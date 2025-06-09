@@ -37,3 +37,13 @@ input#command {
 .limited { color: #b366ff; }
 .bloodline { color: #ff3333; }
 .relic { color: gold; }
+#logo-container {
+  text-align: center;
+  margin-top: 20px;
+}
+#logo {
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
