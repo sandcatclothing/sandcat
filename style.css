@@ -1,0 +1,39 @@
+
+body {
+  background-color: #000;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  padding: 0;
+}
+#terminal {
+  padding: 20px;
+}
+.input-line {
+  display: flex;
+}
+.prompt {
+  margin-right: 10px;
+}
+input#command {
+  background: transparent;
+  border: none;
+  color: #00ff00;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  width: 100%;
+}
+.product {
+  border: 1px solid #00ff00;
+  margin: 10px 0;
+  padding: 10px;
+}
+.product img {
+  width: 150px;
+  display: block;
+  margin-bottom: 5px;
+}
+.core { color: #ccc; }
+.limited { color: #b366ff; }
+.bloodline { color: #ff3333; }
+.relic { color: gold; }
