@@ -1,30 +1,62 @@
-<header id="header" class="modern-header">
-  <div id="brand">
-    <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
-    <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SANDCAT Terminal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="boot-screen">
+    <pre id="boot-text"></pre>
   </div>
-  <nav id="menu">
-    <button onclick="showSection('shop')">SHOP</button>
-    <button onclick="showSection('collections')">COLLECTIONS</button>
-    <button onclick="showSection('about')">ABOUT</button>
-    <button onclick="showSection('contact')">CONTACT</button>
-  </nav>
-</header>
 
-<main id="content"></main>
+  <header id="header">
+    <div id="brand">
+      <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
+      <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
+    </div>
+    <nav id="menu">
+      <button onclick="showSection('shop')">SHOP</button>
+      <button onclick="showSection('collections')">COLLECTIONS</button>
+      <button onclick="showSection('about')">ABOUT</button>
+      <button onclick="showSection('contact')">CONTACT</button>
+    </nav>
+  </header>
 
-<div id="terminal">
-  <div class="input-line">
-    <span class="prompt">&gt;</span>
-    <input type="text" id="command" placeholder="Type a secret command..." />
+  <main id="content"></main>
+
+  <div id="terminal">
+    <div class="input-line">
+      <span class="prompt">&gt;</span>
+      <input type="text" id="command" placeholder="Type a secret command..." />
+    </div>
   </div>
-</div>
 
-<footer id="footer">
-  <p>Subscribe to our newsletter</p>
-  <form id="newsletter-form">
-    <input type="email" placeholder="Your email" required>
-    <button type="submit">Subscribe</button>
-  </form>
-</footer>
+  <footer>
+    <form id="newsletter">
+      <label for="email">Join our newsletter:</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <button type="submit">Subscribe</button>
+    </form>
+  </footer>
 
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="close-modal">×</span>
+      <img id="modal-img" src="" alt="Product">
+      <h2 id="modal-name"></h2>
+      <p id="modal-price"></p>
+      <select id="size">
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+      </select>
+      <button id="add-to-cart">Add to cart</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
