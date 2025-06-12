@@ -30,9 +30,11 @@ function showSection(section) {
       content.appendChild(div);
     });
   } else if (section === "collections") {
-    content.innerHTML = "<ul style='list-style: none; padding-left: 0;'>" +
-      Object.keys(products).map(key => `<li><button onclick="showProducts('${key}')">${key.toUpperCase()}</button></li>`).join('') +
-      "</ul>";
+    content.innerHTML = "<div class='collection-buttons'>" +
+      Object.keys(products).map(key =>
+        `<button class="collection-button" onclick="showProducts('${key}')">${key.toUpperCase()}</button>`
+      ).join('') +
+      "</div>";
   } else if (section === "about") {
     content.innerHTML = "<p>SANDCAT is a terminal-native clothing brand. Welcome to the drop.</p>";
   } else if (section === "contact") {
