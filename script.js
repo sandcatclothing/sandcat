@@ -1,4 +1,4 @@
-// Animación de hackeo rápida y sin mensaje final
+// Animación inicial rápida
 const lines = [
   "Accessing SANDCAT Systems...",
   "Injecting streetwear DNA...",
@@ -36,7 +36,7 @@ window.onload = () => {
   typeLine();
 };
 
-// Comando oculto en consola
+// Comando secreto oculto
 const secretCommand = "paraloschavales";
 document.getElementById("secret-input").addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
@@ -44,7 +44,6 @@ document.getElementById("secret-input").addEventListener("keydown", function (e)
     if (input === secretCommand) {
       const secret = document.getElementById("secret-collection");
       secret.classList.remove("hidden");
-      secret.classList.add("show");
     }
     this.value = "";
   }
@@ -65,3 +64,4 @@ emailInput.addEventListener("keydown", function (e) {
     this.value = "";
   }
 });
+
