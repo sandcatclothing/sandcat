@@ -1,107 +1,107 @@
+/* Reset & base */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
 }
 
 body {
   background-color: #000;
   color: #00ff00;
   font-family: 'Courier New', monospace;
+  overflow-x: hidden;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Header isla blanca */
+/* --- Animación hacker inicial --- */
+#hack-animation {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #000;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  padding: 20px;
+  white-space: pre-wrap;
+  z-index: 9999;
+  user-select: none;
+  overflow-y: auto;
+}
+
+/* --- Isla blanca superior --- */
 #header {
-  background-color: #fff;
-  color: #000;
-  padding: 15px 30px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
   position: sticky;
   top: 0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ccc;
+  height: 70px;
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  user-select: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
 #brand {
   display: flex;
   align-items: center;
   gap: 15px;
-  flex-wrap: nowrap;
-  flex: 1;
 }
 
 #logo-icon {
-  height: 80px;
+  height: 60px;
   width: auto;
+  object-fit: contain;
 }
 
 #logo-text {
-  height: 180px; /* Más del doble que antes */
+  height: 140px; /* más del doble que antes */
   width: auto;
-}
-
-#menu-icon {
-  cursor: pointer;
-  font-size: 2.8rem;
+  object-fit: contain;
   user-select: none;
+}
+
+#hamburger {
+  font-size: 30px;
+  cursor: pointer;
   color: #000;
-  padding: 6px 10px;
-  border: 2px solid #000;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-#menu-icon:hover {
-  background-color: #000;
-  color: #0f0;
+  user-select: none;
+  padding: 5px 10px;
+  transition: color 0.2s ease;
 }
 
-/* Content principal */
-#content {
-  padding: 20px;
-  flex-grow: 1;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-  gap: 20px;
-  justify-items: center;
+#hamburger:hover {
+  color: #666;
 }
 
-/* Terminal (parte inferior) */
-#terminal {
+/* --- Menú consola debajo de la isla --- */
+#terminal-menu {
   background-color: #000;
-  border-top: 1px solid #00ff00;
+  border-top: 2px solid #00ff00;
   padding: 10px 20px;
   font-family: 'Courier New', monospace;
+  font-size: 18px;
+  color: #00ff00;
   user-select: none;
-  position: relative;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease;
+  line-height: 1.6;
+  white-space: pre;
+  cursor: default;
 }
 
-/* Menú consola tipo terminal, oculto inicialmente */
-#terminal-menu {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 12px;
-  user-select: none;
-}
-
-.hidden {
-  display: none !important;
+#terminal-menu.hidden {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
 }
 
 .menu-item {
+  display: block;
+  margin: 5px 0;
   cursor: pointer;
-  border: 1px solid #00ff00;
-  padding: 8px 18px;
-  transition: background-color 0.3s, color 0.3s;
-  color: #00ff00;
-  border-radius: 5px;
-  user-select: none;
 }
 
 .menu-item:hover {
@@ -109,41 +109,53 @@ body {
   color: #000;
 }
 
-/* Input línea */
-.input-line {
-  display: flex;
-  align-items: center;
+.menu-submenu {
+  margin-left: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  display: block;
 }
 
-.prompt {
-  margin-right: 10px;
-  color: #0f0;
+.menu-submenu.hidden {
+  display: none;
 }
 
-input#command {
-  background: transparent;
-  border: none;
+.menu-submenu span:hover {
+  background-color: #00ff00;
+  color: #000;
+  display: block;
+  padding-left: 10px;
+}
+
+/* --- Contenido principal --- */
+#content {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+  gap: 20px;
+  justify-items: center;
   color: #00ff00;
-  outline: none;
   font-family: 'Courier New', monospace;
-  width: 100%;
-  font-size: 1.1rem;
-  user-select: text;
+  min-height: 300px;
 }
 
-/* Productos */
+/* --- Producto --- */
 .product {
   border: 1px solid #00ff00;
-  padding: 10px;
-  width: 200px;
-  text-align: center;
   background-color: #0a0a0a;
+  width: 220px;
+  padding: 10px;
+  text-align: center;
   display: flex;
   flex-direction: column;
+  min-height: 380px;
   justify-content: space-between;
-  min-height: 340px;
   cursor: pointer;
-  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.product:hover {
+  background-color: #004400;
 }
 
 .product img {
@@ -154,111 +166,116 @@ input#command {
   margin-bottom: 10px;
 }
 
-/* Rarities colors */
-.core-drop {
-  color: #999999;
+.product strong {
+  font-size: 1.1em;
+  margin-bottom: 5px;
 }
 
-/* Modal producto */
-#product-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal-content {
-  background-color: #111;
-  border: 1px solid #0f0;
-  padding: 25px 40px;
-  border-radius: 10px;
-  width: 320px;
-  color: #0f0;
-  font-size: 1.1rem;
-  position: relative;
-}
-
-#close-modal {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  color: #0f0;
-  font-size: 2rem;
-  cursor: pointer;
-  user-select: none;
-}
-
-#product-details img {
-  width: 100%;
-  height: 240px;
-  object-fit: contain;
-  margin-bottom: 15px;
-  border: 1px solid #0f0;
-}
-
-#product-details strong {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 1.3rem;
-  color: #ccc;
-}
-
-#product-details span {
-  color: #999;
-  font-style: italic;
+.product span {
+  font-size: 0.9em;
+  color: #888;
   margin-bottom: 10px;
-  display: block;
 }
 
-/* Selector tallas */
-.size-selector {
-  margin: 15px 0;
-  display: flex;
-  gap: 12px;
-  justify-content: center;
+/* Rareza colores */
+.core { color: #ccc; }
+.limited { color: #b366ff; }
+.bloodline { color: #ff3333; }
+.relic { color: gold; }
+.grayrarity { color: gray; }
+
+/* --- Detalles producto (modal) --- */
+#product-detail {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  background: #111;
+  border: 2px solid #00ff00;
+  padding: 20px;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  font-family: 'Courier New', monospace;
+  color: #00ff00;
+  box-shadow: 0 0 10px #00ff00;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  cursor: default;
 }
 
-.size-selector button {
-  padding: 8px 14px;
-  background: transparent;
+#product-detail img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  background-color: #222;
+  margin-bottom: 10px;
+}
+
+#product-detail strong {
+  font-size: 1.3em;
+}
+
+#product-detail .rarity {
+  font-size: 0.9em;
+  color: gray;
+}
+
+#product-detail select {
+  background: #000;
   border: 1px solid #00ff00;
   color: #00ff00;
-  cursor: pointer;
-  font-family: monospace;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 1em;
 }
 
-.size-selector button.selected,
-.size-selector button:hover {
-  background-color: #00ff00;
-  color: #000;
-}
-
-/* Botón comprar */
-#buy-button {
-  display: block;
-  width: 100%;
-  padding: 12px 0;
-  background-color: #00ff00;
-  color: #000;
+#product-detail button {
+  margin-top: 10px;
+  padding: 8px;
+  background: #00ff00;
   border: none;
-  font-weight: bold;
-  font-family: monospace;
   cursor: pointer;
-  border-radius: 6px;
-  user-select: none;
-  transition: background-color 0.25s ease;
+  font-weight: bold;
+  color: #000;
+  transition: background-color 0.2s ease;
 }
 
-#buy-button:hover {
-  background-color: #0c0;
+#product-detail button:hover {
+  background: #00cc00;
 }
+
+/* --- Newsletter footer --- */
+#newsletter {
+  margin: 40px auto 20px;
+  max-width: 400px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  color: #00ff00;
+}
+
+#newsletter input[type=email] {
+  width: 70%;
+  padding: 8px;
+  border: 1px solid #00ff00;
+  background: transparent;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 1em;
+}
+
+#newsletter button {
+  padding: 8px 15px;
+  border: none;
+  background: #00ff00;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.2s ease;
+}
+
+#newsletter button:hover {
+  background: #00cc00;
+}
+
