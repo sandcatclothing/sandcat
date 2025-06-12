@@ -1,73 +1,119 @@
-// script.js
-const lines = [
-  "Accessing SANDCAT Systems...",
-  "Injecting streetwear DNA...",
-  "SANDCAT mode: ACTIVATED ✓"
-];
-
-let currentLine = 0;
-let currentChar = 0;
-
-function typeLine() {
-  const target = lines[currentLine];
-  if (currentChar < target.length) {
-    const randomChar = String.fromCharCode(33 + Math.random() * 94);
-    const pre = target.slice(0, currentChar);
-    const post = target.slice(currentChar + 1);
-    const scramble = pre + randomChar + post;
-    document.getElementById("hack-text").textContent = scramble;
-    setTimeout(typeLine, 20);
-  } else {
-    document.getElementById("hack-text").textContent = lines[currentLine];
-    currentLine++;
-    currentChar = 0;
-    if (currentLine < lines.length) {
-      setTimeout(typeLine, 500);
-    } else {
-      setTimeout(() => {
-        document.getElementById("hack-screen").style.display = "none";
-      }, 600);
-    }
-  }
-  currentChar++;
+// style.css
+body {
+  margin: 0;
+  background: #000;
+  color: #0f0;
+  font-family: 'Courier New', monospace;
 }
 
-window.onload = () => {
-  typeLine();
-};
-
-function toggleMenu() {
-  const menu = document.getElementById("console-menu");
-  menu.scrollIntoView({ behavior: "smooth" });
+#hack-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-size: 1.2rem;
+  text-align: center;
 }
 
-// Comando oculto
-const secretCommand = "paraloschavales";
-document.getElementById("secret-input").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    const input = this.value.trim().toLowerCase();
-    if (input === secretCommand) {
-      const secret = document.getElementById("secret-collection");
-      secret.classList.remove("hidden");
-      secret.classList.add("show");
-    }
-    this.value = "";
-  }
-});
+.white-bar {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-// Newsletter
-const emailInput = document.getElementById("email-input");
-const newsletterMessage = document.getElementById("newsletter-message");
+.newsletter-bar {
+  position: relative;
+  bottom: 0;
+  margin-top: 50px;
+  padding: 30px 20px;
+  flex-direction: column;
+  align-items: start;
+}
 
-emailInput.addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    const email = this.value.trim();
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newsletterMessage.textContent = `Gracias por unirte, ${email}`;
-    } else {
-      newsletterMessage.textContent = "Por favor ingresa un correo válido.";
-    }
-    this.value = "";
-  }
-});
+.logo-left {
+  height: 50px;
+}
 
+.logo-center {
+  height: 40px;
+  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.hamburger {
+  font-size: 30px;
+  cursor: pointer;
+}
+
+#console-menu {
+  background: #222;
+  color: #0f0;
+  padding: 20px;
+  font-size: 1.2rem;
+  min-height: 60vh;
+}
+
+.console-line {
+  margin-bottom: 10px;
+}
+
+.console-input {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.console-input input {
+  background: black;
+  color: #0f0;
+  border: none;
+  outline: none;
+  font-family: monospace;
+  font-size: 1rem;
+  padding-left: 5px;
+  flex: 1;
+}
+
+.newsletter {
+  background: white;
+  color: black;
+  padding: 10px;
+  font-family: sans-serif;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#newsletter-message {
+  margin-top: 10px;
+  color: #0f0;
+  font-size: 0.9rem;
+}
+
+.blinking-cursor::after {
+  content: "_";
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
