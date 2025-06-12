@@ -1,8 +1,6 @@
 // script.js
 const lines = [
   "Accessing SANDCAT Systems...",
-  "Establishing secure connection...",
-  "Bypassing fashion firewalls...",
   "Injecting streetwear DNA...",
   "SANDCAT mode: ACTIVATED ✓"
 ];
@@ -18,17 +16,17 @@ function typeLine() {
     const post = target.slice(currentChar + 1);
     const scramble = pre + randomChar + post;
     document.getElementById("hack-text").textContent = scramble;
-    setTimeout(typeLine, 30);
+    setTimeout(typeLine, 20);
   } else {
     document.getElementById("hack-text").textContent = lines[currentLine];
     currentLine++;
     currentChar = 0;
     if (currentLine < lines.length) {
-      setTimeout(typeLine, 800);
+      setTimeout(typeLine, 500);
     } else {
       setTimeout(() => {
         document.getElementById("hack-screen").style.display = "none";
-      }, 1200);
+      }, 600);
     }
   }
   currentChar++;
@@ -43,9 +41,12 @@ function toggleMenu() {
   menu.scrollIntoView({ behavior: "smooth" });
 }
 
+// Comando oculto
+const secretCommand = "paraloschavales";
 document.getElementById("secret-input").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
-    if (this.value.trim().toLowerCase() === "paraloschavales") {
+    const input = this.value.trim().toLowerCase();
+    if (input === secretCommand) {
       const secret = document.getElementById("secret-collection");
       secret.classList.remove("hidden");
       secret.classList.add("show");
@@ -54,17 +55,19 @@ document.getElementById("secret-input").addEventListener("keydown", function(e) 
   }
 });
 
-document.getElementById("email-input").addEventListener("keydown", function(e) {
+// Newsletter
+const emailInput = document.getElementById("email-input");
+const newsletterMessage = document.getElementById("newsletter-message");
+
+emailInput.addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     const email = this.value.trim();
-    const message = document.getElementById("newsletter-message");
     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      message.textContent = `Gracias por unirte, ${email}`;
+      newsletterMessage.textContent = `Gracias por unirte, ${email}`;
     } else {
-      message.textContent = "Por favor ingresa un correo válido.";
+      newsletterMessage.textContent = "Por favor ingresa un correo válido.";
     }
     this.value = "";
   }
 });
-
 
