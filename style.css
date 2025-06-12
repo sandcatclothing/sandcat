@@ -1,109 +1,264 @@
-/* style.css */
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: monospace;
-  background-color: black;
-  color: green;
+  padding: 0;
 }
 
-#hacker-animation {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background-color: black;
+body {
+  background-color: #000;
   color: #00ff00;
+  font-family: 'Courier New', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header isla blanca */
+#header {
+  background-color: #fff;
+  color: #000;
+  padding: 15px 30px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.isla {
-  background-color: white;
-  color: black;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 2rem;
-}
-
-.logo {
-  height: 40px;
-}
-
-.logo-text {
-  font-size: 2.5rem;
-  margin-left: 1rem;
-  flex-grow: 1;
-}
-
-#menu-button {
-  font-size: 2rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.terminal-menu {
-  background-color: black;
-  padding: 1rem;
-  display: flex;
-  gap: 1rem;
-  border-top: 2px solid green;
-  border-bottom: 2px solid green;
-}
-
-.terminal-menu button {
-  background: none;
-  border: none;
-  color: green;
-  cursor: pointer;
-  font-size: 1.2rem;
-}
-
-.content-section {
-  padding: 2rem;
-  display: none;
-}
-
-.product-grid, .collection-items {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.product-card {
-  border: 2px solid green;
-  padding: 1rem;
-  background-color: #111;
-  width: 200px;
-}
-
-.rarity-grey {
-  color: gray;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
-  justify-content: center;
-  align-items: center;
+  gap: 20px;
+  position: sticky;
+  top: 0;
   z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  user-select: none;
+}
+
+#brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: nowrap;
+  flex: 1;
+}
+
+#logo-icon {
+  height: 80px;
+  width: auto;
+}
+
+#logo-text {
+  height: 180px; /* Más del doble que antes */
+  width: auto;
+}
+
+#menu-icon {
+  cursor: pointer;
+  font-size: 2.8rem;
+  user-select: none;
+  color: #000;
+  padding: 6px 10px;
+  border: 2px solid #000;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+#menu-icon:hover {
+  background-color: #000;
+  color: #0f0;
+}
+
+/* Content principal */
+#content {
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+/* Terminal (parte inferior) */
+#terminal {
+  background-color: #000;
+  border-top: 1px solid #00ff00;
+  padding: 10px 20px;
+  font-family: 'Courier New', monospace;
+  user-select: none;
+  position: relative;
+}
+
+/* Menú consola tipo terminal, oculto inicialmente */
+#terminal-menu {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.menu-item {
+  cursor: pointer;
+  border: 1px solid #00ff00;
+  padding: 8px 18px;
+  transition: background-color 0.3s, color 0.3s;
+  color: #00ff00;
+  border-radius: 5px;
+  user-select: none;
+}
+
+.menu-item:hover {
+  background-color: #00ff00;
+  color: #000;
+}
+
+/* Input línea */
+.input-line {
+  display: flex;
+  align-items: center;
+}
+
+.prompt {
+  margin-right: 10px;
+  color: #0f0;
+}
+
+input#command {
+  background: transparent;
+  border: none;
+  color: #00ff00;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  width: 100%;
+  font-size: 1.1rem;
+  user-select: text;
+}
+
+/* Productos */
+.product {
+  border: 1px solid #00ff00;
+  padding: 10px;
+  width: 200px;
+  text-align: center;
+  background-color: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 340px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.product img {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  background-color: #111;
+  margin-bottom: 10px;
+}
+
+/* Rarities colors */
+.core-drop {
+  color: #999999;
+}
+
+/* Modal producto */
+#product-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
 
 .modal-content {
-  background: white;
-  padding: 2rem;
+  background-color: #111;
+  border: 1px solid #0f0;
+  padding: 25px 40px;
   border-radius: 10px;
-  color: black;
+  width: 320px;
+  color: #0f0;
+  font-size: 1.1rem;
+  position: relative;
 }
 
-.close {
-  float: right;
+#close-modal {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #0f0;
+  font-size: 2rem;
   cursor: pointer;
-  font-size: 1.5rem;
+  user-select: none;
 }
 
+#product-details img {
+  width: 100%;
+  height: 240px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  border: 1px solid #0f0;
+}
+
+#product-details strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  color: #ccc;
+}
+
+#product-details span {
+  color: #999;
+  font-style: italic;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Selector tallas */
+.size-selector {
+  margin: 15px 0;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.size-selector button {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  cursor: pointer;
+  font-family: monospace;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.size-selector button.selected,
+.size-selector button:hover {
+  background-color: #00ff00;
+  color: #000;
+}
+
+/* Botón comprar */
+#buy-button {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  background-color: #00ff00;
+  color: #000;
+  border: none;
+  font-weight: bold;
+  font-family: monospace;
+  cursor: pointer;
+  border-radius: 6px;
+  user-select: none;
+  transition: background-color 0.25s ease;
+}
+
+#buy-button:hover {
+  background-color: #0c0;
+}
