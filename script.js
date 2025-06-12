@@ -1,4 +1,4 @@
-// Animación inicial rápida
+// Animación inicial
 const lines = [
   "Accessing SANDCAT Systems...",
   "Injecting streetwear DNA...",
@@ -22,11 +22,11 @@ function typeLine() {
     currentLine++;
     currentChar = 0;
     if (currentLine < lines.length) {
-      setTimeout(typeLine, 500);
+      setTimeout(typeLine, 400);
     } else {
       setTimeout(() => {
         document.getElementById("hack-screen").style.display = "none";
-      }, 600);
+      }, 400);
     }
   }
   currentChar++;
@@ -36,14 +36,24 @@ window.onload = () => {
   typeLine();
 };
 
-// Comando secreto oculto
+// Menú desplegable
+document.querySelectorAll(".menu-item").forEach(item => {
+  item.addEventListener("click", () => {
+    const target = item.dataset.target;
+    const submenu = document.getElementById(`${target}-submenu`);
+    submenu.classList.toggle("hidden");
+  });
+});
+
+// Comando secreto
 const secretCommand = "paraloschavales";
-document.getElementById("secret-input").addEventListener("keydown", function (e) {
+const inputField = document.getElementById("secret-input");
+
+inputField.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     const input = this.value.trim().toLowerCase();
     if (input === secretCommand) {
-      const secret = document.getElementById("secret-collection");
-      secret.classList.remove("hidden");
+      document.getElementById("founders-drop").classList.remove("hidden");
     }
     this.value = "";
   }
@@ -51,17 +61,16 @@ document.getElementById("secret-input").addEventListener("keydown", function (e)
 
 // Newsletter
 const emailInput = document.getElementById("email-input");
-const newsletterMessage = document.getElementById("newsletter-message");
+const message = document.getElementById("newsletter-message");
 
 emailInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     const email = this.value.trim();
-    if (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
-      newsletterMessage.textContent = `Gracias por unirte, ${email}`;
+    if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      message.textContent = `Gracias por unirte, ${email}`;
     } else {
-      newsletterMessage.textContent = "Por favor ingresa un correo válido.";
+      message.textContent = "Por favor ingresa un correo válido.";
     }
     this.value = "";
   }
 });
-
