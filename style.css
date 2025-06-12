@@ -5,7 +5,6 @@ body {
   font-family: 'Courier New', monospace;
 }
 
-/* Animación tipo hacker */
 #hack-screen {
   position: fixed;
   inset: 0;
@@ -19,40 +18,58 @@ body {
   text-align: center;
 }
 
-/* Barra superior */
 .white-bar {
   background: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 12px 20px;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 .logo-left {
-  height: 50px;
+  height: 60px;
+  max-width: 120px;
 }
 
 .logo-center {
-  height: 40px;
-  margin: 0 auto;
+  height: 50px;
+  max-width: 200px;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* Menú consola */
+.hamburger {
+  font-size: 30px;
+  cursor: pointer;
+}
+
 #console-menu {
-  background: #222;
+  background: #1b1b1b;
   color: #0f0;
   padding: 20px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .console-line {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  cursor: default;
+}
+
+.console-line:hover {
+  color: #6f6;
+}
+
+.menu-item {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.submenu {
+  margin-left: 20px;
 }
 
 .console-input {
@@ -72,22 +89,17 @@ body {
   width: 300px;
 }
 
-/* Sección secreta oculta */
-.hidden {
-  display: none;
-}
-
-/* Isla blanca newsletter */
+/* Newsletter */
 .newsletter {
   background: white;
   color: black;
-  padding: 30px 20px;
+  padding: 40px 20px;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 50px;
 }
 
 .newsletter input {
-  padding: 10px;
+  padding: 12px;
   font-size: 1rem;
   width: 250px;
   border: 1px solid #ccc;
@@ -100,10 +112,17 @@ body {
   color: green;
 }
 
-/* Botón hamburguesa */
-.hamburger {
-  font-size: 30px;
-  cursor: pointer;
+/* Utilidades */
+.hidden {
+  display: none;
+}
+
+.green-tag {
+  color: lime;
+}
+
+.secret-tag {
+  color: #ff0;
 }
 
 
