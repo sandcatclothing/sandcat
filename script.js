@@ -1,10 +1,8 @@
-// Animación inicial
+// Animación de hackeo (acortada)
 const lines = [
-  "Accessing SANDCAT Systems...",
   "Injecting streetwear DNA...",
   "SANDCAT mode: ACTIVATED ✓"
 ];
-
 let currentLine = 0;
 let currentChar = 0;
 
@@ -16,43 +14,40 @@ function typeLine() {
     const post = target.slice(currentChar + 1);
     const scramble = pre + randomChar + post;
     document.getElementById("hack-text").textContent = scramble;
-    setTimeout(typeLine, 20);
+    setTimeout(typeLine, 30);
   } else {
     document.getElementById("hack-text").textContent = lines[currentLine];
     currentLine++;
     currentChar = 0;
     if (currentLine < lines.length) {
-      setTimeout(typeLine, 400);
+      setTimeout(() => {
+        typeLine();
+      }, 600);
     } else {
       setTimeout(() => {
         document.getElementById("hack-screen").style.display = "none";
-      }, 400);
+      }, 800);
     }
   }
   currentChar++;
 }
-
 window.onload = () => {
   typeLine();
 };
 
 // Menú desplegable
-document.querySelectorAll(".menu-item").forEach(item => {
-  item.addEventListener("click", () => {
-    const target = item.dataset.target;
-    const submenu = document.getElementById(`${target}-submenu`);
-    submenu.classList.toggle("hidden");
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const targetId = item.getAttribute('data-target') + '-submenu';
+    const submenu = document.getElementById(targetId);
+    if (submenu) submenu.classList.toggle('hidden');
   });
 });
 
 // Comando secreto
-const secretCommand = "paraloschavales";
-const inputField = document.getElementById("secret-input");
-
-inputField.addEventListener("keydown", function (e) {
+document.getElementById("secret-input").addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
-    const input = this.value.trim().toLowerCase();
-    if (input === secretCommand) {
+    if (this.value.trim().toLowerCase() === "paraloschavales") {
       document.getElementById("founders-drop").classList.remove("hidden");
     }
     this.value = "";
@@ -60,17 +55,11 @@ inputField.addEventListener("keydown", function (e) {
 });
 
 // Newsletter
-const emailInput = document.getElementById("email-input");
-const message = document.getElementById("newsletter-message");
-
-emailInput.addEventListener("keydown", function (e) {
+document.getElementById("email-input").addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
-    const email = this.value.trim();
-    if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      message.textContent = `Gracias por unirte, ${email}`;
-    } else {
-      message.textContent = "Por favor ingresa un correo válido.";
-    }
+    const msg = document.getElementById("newsletter-message");
+    msg.textContent = `Gracias por unirte, ${this.value}`;
     this.value = "";
   }
 });
+
