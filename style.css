@@ -1,48 +1,117 @@
-/* Header moderno (blanco y negro) */
-.modern-header {
-  background-color: #fff;
-  color: #000;
-  border-bottom: 2px solid #000;
+
+body {
+  margin: 0;
+  font-family: monospace;
+  background-color: #000;
+  color: #0f0;
+}
+
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #000;
+  color: #0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#loading-text {
+  font-size: 1.5rem;
+  white-space: pre-wrap;
+}
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: white;
+  color: black;
+}
+
+#brand {
+  display: flex;
+  align-items: center;
 }
 
 #logo-icon {
-  height: 90px;
+  height: 60px;
+  margin-right: 10px;
 }
 
 #logo-text {
-  height: 70px;
+  height: 40px;
 }
 
-/* Footer - newsletter */
-#footer {
-  padding: 30px;
-  background-color: #0a0a0a;
-  color: #00ff00;
-  text-align: center;
-  border-top: 1px solid #00ff00;
-}
-
-#footer form {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-#footer input[type="email"] {
-  background: transparent;
-  border: 1px solid #00ff00;
-  color: #00ff00;
-  padding: 8px;
-  font-family: monospace;
-}
-
-#footer button {
-  background-color: #00ff00;
-  color: #000;
+#menu button {
+  margin: 0 10px;
+  background: none;
   border: none;
-  padding: 8px 16px;
+  font-size: 1.1rem;
+  color: black;
   cursor: pointer;
-  font-family: monospace;
+}
+
+#terminal {
+  padding: 20px;
+}
+
+.prompt {
+  color: #0f0;
+}
+
+#command {
+  background: none;
+  border: none;
+  color: #0f0;
+  font-size: 1rem;
+  width: 80%;
+}
+
+#newsletter-form {
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #111;
+}
+
+#newsletter-form input, #newsletter-form button {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+#product-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+}
+
+#close-modal {
+  float: right;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
 }
