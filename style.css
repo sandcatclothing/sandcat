@@ -1,167 +1,87 @@
-/* Reset & base */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 body {
-  background-color: #000;
-  color: #00ff00;
+  margin: 0;
+  background: #000;
+  color: #0f0;
   font-family: 'Courier New', monospace;
-  overflow-x: hidden;
-  min-height: 100vh;
 }
 
-/* Animación hacker */
-#hack-animation {
+#hack-screen {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #000;
-  color: #00ff00;
-  font-size: 14px;
-  padding: 20px;
-  white-space: pre-wrap;
+  inset: 0;
+  background: #000;
+  color: #0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
-  user-select: none;
-  overflow-y: auto;
+  font-size: 1.5rem;
+  text-align: center;
 }
 
-/* Cabecera blanca */
-#header {
-  position: sticky;
-  top: 0;
-  background: #fff;
+.white-bar {
+  background: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  border-bottom: 1px solid #ccc;
-  height: 70px;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-#brand {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.logo-left {
+  height: 50px;
 }
 
-#logo-icon {
-  height: 60px;
-  width: auto;
-  object-fit: contain;
+.logo-center {
+  height: 40px;
+  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-#logo-text {
-  height: 140px;
-  width: auto;
-  object-fit: contain;
-  user-select: none;
-}
-
-#hamburger {
+.hamburger {
   font-size: 30px;
   cursor: pointer;
-  color: #000;
-  user-select: none;
-  padding: 5px 10px;
-  transition: color 0.2s ease;
 }
 
-#hamburger:hover {
-  color: #666;
+#console-menu {
+  background: #111;
+  color: #0f0;
+  padding: 20px;
+  font-size: 1.2rem;
 }
 
-/* Menú terminal */
-#terminal-menu {
-  background-color: #000;
-  border-top: 2px solid #00ff00;
-  padding: 10px 20px;
-  font-size: 18px;
-  color: #00ff00;
-  user-select: none;
-  max-height: 300px;
-  overflow-y: auto;
-  transition: max-height 0.3s ease;
-  line-height: 1.6;
-  white-space: pre;
-  cursor: default;
+.console-line {
+  margin-bottom: 10px;
 }
 
-#terminal-menu.hidden {
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  overflow: hidden;
-}
-
-.menu-item {
-  display: block;
-  margin: 5px 0;
-  cursor: pointer;
-}
-
-.menu-item:hover {
-  background-color: #00ff00;
-  color: #000;
-}
-
-.menu-submenu {
-  margin-left: 20px;
-  font-size: 16px;
-  display: block;
-  cursor: pointer;
-}
-
-.menu-submenu.hidden {
-  display: none;
-}
-
-.product {
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #00ff00;
-  text-align: center;
-  max-width: 200px;
-}
-
-.product img {
-  width: 100%;
-  height: auto;
-}
-
-#product-detail {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.95);
-  color: #00ff00;
-  display: none;
-  flex-direction: column;
+.console-input {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 30px;
-  z-index: 9999;
-}
-
-#product-detail img {
-  max-width: 200px;
-  margin-bottom: 15px;
-}
-
-#product-detail button {
-  padding: 10px 15px;
-  background-color: #00ff00;
-  color: #000;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
   margin-top: 10px;
 }
 
-#product-detail button:hover {
-  background-color: #00cc00;
+.console-input input {
+  background: black;
+  color: #0f0;
+  border: none;
+  outline: none;
+  font-family: monospace;
+  font-size: 1rem;
+  padding-left: 5px;
+  width: 300px;
+}
+
+.newsletter {
+  background: #111;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.hidden {
+  display: none;
 }
 
 
