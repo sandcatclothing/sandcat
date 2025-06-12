@@ -1,41 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SANDCAT Terminal</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SANDCAT</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- Animación hacker inicial -->
+  <!-- Animación inicial estilo hacker -->
   <div id="hack-animation"></div>
 
-  <!-- Isla blanca superior -->
+  <!-- Cabecera blanca -->
   <header id="header">
     <div id="brand">
-      <img src="assets/logo2.png" alt="Sandcat Icon" id="logo-icon" />
-      <img src="assets/logo_text.png" alt="Sandcat Text Logo" id="logo-text" />
+      <img id="logo-icon" src="assets/sandcat_icon.png" alt="Logo">
+      <img id="logo-text" src="assets/sandcat_logo.png" alt="SANDCAT">
     </div>
-    <div id="hamburger" title="Toggle Menu">&#9776;</div>
+    <div id="hamburger">☰</div>
   </header>
 
-  <!-- Menú consola desplegable -->
+  <!-- Menú terminal oculto -->
   <nav id="terminal-menu" class="hidden">
-    <pre>
-<span class="menu-item" data-section="shop">&gt; SHOP</span>
-<span class="menu-submenu hidden" id="shop-categories">
-  &gt; VIEW ALL
-  &gt; TEE
-  &gt; HOODIES
-  &gt; ACCESSORIES
-</span>
-<span class="menu-item" data-section="collections">&gt; COLLECTIONS</span>
-<span class="menu-item" data-section="about">&gt; ABOUT</span>
-<span class="menu-item" data-section="contact">&gt; CONTACT</span>
-    </pre>
+    <div class="menu-item" data-section="collections">> Collections</div>
+    <div class="menu-item" data-section="shop">> Shop</div>
+    <div id="shop-categories" class="menu-submenu hidden">
+      <span>> View All</span>
+      <span>> Tee</span>
+      <span>> Hoodies</span>
+      <span>> Accessories</span>
+    </div>
+    <div class="menu-item" data-section="about">> About</div>
+    <div class="menu-item" data-section="contact">> Contact</div>
   </nav>
 
+  <!-- Contenido dinámico -->
   <main id="content"></main>
 
   <script src="script.js"></script>
