@@ -1,50 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SANDCAT Terminal</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SANDCAT Terminal</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- Isla superior blanca -->
-<header id="header">
-  <div id="brand">
-    <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon" />
-    <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo" />
-    <div id="menu-icon" title="Toggle Menu">&#9776;</div>
-  </div>
-</header>
+  <!-- Animación hacker inicial -->
+  <div id="hack-animation"></div>
 
-<!-- Contenido principal -->
-<main id="content"></main>
+  <!-- Isla blanca superior -->
+  <header id="header">
+    <div id="brand">
+      <img src="assets/logo2.png" alt="Sandcat Icon" id="logo-icon" />
+      <img src="assets/logo_text.png" alt="Sandcat Text Logo" id="logo-text" />
+    </div>
+    <div id="hamburger" title="Toggle Menu">&#9776;</div>
+  </header>
 
-<!-- Terminal con menú consola y input comando -->
-<div id="terminal">
+  <!-- Menú consola desplegable -->
   <nav id="terminal-menu" class="hidden">
-    <span class="menu-item" data-section="shop">SHOP</span>
-    <span class="menu-item" data-section="collections">COLLECTIONS</span>
-    <span class="menu-item" data-section="about">ABOUT</span>
-    <span class="menu-item" data-section="newsletter">NEWSLETTER</span>
+    <pre>
+<span class="menu-item" data-section="shop">&gt; SHOP</span>
+<span class="menu-submenu hidden" id="shop-categories">
+  &gt; VIEW ALL
+  &gt; TEE
+  &gt; HOODIES
+  &gt; ACCESSORIES
+</span>
+<span class="menu-item" data-section="collections">&gt; COLLECTIONS</span>
+<span class="menu-item" data-section="about">&gt; ABOUT</span>
+<span class="menu-item" data-section="contact">&gt; CONTACT</span>
+    </pre>
   </nav>
 
-  <div class="input-line">
-    <span class="prompt">&gt;</span>
-    <input type="text" id="command" placeholder="Type a secret command..." autocomplete="off" />
-  </div>
-</div>
+  <main id="content"></main>
 
-<!-- Modal producto -->
-<div id="product-modal" class="hidden">
-  <div class="modal-content">
-    <button id="close-modal" title="Close">&times;</button>
-    <div id="product-details"></div>
-  </div>
-</div>
-
-<script src="script.js"></script>
-
+  <script src="script.js"></script>
 </body>
 </html>
+
 
