@@ -2,41 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SANDCAT Terminal</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- Animación hacker inicial -->
-  <div id="hack-animation"></div>
-
-  <!-- Isla blanca superior -->
   <header id="header">
     <div id="brand">
-      <img src="assets/logo2.png" alt="Sandcat Icon" id="logo-icon" />
-      <img src="assets/logo_text.png" alt="Sandcat Text Logo" id="logo-text" />
+      <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon" />
+      <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo" />
+      <div id="hamburger" title="Open Menu">&#9776;</div>
     </div>
-    <div id="hamburger" title="Toggle Menu">&#9776;</div>
   </header>
 
-  <!-- Menú consola desplegable -->
+  <main id="content"></main>
+
   <nav id="terminal-menu" class="hidden">
-    <pre>
-<span class="menu-item" data-section="shop">&gt; SHOP</span>
-<span class="menu-submenu hidden" id="shop-categories">
-  &gt; VIEW ALL
-  &gt; TEE
-  &gt; HOODIES
-  &gt; ACCESSORIES
-</span>
-<span class="menu-item" data-section="collections">&gt; COLLECTIONS</span>
-<span class="menu-item" data-section="about">&gt; ABOUT</span>
-<span class="menu-item" data-section="contact">&gt; CONTACT</span>
-    </pre>
+    <div class="menu-item selectable" data-section="shop">>SHOP</div>
+    <div class="submenu hidden" id="shop-submenu">
+      <div class="submenu-item selectable" data-filter="all">VIEW ALL</div>
+      <div class="submenu-item selectable" data-filter="tee">TEE</div>
+      <div class="submenu-item selectable" data-filter="hoodie">HOODIES</div>
+      <div class="submenu-item selectable" data-filter="accessory">ACCESSORIES</div>
+    </div>
+    <div class="menu-item selectable" data-section="collections">>COLLECTIONS</div>
+    <div class="submenu hidden" id="collections-submenu">
+      <div class="submenu-item selectable" data-collection="coredrop">CORE DROP</div>
+    </div>
+    <div class="menu-item selectable" data-section="about">>ABOUT</div>
+    <div class="menu-item selectable" data-section="contact">>CONTACT</div>
   </nav>
 
-  <main id="content"></main>
+  <div id="terminal">
+    <div class="input-line">
+      <span class="prompt">&gt;</span>
+      <input type="text" id="command" placeholder="Type a secret command..." autocomplete="off" />
+    </div>
+  </div>
+
+  <section id="newsletter-section">
+    <h3>Subscribe to our Newsletter</h3>
+    <form id="newsletter-form">
+      <input type="email" id="newsletter-email" placeholder="Your email" required />
+      <button type="submit">Subscribe</button>
+    </form>
+    <p id="newsletter-msg"></p>
+  </section>
+
+  <!-- Modal Product Detail -->
+  <div id="product-modal" class="hidden">
+    <div id="modal-content">
+      <span id="modal-close">&times;</span>
+      <img id="modal-image" alt="product image" />
+      <h2 id="modal-name"></h2>
+      <p id="modal-rarity"></p>
+      <p id="modal-price"></p>
+      <label for="size-select">Select size:</label>
+      <select id="size-select">
+        <option value="">--Choose--</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+      </select>
+      <button id="add-to-cart">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- Cart -->
+  <div id="cart" class="hidden">
+    <div id="cart-header">
+      <h3>Your Cart</h3>
+      <span id="cart-close">&times;</span>
+    </div>
+    <ul id="cart-items"></ul>
+  </div>
 
   <script src="script.js"></script>
 </body>
