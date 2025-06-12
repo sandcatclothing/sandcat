@@ -1,4 +1,3 @@
-
 body {
   background-color: #000;
   color: #00ff00;
@@ -6,18 +5,32 @@ body {
   margin: 0;
   padding: 0;
 }
+
 #logo-container {
   text-align: center;
   padding: 20px;
 }
-#logo {
+
+#logo.glitch {
   max-width: 300px;
   height: auto;
+  animation: glitch 1s infinite;
 }
+
+@keyframes glitch {
+  0% { transform: none; }
+  20% { transform: skew(-2deg, 0.6deg); }
+  40% { transform: skew(1deg, -0.4deg); }
+  60% { transform: skew(-0.5deg, 0.2deg); }
+  80% { transform: skew(0.5deg, -0.6deg); }
+  100% { transform: none; }
+}
+
 #menu {
   text-align: center;
   margin-bottom: 20px;
 }
+
 #menu button {
   background: transparent;
   border: 1px solid #00ff00;
@@ -27,37 +40,51 @@ body {
   margin: 0 5px;
   cursor: pointer;
 }
+
 #menu button:hover {
   background-color: #00ff00;
   color: #000;
 }
+
 #content {
   padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  justify-items: center;
 }
+
 .product {
   border: 1px solid #00ff00;
-  margin: 10px 0;
   padding: 10px;
+  text-align: center;
+  width: 160px;
 }
+
 .product img {
-  width: 150px;
-  display: block;
+  width: 100%;
+  height: auto;
   margin-bottom: 5px;
 }
+
 .core { color: #ccc; }
 .limited { color: #b366ff; }
 .bloodline { color: #ff3333; }
 .relic { color: gold; }
+
 #terminal {
   padding: 20px;
   border-top: 1px solid #00ff00;
 }
+
 .input-line {
   display: flex;
 }
+
 .prompt {
   margin-right: 10px;
 }
+
 input#command {
   background: transparent;
   border: none;
@@ -66,3 +93,4 @@ input#command {
   font-family: 'Courier New', monospace;
   width: 100%;
 }
+
