@@ -35,7 +35,7 @@ window.onload = () => {
   typeLine();
 };
 
-// Menú desplegable
+// Toggle menú
 document.querySelectorAll('.menu-item').forEach(item => {
   item.addEventListener('click', () => {
     const targetId = item.getAttribute('data-target') + '-submenu';
@@ -62,4 +62,5 @@ document.getElementById("email-input").addEventListener("keydown", function (e) 
     this.value = "";
   }
 });
+
 
