@@ -1,213 +1,109 @@
-/* === style.css === */
-
+/* style.css */
 body {
-  background-color: #000;
-  color: #00ff00;
-  font-family: 'Courier New', monospace;
   margin: 0;
-  padding-top: 0;
+  font-family: monospace;
+  background-color: black;
+  color: green;
 }
 
-/* HEADER - MODERNO BLANCO Y NEGRO */
-#header {
-  background-color: #fff;
-  color: #000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px 0;
-  border-bottom: 2px solid #000;
-}
-
-#brand {
+#hacker-animation {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  color: #00ff00;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
+  z-index: 9999;
+}
+
+.isla {
+  background-color: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 2rem;
+}
+
+.logo {
+  height: 40px;
+}
+
+.logo-text {
+  font-size: 2.5rem;
+  margin-left: 1rem;
+  flex-grow: 1;
+}
+
+#menu-button {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.terminal-menu {
+  background-color: black;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  border-top: 2px solid green;
+  border-bottom: 2px solid green;
+}
+
+.terminal-menu button {
+  background: none;
+  border: none;
+  color: green;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.content-section {
+  padding: 2rem;
+  display: none;
+}
+
+.product-grid, .collection-items {
+  display: flex;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
-#logo-icon {
-  height: 80px;
-  width: auto;
-  object-fit: contain;
-}
-
-#logo-text {
-  height: 120px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* TERMINAL MENU */
-#terminal-menu {
-  background-color: #000;
-  color: #00ff00;
-  border-top: 2px solid #00ff00;
-  border-bottom: 2px solid #00ff00;
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-  gap: 20px;
-}
-
-#terminal-menu button {
-  background: transparent;
-  border: 1px solid #00ff00;
-  color: #00ff00;
-  font-family: monospace;
-  padding: 8px 16px;
-  cursor: pointer;
-  text-align: center;
-}
-
-#terminal-menu button:hover {
-  background-color: #00ff00;
-  color: #000;
-}
-
-/* MAIN CONTENT */
-#content {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  justify-items: center;
-}
-
-.product {
-  border: 1px solid #00ff00;
-  padding: 10px;
-  width: 220px;
-  text-align: center;
-  background-color: #0a0a0a;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 340px;
-  cursor: pointer;
-}
-
-.product img {
-  width: 100%;
-  height: 220px;
-  object-fit: contain;
+.product-card {
+  border: 2px solid green;
+  padding: 1rem;
   background-color: #111;
-  margin-bottom: 10px;
+  width: 200px;
 }
 
-.core { color: #ccc; }
+.rarity-grey {
+  color: gray;
+}
 
-/* PRODUCT MODAL */
-#product-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+.modal {
   display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-#product-modal .modal-content {
-  background-color: #0a0a0a;
-  border: 1px solid #00ff00;
-  padding: 30px;
-  max-width: 400px;
-  width: 100%;
-  color: #00ff00;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-#product-modal select, #product-modal button {
-  background-color: #000;
-  color: #00ff00;
-  border: 1px solid #00ff00;
-  font-family: monospace;
-  padding: 8px;
-}
-
-#product-modal .close-btn {
-  background: #ff0000;
-  color: #fff;
-  border: none;
-  padding: 6px;
-  align-self: flex-end;
-  cursor: pointer;
-}
-
-/* TERMINAL INPUT */
-#terminal {
-  padding: 20px;
-  border-top: 1px solid #00ff00;
-}
-
-.input-line {
-  display: flex;
-}
-
-.prompt {
-  margin-right: 10px;
-}
-
-input#command {
-  background: transparent;
-  border: none;
-  color: #00ff00;
-  outline: none;
-  font-family: 'Courier New', monospace;
-  width: 100%;
-}
-
-/* NEWSLETTER */
-#newsletter {
-  padding: 40px;
-  text-align: center;
-  background-color: #000;
-  color: #00ff00;
-  border-top: 1px solid #00ff00;
-}
-
-#newsletter input[type="email"] {
-  padding: 8px;
-  font-family: monospace;
-  background-color: #000;
-  color: #00ff00;
-  border: 1px solid #00ff00;
-  margin-right: 10px;
-}
-
-#newsletter button {
-  padding: 8px 16px;
-  font-family: monospace;
-  background-color: #00ff00;
-  color: #000;
-  border: none;
-  cursor: pointer;
-}
-
-#newsletter button:hover {
-  background-color: #fff;
-}
-
-/* HACKER LOADING */
-#hacker-loader {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-  color: #00ff00;
-  font-family: monospace;
-  display: flex;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
   justify-content: center;
   align-items: center;
-  font-size: 18px;
-  z-index: 3000;
+  z-index: 1000;
 }
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  color: black;
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
