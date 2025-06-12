@@ -3,32 +3,40 @@ body {
   color: #00ff00;
   font-family: 'Courier New', monospace;
   margin: 0;
-  padding: 0;
+  padding-top: 280px; /* espacio para header */
 }
 
-#logo-container {
-  text-align: center;
-  padding: 20px;
+#header {
+  position: sticky;
+  top: 0;
+  background-color: #000;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #00ff00;
 }
 
-#logo.glitch {
-  max-width: 300px;
-  height: auto;
-  animation: glitch 1s infinite;
+#brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-@keyframes glitch {
-  0% { transform: none; }
-  20% { transform: skew(-2deg, 0.6deg); }
-  40% { transform: skew(1deg, -0.4deg); }
-  60% { transform: skew(-0.5deg, 0.2deg); }
-  80% { transform: skew(0.5deg, -0.6deg); }
-  100% { transform: none; }
+#logo-icon {
+  height: 60px;
+}
+
+#logo-text {
+  height: 60px;
 }
 
 #menu {
-  text-align: center;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 #menu button {
@@ -36,9 +44,10 @@ body {
   border: 1px solid #00ff00;
   color: #00ff00;
   font-family: monospace;
-  padding: 10px 20px;
-  margin: 0 5px;
+  padding: 8px 16px;
   cursor: pointer;
+  width: 160px;
+  text-align: center;
 }
 
 #menu button:hover {
