@@ -7,16 +7,18 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="logo-container">
-    <img src="assets/logo2.png" alt="Sandcat Logo" id="logo" class="glitch">
-  </div>
-
-  <nav id="menu">
-    <button onclick="showSection('shop')">Shop</button>
-    <button onclick="showSection('collections')">Collections</button>
-    <button onclick="showSection('about')">About</button>
-    <button onclick="showSection('contact')">Contact</button>
-  </nav>
+  <header id="header">
+    <div id="brand">
+      <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
+      <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
+    </div>
+    <nav id="menu">
+      <button onclick="showSection('shop')">SHOP</button>
+      <button onclick="showSection('collections')">COLLECTIONS</button>
+      <button onclick="showSection('about')">ABOUT</button>
+      <button onclick="showSection('contact')">CONTACT</button>
+    </nav>
+  </header>
 
   <main id="content"></main>
 
@@ -30,3 +32,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
