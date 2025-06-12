@@ -1,7 +1,8 @@
 /* Reset & base */
 * {
   box-sizing: border-box;
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -12,13 +13,12 @@ body {
   min-height: 100vh;
 }
 
-/* --- Animación hacker inicial --- */
+/* Animación hacker */
 #hack-animation {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background-color: #000;
   color: #00ff00;
-  font-family: 'Courier New', monospace;
   font-size: 14px;
   padding: 20px;
   white-space: pre-wrap;
@@ -27,7 +27,7 @@ body {
   overflow-y: auto;
 }
 
-/* --- Isla blanca superior --- */
+/* Cabecera blanca */
 #header {
   position: sticky;
   top: 0;
@@ -55,7 +55,7 @@ body {
 }
 
 #logo-text {
-  height: 140px; /* más del doble que antes */
+  height: 140px;
   width: auto;
   object-fit: contain;
   user-select: none;
@@ -74,12 +74,11 @@ body {
   color: #666;
 }
 
-/* --- Menú consola debajo de la isla --- */
+/* Menú terminal */
 #terminal-menu {
   background-color: #000;
   border-top: 2px solid #00ff00;
   padding: 10px 20px;
-  font-family: 'Courier New', monospace;
   font-size: 18px;
   color: #00ff00;
   user-select: none;
@@ -112,170 +111,57 @@ body {
 .menu-submenu {
   margin-left: 20px;
   font-size: 16px;
-  cursor: pointer;
   display: block;
+  cursor: pointer;
 }
 
 .menu-submenu.hidden {
   display: none;
 }
 
-.menu-submenu span:hover {
-  background-color: #00ff00;
-  color: #000;
-  display: block;
-  padding-left: 10px;
-}
-
-/* --- Contenido principal --- */
-#content {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-  gap: 20px;
-  justify-items: center;
-  color: #00ff00;
-  font-family: 'Courier New', monospace;
-  min-height: 300px;
-}
-
-/* --- Producto --- */
 .product {
-  border: 1px solid #00ff00;
-  background-color: #0a0a0a;
-  width: 220px;
+  margin: 20px;
   padding: 10px;
+  border: 1px solid #00ff00;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  min-height: 380px;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.product:hover {
-  background-color: #004400;
+  max-width: 200px;
 }
 
 .product img {
   width: 100%;
-  height: 220px;
-  object-fit: contain;
-  background-color: #111;
-  margin-bottom: 10px;
+  height: auto;
 }
 
-.product strong {
-  font-size: 1.1em;
-  margin-bottom: 5px;
-}
-
-.product span {
-  font-size: 0.9em;
-  color: #888;
-  margin-bottom: 10px;
-}
-
-/* Rareza colores */
-.core { color: #ccc; }
-.limited { color: #b366ff; }
-.bloodline { color: #ff3333; }
-.relic { color: gold; }
-.grayrarity { color: gray; }
-
-/* --- Detalles producto (modal) --- */
 #product-detail {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 320px;
-  background: #111;
-  border: 2px solid #00ff00;
-  padding: 20px;
-  transform: translate(-50%, -50%);
-  z-index: 2000;
-  font-family: 'Courier New', monospace;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
   color: #00ff00;
-  box-shadow: 0 0 10px #00ff00;
   display: none;
   flex-direction: column;
-  gap: 10px;
-  cursor: default;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  z-index: 9999;
 }
 
 #product-detail img {
-  width: 100%;
-  height: 200px;
-  object-fit: contain;
-  background-color: #222;
-  margin-bottom: 10px;
-}
-
-#product-detail strong {
-  font-size: 1.3em;
-}
-
-#product-detail .rarity {
-  font-size: 0.9em;
-  color: gray;
-}
-
-#product-detail select {
-  background: #000;
-  border: 1px solid #00ff00;
-  color: #00ff00;
-  padding: 5px;
-  font-family: 'Courier New', monospace;
-  font-size: 1em;
+  max-width: 200px;
+  margin-bottom: 15px;
 }
 
 #product-detail button {
-  margin-top: 10px;
-  padding: 8px;
-  background: #00ff00;
+  padding: 10px 15px;
+  background-color: #00ff00;
+  color: #000;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  color: #000;
-  transition: background-color 0.2s ease;
+  margin-top: 10px;
 }
 
 #product-detail button:hover {
-  background: #00cc00;
+  background-color: #00cc00;
 }
 
-/* --- Newsletter footer --- */
-#newsletter {
-  margin: 40px auto 20px;
-  max-width: 400px;
-  text-align: center;
-  font-family: 'Courier New', monospace;
-  color: #00ff00;
-}
-
-#newsletter input[type=email] {
-  width: 70%;
-  padding: 8px;
-  border: 1px solid #00ff00;
-  background: transparent;
-  color: #00ff00;
-  font-family: 'Courier New', monospace;
-  font-size: 1em;
-}
-
-#newsletter button {
-  padding: 8px 15px;
-  border: none;
-  background: #00ff00;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: background-color 0.2s ease;
-}
-
-#newsletter button:hover {
-  background: #00cc00;
-}
 
