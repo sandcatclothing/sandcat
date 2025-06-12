@@ -1,84 +1,569 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SANDCAT Terminal</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sandcat Store</title>
+<style>
+  /* Reset y base */
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0; border: none; height: 100%;
+    background: #000;
+    color: #0f0;
+    font-family: monospace;
+    overflow-x: hidden;
+  }
+
+  /* Isla blanca */
+  #island {
+    position: relative;
+    width: 85vw;
+    max-width: 1000px;
+    min-height: 600px;
+    background: #111; /* más oscuro que blanco puro para mejor contraste */
+    margin: 30px auto 50px auto;
+    border-radius: 12px;
+    padding: 20px 40px 40px 40px;
+    box-shadow:
+      0 0 20px #0f0,
+      inset 0 0 8px #0f0;
+  }
+
+  /* Logo centrado */
+  #logo_text {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #0f0;
+    user-select: none;
+  }
+
+  /* Terminal menu */
+  #terminal-menu {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+  #terminal-menu.hidden {
+    display: none;
+  }
+  .menu-item {
+    cursor: pointer;
+    border: 1.5px solid #0f0;
+    padding: 6px 14px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  .menu-item:hover {
+    background-color: #0f0;
+    color: #000;
+  }
+
+  /* Submenus */
+  .submenu {
+    margin: 10px 0 20px 0;
+    display: flex;
+    gap: 15px;
+  }
+  .submenu.hidden {
+    display: none;
+  }
+  .submenu-item {
+    cursor: pointer;
+    border: 1px solid #0f0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+  }
+  .submenu-item:hover {
+    background-color: #0f0;
+    color: #000;
+  }
+
+  /* Contenido principal */
+  #content {
+    min-height: 300px;
+    color: #0f0;
+    font-size: 1.1em;
+    user-select: text;
+  }
+
+  /* Productos */
+  .product {
+    border: 1px solid #0f0;
+    padding: 10px;
+    border-radius: 6px;
+    width: 160px;
+    margin: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    user-select: none;
+  }
+  .product:hover {
+    background-color: #0f0;
+    color: #000;
+  }
+  .product img {
+    max-width: 100%;
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 6px;
+    border: 1px solid #0f0;
+    border-radius: 4px;
+  }
+  .coredrop {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #0f0;
+  }
+
+  /* Modal producto */
+  #product-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 320px;
+    background: #000;
+    border: 2px solid #0f0;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    padding: 20px;
+    display: none;
+    color: #0f0;
+  }
+  #product-modal.visible {
+    display: block;
+  }
+  #modal-close {
+    position: absolute;
+    top: 8px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #0f0;
+    user-select: none;
+  }
+  #modal-image {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    margin-bottom: 15px;
+  }
+  #modal-name {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 8px;
+  }
+  #modal-price {
+    margin-bottom: 8px;
+  }
+  #modal-rarity {
+    font-style: italic;
+    margin-bottom: 15px;
+  }
+  #size-select {
+    width: 100%;
+    padding: 6px;
+    background: transparent;
+    color: #0f0;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 1em;
+    margin-bottom: 15px;
+    user-select: none;
+  }
+  #add-to-cart {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #0f0;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    font-family: monospace;
+  }
+  #add-to-cart:hover {
+    background-color: #0c0;
+  }
+
+  /* Carrito */
+  #cart {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    background: #000;
+    border: 2px solid #0f0;
+    padding: 10px 15px;
+    max-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1200;
+    font-family: monospace;
+    color: #0f0;
+    border-radius: 6px;
+    display: none;
+  }
+  #cart.visible {
+    display: block;
+  }
+  #cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  #cart-close {
+    cursor: pointer;
+    font-size: 24px;
+    user-select: none;
+  }
+  #cart-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #cart-items li {
+    padding: 6px 0;
+    border-bottom: 1px solid #0f0;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  /* Newsletter */
+  #newsletter-section {
+    margin-top: 30px;
+    border-top: 1px solid #0f0;
+    padding-top: 15px;
+  }
+  #newsletter-section label {
+    display: block;
+    margin-bottom: 6px;
+  }
+  #newsletter-form input[type="email"] {
+    width: 60%;
+    padding: 6px 8px;
+    border-radius: 5px;
+    border: 1px solid #0f0;
+    background: transparent;
+    color: #0f0;
+    font-family: monospace;
+  }
+  #newsletter-form button {
+    padding: 7px 12px;
+    border: none;
+    background-color: #0f0;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-family: monospace;
+  }
+  #newsletter-msg {
+    margin-top: 8px;
+    font-size: 0.9em;
+    height: 20px;
+    user-select: none;
+  }
+
+  /* Animación hackeo */
+  #content.hack-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.7em;
+    white-space: nowrap;
+    letter-spacing: 2px;
+    user-select: none;
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+    color: #0f0;
+    background: #000;
+    font-family: monospace;
+  }
+  .hacker-char {
+    display: inline-block;
+    animation: flicker 1.5s infinite alternate;
+  }
+  @keyframes flicker {
+    0%, 100% {opacity: 1;}
+    50% {opacity: 0.3;}
+  }
+</style>
 </head>
 <body>
-  <header id="header">
-    <div id="brand">
-      <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon" />
-      <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo" />
-      <div id="hamburger" title="Open Menu">&#9776;</div>
-    </div>
-  </header>
 
-  <main id="content"></main>
+<div id="island">
+  <div id="logo_text">SANDCAT STORE</div>
 
-  <nav id="terminal-menu" class="hidden">
-    <div class="menu-item selectable" data-section="shop">>SHOP</div>
-    <div class="submenu hidden" id="shop-submenu">
-      <div class="submenu-item selectable" data-filter="all">VIEW ALL</div>
-      <div class="submenu-item selectable" data-filter="tee">TEE</div>
-      <div class="submenu-item selectable" data-filter="hoodie">HOODIES</div>
-      <div class="submenu-item selectable" data-filter="accessory">ACCESSORIES</div>
-    </div>
-    <div class="menu-item selectable" data-section="collections">>COLLECTIONS</div>
-    <div class="submenu hidden" id="collections-submenu">
-      <div class="submenu-item selectable" data-collection="coredrop">CORE DROP</div>
-    </div>
-    <div class="menu-item selectable" data-section="about">>ABOUT</div>
-    <div class="menu-item selectable" data-section="contact">>CONTACT</div>
+  <!-- Menu -->
+  <nav id="terminal-menu">
+    <div class="menu-item" data-menu="shop">SHOP</div>
+    <div class="menu-item" data-menu="collections">COLLECTIONS</div>
+    <div class="menu-item" data-menu="about">ABOUT</div>
+    <div class="menu-item" data-menu="contact">CONTACT</div>
   </nav>
 
-  <div id="terminal">
-    <div class="input-line">
-      <span class="prompt">&gt;</span>
-      <input type="text" id="command" placeholder="Type a secret command..." autocomplete="off" />
-    </div>
+  <!-- Submenus -->
+  <div id="submenu-shop" class="submenu hidden">
+    <div class="submenu-item" data-product="tee">Tee</div>
+    <div class="submenu-item" data-product="hoodie">Hoodie</div>
+    <div class="submenu-item" data-product="viewall">View All</div>
+  </div>
+  <div id="submenu-collections" class="submenu hidden">
+    <div class="submenu-item" data-collection="chemical">Chemical Imbalance</div>
+    <div class="submenu-item" data-collection="summer">Summer Vibes</div>
   </div>
 
+  <!-- Contenido principal -->
+  <div id="content"></div>
+
+  <!-- Newsletter -->
   <section id="newsletter-section">
-    <h3>Subscribe to our Newsletter</h3>
     <form id="newsletter-form">
-      <input type="email" id="newsletter-email" placeholder="Your email" required />
+      <label for="email">Subscribe to our newsletter:</label>
+      <input type="email" id="email" name="email" placeholder="Your email" required />
       <button type="submit">Subscribe</button>
+      <div id="newsletter-msg"></div>
     </form>
-    <p id="newsletter-msg"></p>
   </section>
+</div>
 
-  <!-- Modal Product Detail -->
-  <div id="product-modal" class="hidden">
-    <div id="modal-content">
-      <span id="modal-close">&times;</span>
-      <img id="modal-image" alt="product image" />
-      <h2 id="modal-name"></h2>
-      <p id="modal-rarity"></p>
-      <p id="modal-price"></p>
-      <label for="size-select">Select size:</label>
-      <select id="size-select">
-        <option value="">--Choose--</option>
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="L">L</option>
-        <option value="XL">XL</option>
-      </select>
-      <button id="add-to-cart">Add to Cart</button>
-    </div>
+<!-- Modal producto -->
+<div id="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+  <span id="modal-close" aria-label="Close modal" tabindex="0">&times;</span>
+  <img src="" alt="" id="modal-image" />
+  <div id="modal-name"></div>
+  <div id="modal-price"></div>
+  <div id="modal-rarity"></div>
+  <select id="size-select" aria-label="Select size">
+    <option value="">Select size</option>
+    <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
+  </select>
+  <button id="add-to-cart" disabled>Add to Cart</button>
+</div>
+
+<!-- Carrito -->
+<div id="cart" aria-live="polite" aria-atomic="true" aria-label="Shopping cart">
+  <div id="cart-header">
+    <div>Cart</div>
+    <div id="cart-close" role="button" tabindex="0" aria-label="Close cart">&times;</div>
   </div>
+  <ul id="cart-items"></ul>
+</div>
 
-  <!-- Cart -->
-  <div id="cart" class="hidden">
-    <div id="cart-header">
-      <h3>Your Cart</h3>
-      <span id="cart-close">&times;</span>
-    </div>
-    <ul id="cart-items"></ul>
-  </div>
+<!-- Animación hackeo container -->
+<div id="hack-animation" style="display:none;"></div>
 
-  <script src="script.js"></script>
+<script>
+  // Datos producto de ejemplo
+  const products = {
+    tee: {
+      name: "Sandcat Tee",
+      price: "$25",
+      rarity: "Common",
+      img: "https://i.imgur.com/ZG3l9vT.png",
+      sizes: ["S","M","L","XL"]
+    },
+    hoodie: {
+      name: "Sandcat Hoodie",
+      price: "$45",
+      rarity: "Rare",
+      img: "https://i.imgur.com/MdP2v9f.png",
+      sizes: ["S","M","L","XL"]
+    }
+  };
+
+  // Referencias DOM
+  const menu = document.getElementById('terminal-menu');
+  const submenuShop = document.getElementById('submenu-shop');
+  const submenuCollections = document.getElementById('submenu-collections');
+  const content = document.getElementById('content');
+  const newsletterForm = document.getElementById('newsletter-form');
+  const newsletterMsg = document.getElementById('newsletter-msg');
+  const productModal = document.getElementById('product-modal');
+  const modalClose = document.getElementById('modal-close');
+  const modalImage = document.getElementById('modal-image');
+  const modalName = document.getElementById('modal-name');
+  const modalPrice = document.getElementById('modal-price');
+  const modalRarity = document.getElementById('modal-rarity');
+  const sizeSelect = document.getElementById('size-select');
+  const addToCartBtn = document.getElementById('add-to-cart');
+  const cart = document.getElementById('cart');
+  const cartClose = document.getElementById('cart-close');
+  const cartItems = document.getElementById('cart-items');
+
+  let cartData = [];
+
+  // Mostrar submenu
+  function hideAllSubmenus() {
+    submenuShop.classList.add('hidden');
+    submenuCollections.classList.add('hidden');
+  }
+  function showSubmenu(name) {
+    hideAllSubmenus();
+    if(name === 'shop') submenuShop.classList.remove('hidden');
+    else if(name === 'collections') submenuCollections.classList.remove('hidden');
+  }
+
+  // Mostrar productos del submenu shop
+  function showProducts(filter) {
+    content.innerHTML = '';
+    let toShow = [];
+    if(filter === 'tee') toShow = [products.tee];
+    else if(filter === 'hoodie') toShow = [products.hoodie];
+    else if(filter === 'viewall') toShow = [products.tee, products.hoodie];
+
+    toShow.forEach(p => {
+      const div = document.createElement('div');
+      div.classList.add('product');
+      div.innerHTML = `
+        <img src="${p.img}" alt="${p.name}">
+        <div>${p.name}</div>
+        <div class="coredrop">${p.price}</div>
+      `;
+      div.onclick = () => openModal(p);
+      content.appendChild(div);
+    });
+  }
+
+  // Mostrar colecciones - aquí simplemente ejemplo
+  function showCollections(name) {
+    content.innerHTML = `<p>Collection: <strong>${name}</strong> - Content coming soon.</p>`;
+  }
+
+  // Abrir modal producto
+  function openModal(product) {
+    modalImage.src = product.img;
+    modalImage.alt = product.name;
+    modalName.textContent = product.name;
+    modalPrice.textContent = `Price: ${product.price}`;
+    modalRarity.textContent = `Rarity: ${product.rarity}`;
+    sizeSelect.value = '';
+    addToCartBtn.disabled = true;
+    productModal.classList.add('visible');
+    selectedProduct = product;
+  }
+
+  // Cerrar modal
+  modalClose.onclick = () => {
+    productModal.classList.remove('visible');
+  };
+  // Cerrar modal con teclado (Escape)
+  window.addEventListener('keydown', e => {
+    if(e.key === 'Escape') productModal.classList.remove('visible');
+  });
+
+  // Selección talla
+  sizeSelect.addEventListener('change', () => {
+    addToCartBtn.disabled = sizeSelect.value === '';
+  });
+
+  // Añadir al carrito
+  addToCartBtn.onclick = () => {
+    const size = sizeSelect.value;
+    if(!size) return;
+    cartData.push({
+      product: selectedProduct.name,
+      size: size,
+      price: selectedProduct.price
+    });
+    updateCart();
+    productModal.classList.remove('visible');
+  };
+
+  // Actualizar carrito visual
+  function updateCart() {
+    if(cartData.length === 0){
+      cart.classList.remove('visible');
+      return;
+    }
+    cart.classList.add('visible');
+    cartItems.innerHTML = '';
+    cartData.forEach((item, i) => {
+      const li = document.createElement('li');
+      li.textContent = `${item.product} (Size: ${item.size}) - ${item.price}`;
+      cartItems.appendChild(li);
+    });
+  }
+
+  // Cerrar carrito
+  cartClose.onclick = () => {
+    cart.classList.remove('visible');
+  };
+
+  // Accesibilidad carrito close
+  cartClose.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') cart.classList.remove('visible');
+  });
+
+  // Click en menú principal
+  menu.addEventListener('click', (e) => {
+    if(!e.target.classList.contains('menu-item')) return;
+    const name = e.target.dataset.menu;
+    hideAllSubmenus();
+    if(name === 'about') {
+      content.innerHTML = `<p>Sandcat Store is a canalla urban brand. Stay tuned!</p>`;
+      return;
+    }
+    if(name === 'contact') {
+      content.innerHTML = `<p>Contact us at contact@sandcat.store</p>`;
+      return;
+    }
+    if(name === 'shop' || name === 'collections') {
+      showSubmenu(name);
+      content.innerHTML = '';
+    }
+  });
+
+  // Click en submenu shop
+  submenuShop.addEventListener('click', (e) => {
+    if(!e.target.classList.contains('submenu-item')) return;
+    const prod = e.target.dataset.product;
+    if(prod) showProducts(prod);
+  });
+
+  // Click en submenu collections
+  submenuCollections.addEventListener('click', (e) => {
+    if(!e.target.classList.contains('submenu-item')) return;
+    const coll = e.target.dataset.collection;
+    if(coll) showCollections(coll);
+  });
+
+  // Newsletter form submit
+  newsletterForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = newsletterForm.email.value.trim();
+    if(email){
+      newsletterMsg.textContent = `Thanks for subscribing, ${email}!`;
+      newsletterForm.reset();
+    }
+  });
+
+  // Variables globales
+  let selectedProduct = null;
+
+</script>
 </body>
 </html>
 
