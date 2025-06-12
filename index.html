@@ -2,51 +2,51 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SANDCAT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SANDCAT Console</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
 </head>
 <body>
+
+  <!-- Animación inicial -->
   <div id="hack-screen">
     <div id="hack-text"></div>
   </div>
 
+  <!-- Barra blanca superior -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="logo" />
-    <img src="assets/logo_text.png" class="logo-center" alt="logo centro" />
+    <img src="assets/logo2.png" class="logo-left" alt="SANDCAT Logo" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT Text" />
     <div class="hamburger" onclick="toggleMenu()">☰</div>
   </div>
 
+  <!-- Consola principal -->
   <div id="console-menu">
-    <div class="console-line">&gt; <span class="blinking-cursor"></span></div>
+    <div class="console-line">&gt; shop</div>
+    <div class="console-line">&gt; collections</div>
+    <div class="console-line">&gt; about us</div>
+    <div class="console-line">&gt; contact</div>
+
+    <!-- Línea de comando invisible -->
     <div class="console-input">
       <span>&gt;</span>
-      <input type="text" id="secret-input" placeholder="" />
+      <input type="text" id="secret-input" autocomplete="off" placeholder=" " />
     </div>
 
-    <div id="command-menu" class="show">
-      <div class="console-line">&gt; shop</div>
-      <div class="console-line">&gt; collections</div>
-      <div class="console-line">&gt; about us</div>
-      <div class="console-line">&gt; contact</div>
-    </div>
-
+    <!-- Sección secreta oculta -->
     <div id="secret-collection" class="hidden">
-      <p>🔓 Acceso secreto concedido.</p>
+      <div class="console-line">ACCESO CONCEDIDO. Bienvenido a la colección oculta.</div>
     </div>
   </div>
 
-  <div class="white-bar newsletter-bar">
-    <div class="newsletter">
-      <p>Únete al newsletter</p>
-      <div class="console-input">
-        <span>@</span>
-        <input type="email" id="email-input" placeholder="tuemail@ejemplo.com" />
-      </div>
-      <div id="newsletter-message"></div>
-    </div>
+  <!-- Isla blanca (newsletter) -->
+  <div class="newsletter">
+    <h3>Únete a la comunidad</h3>
+    <input type="email" id="email-input" placeholder="Tu correo electrónico" />
+    <p id="newsletter-message"></p>
   </div>
+
 </body>
 </html>
 
