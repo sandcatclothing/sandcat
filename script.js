@@ -1,46 +1,56 @@
-
 const content = document.getElementById("content");
 const input = document.getElementById("command");
 
 const products = {
   core: [
-    { name: "SANDCAT CORE TEE", image: "assets/core_tee.png", price: "29.99 €" },
-    { name: "ESSENTIAL HOODIE", image: "assets/core_hoodie.png", price: "49.99 €" }
+    { name: "SANDCAT CORE TEE", image: "assets/core_tee.png", price: "29.99 €", rarity: "core" },
+    { name: "ESSENTIAL HOODIE", image: "assets/core_hoodie.png", price: "49.99 €", rarity: "core" }
   ],
   limited: [
-    { name: "PHANTOM PURPLE DROP", image: "assets/limited_purple.png", price: "59.99 €" }
+    { name: "PHANTOM PURPLE DROP", image: "assets/limited_purple.png", price: "59.99 €", rarity: "limited" }
   ],
   bloodline: [
-    { name: "REDLINE CREWNECK", image: "assets/bloodline_crew.png", price: "54.99 €" }
+    { name: "REDLINE CREWNECK", image: "assets/bloodline_crew.png", price: "54.99 €", rarity: "bloodline" }
   ],
   relic: [
-    { name: "GOLD EMBLEM ZIP HOODIE", image: "assets/relic_gold.png", price: "89.99 €" }
+    { name: "GOLD EMBLEM ZIP HOODIE", image: "assets/relic_gold.png", price: "89.99 €", rarity: "relic" }
   ]
 };
 
 function showSection(section) {
   content.innerHTML = "";
   if (section === "shop") {
-    ["core", "limited", "bloodline", "relic"].forEach(showProducts);
+    Object.values(products).flat().forEach(p => {
+      const div = document.createElement("div");
+      div.className = `product ${p.rarity}`;
+      div.innerHTML = `<img src="${p.image}" alt="${p.name}">
+        <strong>${p.name}</strong><br>
+        <span>${p.rarity.toUpperCase()}</span><br>
+        ${p.price}`;
+      content.appendChild(div);
+    });
   } else if (section === "collections") {
-    content.innerHTML = "<ul>" +
-      Object.keys(products).map(key => `<li onclick="showProducts('${key}')">${key.toUpperCase()}</li>`).join('') +
+    content.innerHTML = "<ul style='list-style: none; padding-left: 0;'>" +
+      Object.keys(products).map(key => `<li><button onclick="showProducts('${key}')">${key.toUpperCase()}</button></li>`).join('') +
       "</ul>";
   } else if (section === "about") {
-    content.textContent = "SANDCAT is a terminal-native clothing brand. Welcome to the drop.";
+    content.innerHTML = "<p>SANDCAT is a terminal-native clothing brand. Welcome to the drop.</p>";
   } else if (section === "contact") {
-    content.textContent = "Contact us at: contact@sandcat.es";
+    content.innerHTML = "<p>Contact us at: contact@sandcat.es</p>";
   }
 }
 
 function showProducts(collection) {
   const list = products[collection];
   if (!list) return;
-  content.innerHTML = `<h2>${collection.toUpperCase()} Collection</h2>`;
+  content.innerHTML = "";
   list.forEach(p => {
     const div = document.createElement("div");
     div.className = `product ${collection}`;
-    div.innerHTML = `<img src="${p.image}" alt="${p.name}"><strong>${p.name}</strong><br>${p.price}`;
+    div.innerHTML = `<img src="${p.image}" alt="${p.name}">
+      <strong>${p.name}</strong><br>
+      <span>${p.rarity.toUpperCase()}</span><br>
+      ${p.price}`;
     content.appendChild(div);
   });
 }
