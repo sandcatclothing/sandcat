@@ -2,45 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SANDCAT Terminal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SANDCAT</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Isla superior blanca y moderna -->
-  <div id="top-banner">
-    <div id="brand">
-      <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
-      <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
-    </div>
+  <div id="hacker-animation">
+    <pre id="matrix"></pre>
   </div>
 
-  <!-- Menú consola estilo terminal -->
-  <header id="header">
-    <nav id="menu">
-      <button onclick="showSection('shop')">SHOP</button>
-      <button onclick="showSection('collections')">COLLECTIONS</button>
-      <button onclick="showSection('about')">ABOUT</button>
-      <button onclick="showSection('contact')">CONTACT</button>
+  <div id="main-content" style="display:none;">
+    <!-- Isla superior -->
+    <header class="isla">
+      <img src="logo.png" alt="Sandcat Logo" class="logo" />
+      <h1 class="logo-text">SANDCAT</h1>
+      <button id="menu-button">&#9776;</button>
+    </header>
+
+    <!-- Menú consola -->
+    <nav class="terminal-menu">
+      <button data-section="shop">shop</button>
+      <button data-section="collections">collections</button>
+      <button data-section="about">about</button>
+      <button data-section="newsletter">newsletter</button>
     </nav>
-  </header>
 
-  <main id="content"></main>
+    <main>
+      <!-- SHOP -->
+      <section id="shop" class="content-section">
+        <label for="category-select">Filter:</label>
+        <select id="category-select">
+          <option value="all">view all</option>
+          <option value="tee">tee</option>
+          <option value="hoodie">hoodies</option>
+          <option value="accessories">accessories</option>
+        </select>
+        <div class="product-grid"></div>
+      </section>
 
-  <!-- Terminal de comandos -->
-  <div id="terminal">
-    <div class="input-line">
-      <span class="prompt">&gt;</span>
-      <input type="text" id="command" placeholder="Type a secret command..." />
-    </div>
+      <!-- COLLECTIONS -->
+      <section id="collections" class="content-section">
+        <h2>CORE DROP</h2>
+        <div class="collection-items">
+          <div class="product-card" data-category="tee">
+            <h3>CORE TEE FOUNDERS</h3>
+            <p class="rarity rarity-grey">rareza: gris</p>
+            <button class="view-product">ver</button>
+          </div>
+          <div class="product-card" data-category="hoodie">
+            <h3>CORE HOODIE FOUNDERS</h3>
+            <p class="rarity rarity-grey">rareza: gris</p>
+            <button class="view-product">ver</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about" class="content-section">
+        <h2>About SANDCAT</h2>
+        <p>Marca urbana que representa el canallismo y la actitud. Nacida en los 2000s, inspirada en la infancia y los excesos.</p>
+      </section>
+
+      <!-- NEWSLETTER -->
+      <section id="newsletter" class="content-section">
+        <h2>Subscribe to our newsletter</h2>
+        <input type="email" placeholder="your@email.com" />
+        <button>Subscribe</button>
+      </section>
+
+      <!-- PRODUCT MODAL -->
+      <div id="product-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3 id="product-title"></h3>
+          <label for="size-select">Talla:</label>
+          <select id="size-select">
+            <option>S</option>
+            <option>M</option>
+            <option>L</option>
+            <option>XL</option>
+          </select>
+          <button>Añadir al carrito</button>
+        </div>
+      </div>
+    </main>
   </div>
-
-  <!-- Newsletter -->
-  <footer id="newsletter">
-    <h3>Join the SANDCAT Terminal</h3>
-    <input type="email" placeholder="Enter your email...">
-    <button>Subscribe</button>
-  </footer>
 
   <script src="script.js"></script>
 </body>
