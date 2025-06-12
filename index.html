@@ -14,22 +14,30 @@
 
   <div class="white-bar">
     <img src="assets/logos/logo-left.png" class="logo-left" alt="logo" />
-    <img src="assets/logos/logo-center.png" class="logo-center" alt="logo" />
+    <img src="assets/logos/logo-center.png" class="logo-center" alt="logo centro" />
     <div class="hamburger" onclick="toggleMenu()">☰</div>
   </div>
 
   <div id="console-menu">
-    <div class="console-line">Bienvenido a la consola SANDCAT.</div>
-    <div class="console-line">Escribe el comando secreto:</div>
+    <div class="console-line">&gt; <span class="blinking-cursor"></span></div>
     <div class="console-input">
       <span>&gt;</span>
-      <input type="text" id="secret-input" placeholder="Comando..." />
+      <input type="text" id="secret-input" placeholder="" />
+    </div>
+
+    <div id="command-menu" class="show">
+      <div class="console-line">&gt; shop</div>
+      <div class="console-line">&gt; collections</div>
+      <div class="console-line">&gt; about us</div>
+      <div class="console-line">&gt; contact</div>
     </div>
 
     <div id="secret-collection" class="hidden">
-      <p>🔓 Colección secreta desbloqueada. Bienvenido al lado oculto del streetwear.</p>
+      <p>🔓 Acceso secreto concedido.</p>
     </div>
+  </div>
 
+  <div class="white-bar newsletter-bar">
     <div class="newsletter">
       <p>Únete al newsletter</p>
       <div class="console-input">
@@ -41,3 +49,4 @@
   </div>
 </body>
 </html>
+
