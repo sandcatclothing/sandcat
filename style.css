@@ -36,8 +36,8 @@ body {
 }
 
 .logo-left {
-  height: 60px;
-  max-width: 120px;
+  height: auto;
+  max-width: 200px;
 }
 
 .logo-center {
@@ -47,6 +47,7 @@ body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  transform: translateY(-5%);
 }
 
 .hamburger {
