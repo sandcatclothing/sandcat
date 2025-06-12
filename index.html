@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- Animación inicial -->
+  <!-- Pantalla inicial -->
   <div id="hack-screen">
     <div id="hack-text"></div>
   </div>
@@ -23,30 +23,35 @@
 
   <!-- Consola principal -->
   <div id="console-menu">
-    <div class="console-line">&gt; shop</div>
-    <div class="console-line">&gt; collections</div>
-    <div class="console-line">&gt; about us</div>
-    <div class="console-line">&gt; contact</div>
+    <div class="console-line menu-item" data-target="shop">> shop</div>
+    <div id="shop-submenu" class="submenu hidden">
+      <div class="console-line">- shop all</div>
+      <div class="console-line">- hoodies</div>
+      <div class="console-line">- tees</div>
+      <div class="console-line">- accessories</div>
+    </div>
 
-    <!-- Línea de comando invisible -->
+    <div class="console-line menu-item" data-target="collections">> collections</div>
+    <div id="collections-submenu" class="submenu hidden">
+      <div class="console-line">- core drop <span class="green-tag">(verde)</span></div>
+      <div id="founders-drop" class="console-line hidden">- founders drop <span class="secret-tag">(acceso especial)</span></div>
+    </div>
+
+    <div class="console-line">> about us</div>
+    <div class="console-line">> contact</div>
+
     <div class="console-input">
       <span>&gt;</span>
       <input type="text" id="secret-input" autocomplete="off" placeholder=" " />
     </div>
-
-    <!-- Sección secreta oculta -->
-    <div id="secret-collection" class="hidden">
-      <div class="console-line">ACCESO CONCEDIDO. Bienvenido a la colección oculta.</div>
-    </div>
   </div>
 
-  <!-- Isla blanca (newsletter) -->
+  <!-- Newsletter -->
   <div class="newsletter">
-    <h3>Únete a la comunidad</h3>
+    <h3>Únete a la comunidad SANDCAT</h3>
     <input type="email" id="email-input" placeholder="Tu correo electrónico" />
     <p id="newsletter-message"></p>
   </div>
 
 </body>
 </html>
-
