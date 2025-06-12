@@ -1,35 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SANDCAT Terminal</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header id="header">
-    <div id="brand">
-      <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
-      <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
-    </div>
-    <nav id="menu">
-      <button onclick="showSection('shop')">SHOP</button>
-      <button onclick="showSection('collections')">COLLECTIONS</button>
-      <button onclick="showSection('about')">ABOUT</button>
-      <button onclick="showSection('contact')">CONTACT</button>
-    </nav>
-  </header>
-
-  <main id="content"></main>
-
-  <div id="terminal">
-    <div class="input-line">
-      <span class="prompt">&gt;</span>
-      <input type="text" id="command" placeholder="Type a secret command..." />
-    </div>
+<header id="header" class="modern-header">
+  <div id="brand">
+    <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
+    <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
   </div>
+  <nav id="menu">
+    <button onclick="showSection('shop')">SHOP</button>
+    <button onclick="showSection('collections')">COLLECTIONS</button>
+    <button onclick="showSection('about')">ABOUT</button>
+    <button onclick="showSection('contact')">CONTACT</button>
+  </nav>
+</header>
 
-  <script src="script.js"></script>
-</body>
-</html>
+<main id="content"></main>
+
+<div id="terminal">
+  <div class="input-line">
+    <span class="prompt">&gt;</span>
+    <input type="text" id="command" placeholder="Type a secret command..." />
+  </div>
+</div>
+
+<footer id="footer">
+  <p>Subscribe to our newsletter</p>
+  <form id="newsletter-form">
+    <input type="email" placeholder="Your email" required>
+    <button type="submit">Subscribe</button>
+  </form>
+</footer>
 
