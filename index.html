@@ -1,47 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SANDCAT</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <!-- Animación de desencriptado -->
   <div id="hack-screen">
     <div id="hack-text"></div>
   </div>
 
-  <!-- Header -->
-  <header class="white-bar">
-    <img src="logo2.png" alt="Sandcat Logo" class="logo-left" />
-    <img src="logo_text.png" alt="Sandcat Text Logo" class="logo-center" />
+  <div class="white-bar">
+    <img src="assets/logos/logo-left.png" class="logo-left" alt="logo" />
+    <img src="assets/logos/logo-center.png" class="logo-center" alt="logo" />
     <div class="hamburger" onclick="toggleMenu()">☰</div>
-  </header>
+  </div>
 
-  <!-- Menú estilo consola -->
-  <nav id="console-menu">
-    <div class="console-line">&gt;shop</div>
-    <div class="console-line">&gt;collections</div>
-    <div class="console-line">&gt;about</div>
-    <div class="console-line">&gt;contact</div>
+  <div id="console-menu">
+    <div class="console-line">Bienvenido a la consola SANDCAT.</div>
+    <div class="console-line">Escribe el comando secreto:</div>
     <div class="console-input">
-      <span>&gt;</span><input type="text" id="secret-input" placeholder="type command..." />
+      <span>&gt;</span>
+      <input type="text" id="secret-input" placeholder="Comando..." />
     </div>
+
     <div id="secret-collection" class="hidden">
-      🔴 Rareza ROJA desbloqueada: <strong>PARA LOS CHAVALES</strong>
+      <p>🔓 Colección secreta desbloqueada. Bienvenido al lado oculto del streetwear.</p>
     </div>
-  </nav>
 
-  <!-- Newsletter estilo terminal -->
-  <section class="newsletter">
-    <div class="console-line">ÚNETE AL DROP</div>
-    <div class="console-input">
-      <span>&gt;</span><input type="email" id="email-input" placeholder="tu@email.com" />
+    <div class="newsletter">
+      <p>Únete al newsletter</p>
+      <div class="console-input">
+        <span>@</span>
+        <input type="email" id="email-input" placeholder="tuemail@ejemplo.com" />
+      </div>
+      <div id="newsletter-message"></div>
     </div>
-    <div class="console-line">Presiona ENTER para suscribirte</div>
-  </section>
-
-  <script src="script.js"></script>
+  </div>
 </body>
 </html>
