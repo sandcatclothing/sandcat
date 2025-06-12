@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SANDCAT Terminal</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="boot-screen">
-    <pre id="boot-text"></pre>
-  </div>
-
-  <header id="header">
+  <!-- Isla superior blanca y moderna -->
+  <div id="top-banner">
     <div id="brand">
       <img src="assets/logo2.png" id="logo-icon" alt="Sandcat Icon">
       <img src="assets/logo_text.png" id="logo-text" alt="Sandcat Text Logo">
     </div>
+  </div>
+
+  <!-- Menú consola estilo terminal -->
+  <header id="header">
     <nav id="menu">
       <button onclick="showSection('shop')">SHOP</button>
       <button onclick="showSection('collections')">COLLECTIONS</button>
@@ -26,6 +27,7 @@
 
   <main id="content"></main>
 
+  <!-- Terminal de comandos -->
   <div id="terminal">
     <div class="input-line">
       <span class="prompt">&gt;</span>
@@ -33,29 +35,12 @@
     </div>
   </div>
 
-  <footer>
-    <form id="newsletter">
-      <label for="email">Join our newsletter:</label>
-      <input type="email" id="email" placeholder="Enter your email" required>
-      <button type="submit">Subscribe</button>
-    </form>
+  <!-- Newsletter -->
+  <footer id="newsletter">
+    <h3>Join the SANDCAT Terminal</h3>
+    <input type="email" placeholder="Enter your email...">
+    <button>Subscribe</button>
   </footer>
-
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span id="close-modal">×</span>
-      <img id="modal-img" src="" alt="Product">
-      <h2 id="modal-name"></h2>
-      <p id="modal-price"></p>
-      <select id="size">
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="L">L</option>
-        <option value="XL">XL</option>
-      </select>
-      <button id="add-to-cart">Add to cart</button>
-    </div>
-  </div>
 
   <script src="script.js"></script>
 </body>
