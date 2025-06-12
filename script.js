@@ -1,70 +1,34 @@
-const content = document.getElementById("content");
-const input = document.getElementById("command");
+const loadingText = document.getElementById("loading-text");
+const loadingScreen = document.getElementById("loading-screen");
 
-const products = {
-  core: [
-    { name: "SANDCAT CORE TEE", image: "assets/core_tee.png", price: "29.99 €", rarity: "core" },
-    { name: "ESSENTIAL HOODIE", image: "assets/core_hoodie.png", price: "49.99 €", rarity: "core" }
-  ],
-  limited: [
-    { name: "PHANTOM PURPLE DROP", image: "assets/limited_purple.png", price: "59.99 €", rarity: "limited" }
-  ],
-  bloodline: [
-    { name: "REDLINE CREWNECK", image: "assets/bloodline_crew.png", price: "54.99 €", rarity: "bloodline" }
-  ],
-  relic: [
-    { name: "GOLD EMBLEM ZIP HOODIE", image: "assets/relic_gold.png", price: "89.99 €", rarity: "relic" }
-  ]
-};
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+let index = 0;
+const fakeData = [];
 
-function showSection(section) {
-  content.innerHTML = "";
-  if (section === "shop") {
-    Object.values(products).flat().forEach(p => {
-      const div = document.createElement("div");
-      div.className = `product ${p.rarity}`;
-      div.innerHTML = `<img src="${p.image}" alt="${p.name}">
-        <strong>${p.name}</strong><br>
-        <span>${p.rarity.toUpperCase()}</span><br>
-        ${p.price}`;
-      content.appendChild(div);
-    });
-  } else if (section === "collections") {
-    content.innerHTML = "<div class='collection-buttons'>" +
-      Object.keys(products).map(key =>
-        `<button class="collection-button" onclick="showProducts('${key}')">${key.toUpperCase()}</button>`
-      ).join('') +
-      "</div>";
-  } else if (section === "about") {
-    content.innerHTML = "<p>SANDCAT is a terminal-native clothing brand. Welcome to the drop.</p>";
-  } else if (section === "contact") {
-    content.innerHTML = "<p>Contact us at: contact@sandcat.es</p>";
+for (let i = 0; i < 200; i++) {
+  let line = "";
+  for (let j = 0; j < 60; j++) {
+    line += characters[Math.floor(Math.random() * characters.length)];
+  }
+  fakeData.push(line);
+}
+
+function showNextLine() {
+  if (index < fakeData.length) {
+    loadingText.textContent += fakeData[index] + "\n";
+    index++;
+    setTimeout(showNextLine, 15);
+  } else {
+    loadingScreen.style.display = "none";
   }
 }
 
-function showProducts(collection) {
-  const list = products[collection];
-  if (!list) return;
-  content.innerHTML = "";
-  list.forEach(p => {
-    const div = document.createElement("div");
-    div.className = `product ${collection}`;
-    div.innerHTML = `<img src="${p.image}" alt="${p.name}">
-      <strong>${p.name}</strong><br>
-      <span>${p.rarity.toUpperCase()}</span><br>
-      ${p.price}`;
-    content.appendChild(div);
-  });
-}
+window.onload = showNextLine;
 
-input.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    const cmd = input.value.trim().toLowerCase();
-    if (cmd === "drop42") {
-      content.innerHTML = "<p><strong>🔒 Secret drop unlocked!</strong></p>";
-    } else {
-      content.innerHTML = "<p>Unknown command.</p>";
-    }
-    input.value = "";
-  }
-});
+// Modal logic (simplified)
+const modal = document.getElementById("product-modal");
+const closeModal = document.getElementById("close-modal");
+closeModal.onclick = () => modal.classList.add("hidden");
+
+// Sample way to open modal:
+// document.querySelector(".product").onclick = () => modal.classList.remove("hidden");
