@@ -6,22 +6,33 @@ body {
   margin: 0;
   padding: 0;
 }
-#terminal {
+#logo-container {
+  text-align: center;
   padding: 20px;
 }
-.input-line {
-  display: flex;
+#logo {
+  max-width: 300px;
+  height: auto;
 }
-.prompt {
-  margin-right: 10px;
+#menu {
+  text-align: center;
+  margin-bottom: 20px;
 }
-input#command {
+#menu button {
   background: transparent;
-  border: none;
+  border: 1px solid #00ff00;
   color: #00ff00;
-  outline: none;
-  font-family: 'Courier New', monospace;
-  width: 100%;
+  font-family: monospace;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+#menu button:hover {
+  background-color: #00ff00;
+  color: #000;
+}
+#content {
+  padding: 20px;
 }
 .product {
   border: 1px solid #00ff00;
@@ -37,3 +48,21 @@ input#command {
 .limited { color: #b366ff; }
 .bloodline { color: #ff3333; }
 .relic { color: gold; }
+#terminal {
+  padding: 20px;
+  border-top: 1px solid #00ff00;
+}
+.input-line {
+  display: flex;
+}
+.prompt {
+  margin-right: 10px;
+}
+input#command {
+  background: transparent;
+  border: none;
+  color: #00ff00;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  width: 100%;
+}

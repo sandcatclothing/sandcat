@@ -1,5 +1,5 @@
 
-const output = document.getElementById("output");
+const content = document.getElementById("content");
 const input = document.getElementById("command");
 
 const products = {
@@ -18,53 +18,41 @@ const products = {
   ]
 };
 
-function print(text) {
-  const line = document.createElement("div");
-  line.textContent = text;
-  output.appendChild(line);
-  output.scrollTop = output.scrollHeight;
+function showSection(section) {
+  content.innerHTML = "";
+  if (section === "shop") {
+    ["core", "limited", "bloodline", "relic"].forEach(showProducts);
+  } else if (section === "collections") {
+    content.innerHTML = "<ul>" +
+      Object.keys(products).map(key => `<li onclick="showProducts('${key}')">${key.toUpperCase()}</li>`).join('') +
+      "</ul>";
+  } else if (section === "about") {
+    content.textContent = "SANDCAT is a terminal-native clothing brand. Welcome to the drop.";
+  } else if (section === "contact") {
+    content.textContent = "Contact us at: contact@sandcat.es";
+  }
 }
 
 function showProducts(collection) {
   const list = products[collection];
-  if (!list) {
-    print("Collection not found.");
-    return;
-  }
+  if (!list) return;
+  content.innerHTML = `<h2>${collection.toUpperCase()} Collection</h2>`;
   list.forEach(p => {
     const div = document.createElement("div");
     div.className = `product ${collection}`;
     div.innerHTML = `<img src="${p.image}" alt="${p.name}"><strong>${p.name}</strong><br>${p.price}`;
-    output.appendChild(div);
+    content.appendChild(div);
   });
-}
-
-function processCommand(cmd) {
-  cmd = cmd.trim().toLowerCase();
-  print("> " + cmd);
-
-  if (cmd === "shop") {
-    ["core", "limited", "bloodline", "relic"].forEach(showProducts);
-  } else if (cmd === "collections") {
-    print("Available collections:");
-    print("- core");
-    print("- limited");
-    print("- bloodline");
-    print("- relic");
-  } else if (["core", "limited", "bloodline", "relic"].includes(cmd)) {
-    showProducts(cmd);
-  } else if (cmd === "about") {
-    print("SANDCAT is a terminal-native clothing brand. Welcome to the drop.");
-  } else if (cmd === "contact") {
-    print("Contact us at: contact@sandcat.es");
-  } else {
-    print("Unknown command. Try: shop, collections, about, contact");
-  }
 }
 
 input.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
-    processCommand(input.value);
+    const cmd = input.value.trim().toLowerCase();
+    if (cmd === "drop42") {
+      content.innerHTML = "<p><strong>🔒 Secret drop unlocked!</strong></p>";
+    } else {
+      content.innerHTML = "<p>Unknown command.</p>";
+    }
     input.value = "";
   }
 });

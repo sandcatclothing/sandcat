@@ -8,13 +8,26 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="logo-container">
+    <img src="assets/logo.png" alt="Sandcat Logo" id="logo">
+  </div>
+
+  <nav id="menu">
+    <button onclick="showSection('shop')">Shop</button>
+    <button onclick="showSection('collections')">Collections</button>
+    <button onclick="showSection('about')">About</button>
+    <button onclick="showSection('contact')">Contact</button>
+  </nav>
+
+  <main id="content"></main>
+
   <div id="terminal">
-    <div id="output"></div>
     <div class="input-line">
       <span class="prompt">&gt;</span>
-      <input type="text" id="command" autofocus />
+      <input type="text" id="command" placeholder="Type a secret command..." />
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
