@@ -37,7 +37,7 @@ body {
 
 .logo-left {
   height: auto;
-  max-width: 200px;
+  max-width: 100px;
 }
 
 .logo-center {
@@ -45,7 +45,7 @@ body {
   max-width: 300px;
   width: 40vw;
   position: absolute;
-  left: 50%;
+  left: 45%;
   transform: translateX(-50%);
   transform: translateY(-5%);
 }
