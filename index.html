@@ -1,57 +1,51 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SANDCAT Console</title>
+  <title>SANDCAT</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
 </head>
 <body>
-
-  <!-- Pantalla inicial -->
-  <div id="hack-screen">
-    <div id="hack-text"></div>
-  </div>
+  <!-- Pantalla de animación tipo hackeo -->
+  <div id="hack-screen"></div>
 
   <!-- Barra blanca superior -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="SANDCAT Logo" />
-    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT Text" />
+    <img src="logo2.png" alt="Logo" class="logo-left" />
+    <img src="logo_text.png" alt="SANDCAT Text" class="logo-center" />
     <div class="hamburger" onclick="toggleMenu()">☰</div>
   </div>
 
-  <!-- Consola principal -->
-  <div id="console-menu">
-    <div class="console-line menu-item" data-target="shop">> shop</div>
-    <div id="shop-submenu" class="submenu hidden">
-      <div class="console-line">- shop all</div>
-      <div class="console-line">- hoodies</div>
-      <div class="console-line">- tees</div>
-      <div class="console-line">- accessories</div>
-    </div>
+  <!-- Menú consola -->
+  <div id="console-menu" class="hidden">
+    <div class="console-line" onclick="navigate('shop')">&gt;shop</div>
+    <div class="console-line" onclick="navigate('collections')">&gt;collections</div>
+    <div class="console-line" onclick="navigate('about')">&gt;about</div>
+    <div class="console-line" onclick="navigate('contact')">&gt;contact</div>
 
-    <div class="console-line menu-item" data-target="collections">> collections</div>
-    <div id="collections-submenu" class="submenu hidden">
-      <div class="console-line">- core drop <span class="green-tag">(verde)</span></div>
-      <div id="founders-drop" class="console-line hidden">- founders drop <span class="secret-tag">(acceso especial)</span></div>
-    </div>
-
-    <div class="console-line">> about us</div>
-    <div class="console-line">> contact</div>
-
+    <!-- Consola de comandos secretos -->
     <div class="console-input">
       <span>&gt;</span>
-      <input type="text" id="secret-input" autocomplete="off" placeholder="" />
+      <input type="text" id="secret-input" placeholder="Enter command..." onkeydown="handleCommand(event)" />
+    </div>
+
+    <!-- Sección secreta (colección rara en rojo) -->
+    <div id="secret-collection" class="hidden">
+      <p class="secret-tag">&gt; Access granted. RED DROP unlocked 🔓</p>
+      <p class="secret-tag">"Time-Limited Chaos Collection"</p>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="newsletter">
+      <p>Subscribe to our underground newsletter:</p>
+      <div class="console-input">
+        <span>&gt;</span>
+        <input type="email" placeholder="Enter your email..." />
+      </div>
     </div>
   </div>
 
-  <!-- Newsletter -->
-  <div class="newsletter">
-    <h3>Únete a la comunidad SANDCAT</h3>
-    <input type="email" id="email-input" placeholder="Tu correo electrónico" />
-    <p id="newsletter-message"></p>
-  </div>
-
+  <script src="script.js"></script>
 </body>
 </html>
