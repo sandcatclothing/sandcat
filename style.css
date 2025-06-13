@@ -1,122 +1,83 @@
-body {
-  margin: 0;
-  background: black;
-  color: white;
-  font-family: 'Courier New', monospace;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const hackScreen = document.getElementById("hack-screen");
+  const consoleMenu = document.getElementById("console-menu");
+  const secretInput = document.getElementById("secret-input");
+  const secretCollection = document.getElementById("secret-collection");
 
-#hack-screen {
-  position: fixed;
-  inset: 0;
-  background: black;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  font-size: 1.5rem;
-  text-align: center;
-}
+  const messages = [
+    "SANDCAT mode: ACTIVATED"
+  ];
 
-.white-bar {
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
+  let currentLine = 0;
 
-.logo-left {
-  height: 90px;
-}
+  const randomChar = () => {
+    const chars = "!@#$%^&*()_+=-[]{}|;:,.<>/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    return chars[Math.floor(Math.random() * chars.length)];
+  };
 
-.logo-center {
-  height: 200px;
-  left: 65%;
-  top: -8px;
-  transform: translateX(-50%);
-}
+  const revealText = (text, callback) => {
+    let display = new Array(text.length).fill("");
+    let iterations = 0;
+    const totalIterations = text.length * 6;
 
-.hamburger {
-  font-size: 30px;
-  cursor: pointer;
-  color: black;
-}
+    const interval = setInterval(() => {
+      for (let i = 0; i < text.length; i++) {
+        if (iterations / 6 > i) {
+          display[i] = text[i];
+        } else {
+          display[i] = randomChar();
+        }
+      }
 
-#console-menu {
-  background: black;
-  color: white;
-  padding: 20px;
-  font-size: 1.2rem;
-  flex-grow: 1;
-}
+      hackScreen.innerText = display.join("");
+      iterations++;
 
-.console-line {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
+      if (iterations > totalIterations) {
+        clearInterval(interval);
+        hackScreen.innerText = text;
+        setTimeout(callback, 500);
+      }
+    }, 30);
+  };
 
-/* INPUT estilo consola */
-.console-input {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
+  const showNextLine = () => {
+    if (currentLine < messages.length) {
+      revealText(messages[currentLine], () => {
+        currentLine++;
+        showNextLine();
+      });
+    } else {
+      // Oculta pantalla de hack y muestra el menú
+      setTimeout(() => {
+        hackScreen.classList.add("hidden");
+        consoleMenu.classList.remove("hidden");
+      }, 1000);
+    }
+  };
 
-.console-input input {
-  background: black;
-  color: white;
-  border: none;
-  outline: none;
-  font-family: monospace;
-  font-size: 1rem;
-  padding-left: 5px;
-  width: 300px;
-}
+  showNextLine();
 
-/* Newsletter */
-.newsletter {
-  background: black;
-  color: white;
-  padding: 40px 20px;
-  text-align: center;
-  margin-top: auto;
-}
+  // Función hamburguesa (reabre menú si se cierra)
+  window.toggleMenu = () => {
+    consoleMenu.classList.toggle("hidden");
+  };
 
-.newsletter input {
-  background: black;
-  color: white;
-  border: 1px solid white;
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 10px;
-  width: 300px;
-  max-width: 90%;
-}
+  // Simulación navegación
+  window.navigate = (section) => {
+    alert(`Going to: ${section}`);
+    consoleMenu.classList.add("hidden");
+  };
 
-/* Rarezas */
-.core-tag {
-  color: #2c5071; /* Morado / Azul oscuro */
-}
+  // Comando secreto
+  window.handleCommand = (e) => {
+    if (e.key === "Enter") {
+      const value = secretInput.value.trim().toLowerCase();
+      if (value === "paraloschavales") {
+        secretCollection.classList.remove("hidden");
+      }
+      secretInput.value = "";
+    }
+  };
+});
 
-.secret-tag {
-  color: red;
-  font-style: italic;
-}
-
-.gold-tag {
-  color: gold;
-  font-weight: bold;
-}
-
-/* Otros */
-.hidden {
-  display: none;
-}
 
