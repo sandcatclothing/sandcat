@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  background: #white;
-  color: #2c5071;
+  background: black;
+  color: white;
   font-family: 'Courier New', monospace;
   display: flex;
   flex-direction: column;
@@ -11,8 +11,8 @@ body {
 #hack-screen {
   position: fixed;
   inset: 0;
-  background: white;
-  color: #2c5071;
+  background: black;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,20 +37,21 @@ body {
 }
 
 .logo-center {
-  height: 200px;               /* Más pequeño (antes 80px) */               /* Más abajo (ajusta según necesidad) */
-  left: 55%; 
-  top: -8px; /* Mueve un poco a la izquierda (antes 50%) */
+  height: 200px;
+  left: 65%;
+  top: -8px;
   transform: translateX(-50%);
 }
 
 .hamburger {
   font-size: 30px;
   cursor: pointer;
+  color: black;
 }
 
 #console-menu {
-  background: white;
-  color: #2c5071;
+  background: black;
+  color: white;
   padding: 20px;
   font-size: 1.2rem;
   flex-grow: 1;
@@ -61,6 +62,7 @@ body {
   cursor: pointer;
 }
 
+/* INPUT estilo consola */
 .console-input {
   display: flex;
   align-items: center;
@@ -68,8 +70,8 @@ body {
 }
 
 .console-input input {
-  background: white;
-  color: #2c5071;
+  background: black;
+  color: white;
   border: none;
   outline: none;
   font-family: monospace;
@@ -78,19 +80,19 @@ body {
   width: 300px;
 }
 
-.submenu {
-  margin-left: 20px;
-}
-
+/* Newsletter */
 .newsletter {
-  background: white;
-  color: black;
+  background: black;
+  color: white;
   padding: 40px 20px;
   text-align: center;
   margin-top: auto;
 }
 
 .newsletter input {
+  background: black;
+  color: white;
+  border: 1px solid white;
   padding: 10px;
   font-size: 1rem;
   margin-top: 10px;
@@ -98,12 +100,9 @@ body {
   max-width: 90%;
 }
 
-.hidden {
-  display: none;
-}
-
-.green-tag {
-  color: #2c5071;
+/* Rarezas */
+.core-tag {
+  color: #2c5071; /* Morado / Azul oscuro */
 }
 
 .secret-tag {
@@ -111,5 +110,13 @@ body {
   font-style: italic;
 }
 
+.gold-tag {
+  color: gold;
+  font-weight: bold;
+}
 
+/* Otros */
+.hidden {
+  display: none;
+}
 
