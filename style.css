@@ -1,15 +1,13 @@
-/* Reset y estructura base */
 body {
   margin: 0;
   background: #000;
   color: #0f0;
   font-family: 'Courier New', monospace;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
-/* Pantalla de animación */
 #hack-screen {
   position: fixed;
   inset: 0;
@@ -23,7 +21,6 @@ body {
   text-align: center;
 }
 
-/* Barra superior blanca */
 .white-bar {
   background: white;
   display: flex;
@@ -36,36 +33,28 @@ body {
 }
 
 .logo-left {
-  height: auto;
-  max-width: 70px;
+  height: 60px;
 }
 
 .logo-center {
-  height: auto;
-  max-width: 300px;
-  width: 40vw;
+  height: 80px;
+  margin: 0 auto;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  transform: translateY(-5%);
 }
 
 .hamburger {
   font-size: 30px;
-   color: #1b1b1b;
   cursor: pointer;
-  z-index: 11;
 }
 
-/* Consola */
 #console-menu {
-  background: #1b1b1b;
+  background: #1a1a1a;
   color: #0f0;
   padding: 20px;
-  font-size: 1.1rem;
-  flex-grow: 1; /* Ocupa todo el espacio restante */
-  display: flex;
-  flex-direction: column;
+  font-size: 1.2rem;
+  flex-grow: 1;
 }
 
 .console-line {
@@ -76,11 +65,11 @@ body {
 .console-input {
   display: flex;
   align-items: center;
-  margin-top: auto; /* Siempre al fondo dentro del panel */
+  margin-top: 10px;
 }
 
 .console-input input {
-  background: #1b1b1b;
+  background: black;
   color: #0f0;
   border: none;
   outline: none;
@@ -90,12 +79,28 @@ body {
   width: 300px;
 }
 
-.hidden {
-  display: none;
-}
-
 .submenu {
   margin-left: 20px;
+}
+
+.newsletter {
+  background: white;
+  color: black;
+  padding: 40px 20px;
+  text-align: center;
+  margin-top: auto;
+}
+
+.newsletter input {
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 10px;
+  width: 300px;
+  max-width: 90%;
+}
+
+.hidden {
+  display: none;
 }
 
 .green-tag {
@@ -103,29 +108,9 @@ body {
 }
 
 .secret-tag {
-  color: orange;
+  color: red;
+  font-style: italic;
 }
 
-/* Newsletter al final */
-.newsletter {
-  background: white;
-  color: black;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.newsletter input {
-  padding: 10px;
-  font-size: 1rem;
-  width: 300px;
-  max-width: 90%;
-  margin-top: 10px;
-}
-
-#newsletter-message {
-  margin-top: 10px;
-  color: green;
-  font-size: 0.9rem;
-}
 
 
