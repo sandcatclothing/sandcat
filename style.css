@@ -39,7 +39,7 @@ body {
 .logo-center {
   height: 200px;               /* Más pequeño (antes 80px) */
   position: absolute;
-  top: 0px;                  /* Más abajo (ajusta según necesidad) */
+  top: -10px;                  /* Más abajo (ajusta según necesidad) */
   left: 50%;                  /* Mueve un poco a la izquierda (antes 50%) */
   transform: translateX(-50%);
 }
