@@ -2,47 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SANDCAT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SANDCAT Console</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Pantalla de animación tipo hackeo -->
-  <div id="hack-screen"></div>
-
-  <!-- Barra blanca superior -->
-  <div class="white-bar">
-    <img src="logo2.png" alt="Logo" class="logo-left" />
-    <img src="logo_text.png" alt="SANDCAT Text" class="logo-center" />
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  <!-- Hack screen loading animation -->
+  <div id="hack-screen">
+    <div id="hack-text"></div>
   </div>
 
-  <!-- Menú consola -->
-  <div id="console-menu" class="hidden">
-    <div class="console-line" onclick="navigate('shop')">&gt;shop</div>
-    <div class="console-line" onclick="navigate('collections')">&gt;collections</div>
-    <div class="console-line" onclick="navigate('about')">&gt;about</div>
-    <div class="console-line" onclick="navigate('contact')">&gt;contact</div>
+  <!-- White top bar -->
+  <div class="white-bar">
+    <img src="logo2.png" class="logo-left" />
+    <img src="logo_text.png" class="logo-center" />
+    <div class="hamburger" onclick="window.location.reload()">☰</div>
+  </div>
 
-    <!-- Consola de comandos secretos -->
+  <!-- Console menu -->
+  <div id="console-menu">
+    <div class="console-line">&gt; shop</div>
+    <div class="console-line">&gt; collections
+      <div class="submenu">
+        <div class="console-line green-tag">- CORE DROP</div>
+        <div class="console-line secret-tag hidden">- FOUNDERS DROP</div>
+      </div>
+    </div>
+    <div class="console-line">&gt; about</div>
+    <div class="console-line">&gt; contact</div>
+
+    <!-- Secret command -->
     <div class="console-input">
       <span>&gt;</span>
-      <input type="text" id="secret-input" placeholder="Enter command..." onkeydown="handleCommand(event)" />
-    </div>
-
-    <!-- Sección secreta (colección rara en rojo) -->
-    <div id="secret-collection" class="hidden">
-      <p class="secret-tag">&gt; Access granted. RED DROP unlocked 🔓</p>
-      <p class="secret-tag">"Time-Limited Chaos Collection"</p>
+      <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
     </div>
 
     <!-- Newsletter -->
     <div class="newsletter">
-      <p>Subscribe to our underground newsletter:</p>
-      <div class="console-input">
-        <span>&gt;</span>
-        <input type="email" placeholder="Enter your email..." />
-      </div>
+      <p>Subscribe to our newsletter:</p>
+      <input type="email" placeholder="youremail@example.com" />
     </div>
   </div>
 
