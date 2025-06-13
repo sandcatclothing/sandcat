@@ -1,62 +1,57 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const hackScreen = document.getElementById("hack-screen");
+const hackTextElement = document.getElementById("hack-text");
+const hackScreen = document.getElementById("hack-screen");
 
-  const messages = [
-    "Accessing SANDCAT Systems...",
-    "Establishing secure connection...",
-    "Bypassing fashion firewalls...",
-    "Injecting streetwear DNA...",
-    "SANDCAT mode: ACTIVATED ✓"
-  ];
+const hackLines = [
+  "Accessing SANDCAT Systems...",
+  "Establishing secure connection...",
+  "Bypassing fashion firewalls...",
+  "Injecting streetwear DNA...",
+  "SANDCAT mode: ACTIVATED ✓"
+];
 
-  let currentLine = 0;
+let currentLine = 0;
+let currentChar = 0;
+let revealInterval;
 
-  const randomChar = () => {
-    const chars = "!@#$%^&*()_+=-[]{}|;:,.<>/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    return chars[Math.floor(Math.random() * chars.length)];
-  };
+function showNextChar() {
+  const line = hackLines[currentLine];
+  const partial = line.slice(0, currentChar);
+  const randomTail = Array.from({ length: line.length - currentChar }, () =>
+    String.fromCharCode(33 + Math.random() * 94 | 0)
+  ).join("");
 
-  const revealText = (text, callback) => {
-    let display = new Array(text.length).fill("");
-    let iterations = 0;
-    const totalIterations = text.length * 6; // Ajusta velocidad aquí
+  hackTextElement.innerText = partial + randomTail;
 
-    const interval = setInterval(() => {
-      for (let i = 0; i < text.length; i++) {
-        if (iterations / 6 > i) {
-          display[i] = text[i];
-        } else {
-          display[i] = randomChar();
-        }
-      }
+  if (currentChar < line.length) {
+    currentChar++;
+  } else {
+    clearInterval(revealInterval);
+    currentLine++;
+    currentChar = 0;
 
-      hackScreen.innerText = display.join("");
-
-      iterations++;
-      if (iterations > totalIterations) {
-        clearInterval(interval);
-        hackScreen.innerText = text;
-        setTimeout(callback, 500); // Espera antes del siguiente mensaje
-      }
-    }, 30);
-  };
-
-  const showNextLine = () => {
-    if (currentLine < messages.length) {
-      revealText(messages[currentLine], () => {
-        currentLine++;
-        showNextLine();
-      });
-    } else {
-      // Oculta el hack screen tras terminar
+    if (currentLine < hackLines.length) {
       setTimeout(() => {
-        hackScreen.classList.add("hidden");
-      }, 1000);
+        revealInterval = setInterval(showNextChar, 50);
+      }, 400);
+    } else {
+      setTimeout(() => {
+        hackScreen.style.display = "none";
+      }, 800);
     }
-  };
+  }
+}
 
-  showNextLine();
-});
+window.onload = () => {
+  revealInterval = setInterval(showNextChar, 50);
+};
 
-
+function handleCommand(e) {
+  if (e.key === "Enter") {
+    const input = e.target.value.trim().toLowerCase();
+    if (input === "paraloschavales") {
+      document.querySelector(".secret-tag").classList.remove("hidden");
+    }
+    e.target.value = "";
+  }
+}
 
