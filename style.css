@@ -33,12 +33,13 @@ body {
 }
 
 .logo-left {
-  height: 80px;
+  height: 90px;
 }
 
 .logo-center {
   height: 200px;               /* Más pequeño (antes 80px) */               /* Más abajo (ajusta según necesidad) */
-  left: 55%;                  /* Mueve un poco a la izquierda (antes 50%) */
+  left: 55%; 
+  top: -8px; /* Mueve un poco a la izquierda (antes 50%) */
   transform: translateX(-50%);
 }
 
