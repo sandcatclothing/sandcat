@@ -79,7 +79,7 @@ body {
 }
 
 .console-input input {
-  background: black;
+  background: #1b1b1b;
   color: #0f0;
   border: none;
   outline: none;
