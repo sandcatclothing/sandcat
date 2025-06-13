@@ -1,69 +1,62 @@
-// Animación de hackeo
-const lines = [
-  "SANDCAT mode: ACTIVATED ✓"
-];
+document.addEventListener("DOMContentLoaded", () => {
+  const hackScreen = document.getElementById("hack-screen");
 
-let currentLine = 0;
-let currentChar = 0;
+  const messages = [
+    "Accessing SANDCAT Systems...",
+    "Establishing secure connection...",
+    "Bypassing fashion firewalls...",
+    "Injecting streetwear DNA...",
+    "SANDCAT mode: ACTIVATED ✓"
+  ];
 
-function typeLine() {
-  const target = lines[currentLine];
-  if (currentChar < target.length) {
-    const randomChar = String.fromCharCode(33 + Math.random() * 94);
-    const pre = target.slice(0, currentChar);
-    const post = target.slice(currentChar + 1);
-    const scramble = pre + randomChar + post;
-    document.getElementById("hack-text").textContent = scramble;
-    setTimeout(typeLine, 25);
-  } else {
-    document.getElementById("hack-text").textContent = lines[currentLine];
-    currentLine++;
-    currentChar = 0;
-    if (currentLine < lines.length) {
-      setTimeout(() => typeLine(), 600);
+  let currentLine = 0;
+
+  const randomChar = () => {
+    const chars = "!@#$%^&*()_+=-[]{}|;:,.<>/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    return chars[Math.floor(Math.random() * chars.length)];
+  };
+
+  const revealText = (text, callback) => {
+    let display = new Array(text.length).fill("");
+    let iterations = 0;
+    const totalIterations = text.length * 6; // Ajusta velocidad aquí
+
+    const interval = setInterval(() => {
+      for (let i = 0; i < text.length; i++) {
+        if (iterations / 6 > i) {
+          display[i] = text[i];
+        } else {
+          display[i] = randomChar();
+        }
+      }
+
+      hackScreen.innerText = display.join("");
+
+      iterations++;
+      if (iterations > totalIterations) {
+        clearInterval(interval);
+        hackScreen.innerText = text;
+        setTimeout(callback, 500); // Espera antes del siguiente mensaje
+      }
+    }, 30);
+  };
+
+  const showNextLine = () => {
+    if (currentLine < messages.length) {
+      revealText(messages[currentLine], () => {
+        currentLine++;
+        showNextLine();
+      });
     } else {
+      // Oculta el hack screen tras terminar
       setTimeout(() => {
-        document.getElementById("hack-screen").style.display = "none";
-      }, 800);
+        hackScreen.classList.add("hidden");
+      }, 1000);
     }
-  }
-  currentChar++;
-}
+  };
 
-window.onload = () => {
-  typeLine();
-};
-
-// Menú desplegable
-function toggleMenu() {
-  const menu = document.getElementById("console-menu");
-  menu.scrollIntoView({ behavior: "smooth" });
-}
-
-document.querySelectorAll(".menu-item").forEach(item => {
-  item.addEventListener("click", () => {
-    const target = item.getAttribute("data-target") + "-submenu";
-    const submenu = document.getElementById(target);
-    submenu.classList.toggle("hidden");
-  });
+  showNextLine();
 });
 
-// Comando secreto
-document.getElementById("secret-input").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    if (this.value.trim().toLowerCase() === "paraloschavales") {
-      document.getElementById("founders-drop").classList.remove("hidden");
-    }
-    this.value = "";
-  }
-});
-
-// Newsletter
-document.getElementById("email-input").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    document.getElementById("newsletter-message").textContent = `Gracias por unirte, ${this.value}`;
-    this.value = "";
-  }
-});
 
 
