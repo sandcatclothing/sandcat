@@ -37,10 +37,10 @@ body {
 }
 
 .logo-center {
-  height: 150px;               /* Más pequeño (antes 80px) */
+  height: 170px;               /* Más pequeño (antes 80px) */
   position: absolute;
-  top: 20px;                  /* Más abajo (ajusta según necesidad) */
-  left: 45%;                  /* Mueve un poco a la izquierda (antes 50%) */
+  top: 5px;                  /* Más abajo (ajusta según necesidad) */
+  left: 50%;                  /* Mueve un poco a la izquierda (antes 50%) */
   transform: translateX(-50%);
 }
 
