@@ -52,6 +52,7 @@ body {
 
 .hamburger {
   font-size: 30px;
+   color: #1b1b1b;
   cursor: pointer;
   z-index: 11;
 }
