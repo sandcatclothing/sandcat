@@ -37,7 +37,7 @@ body {
 }
 
 .logo-center {
-  height: 120px;               /* Más pequeño (antes 80px) */
+  height: 150px;               /* Más pequeño (antes 80px) */
   position: absolute;
   top: 20px;                  /* Más abajo (ajusta según necesidad) */
   left: 45%;                  /* Mueve un poco a la izquierda (antes 50%) */
