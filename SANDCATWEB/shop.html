@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop - SANDCAT</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" />
+    <img src="assets/logo_text.png" class="logo-center" />
+    <div class="top-icons">
+      <div class="cart-icon" onclick="window.location.href='cart.html'">
+        🛍️ <span id="cart-count">0</span>
+      </div>
+      <div class="hamburger" onclick="window.location.href='index.html'">&#9776;</div>
+    </div>
+  </div>
+
+  <div id="console-menu">
+    <div class="console-line">&gt; shop</div>
+    <div class="shop-grid">
+      <div class="product">
+        <img src="assets/logo2.png" onclick="previewImage(this.src)" />
+        <p>Hoodie SANDCAT</p>
+        <p>€55</p>
+        <select id="size-hoodie">
+          <option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button onclick="addToCart('Hoodie SANDCAT', 55, document.getElementById('size-hoodie').value)">Add to cart</button>
+      </div>
+      <div class="product">
+        <img src="assets/logo_text.png" onclick="previewImage(this.src)" />
+        <p>Black Tee</p>
+        <p>€30</p>
+        <select id="size-tee">
+          <option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button onclick="addToCart('Black Tee', 30, document.getElementById('size-tee').value)">Add to cart</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="newsletter sticky-newsletter">
+    <p>Subscribe to our newsletter:</p>
+    <input type="email" placeholder="youremail@example.com" />
+  </div>
+
+  <div id="preview-modal" class="hidden">
+    <span onclick="closePreview()">✖</span>
+    <img id="preview-img" />
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

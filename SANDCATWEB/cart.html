@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart - SANDCAT</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" />
+    <img src="assets/logo_text.png" class="logo-center" />
+    <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+  </div>
+
+  <div id="console-menu">
+    <div class="console-line">&gt; cart</div>
+    <div id="cart-items"></div>
+    <p>Total: €<span id="cart-total">0</span></p>
+    <button onclick="simulatePaypal()">Pay with PayPal</button>
+  </div>
+
+  <div class="newsletter sticky-newsletter">
+    <p>Subscribe to our newsletter:</p>
+    <input type="email" placeholder="youremail@example.com" />
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

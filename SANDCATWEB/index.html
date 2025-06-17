@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SANDCAT Console</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" />
+    <img src="assets/logo_text.png" class="logo-center" />
+    <div class="hamburger" onclick="window.location.reload()">☰</div>
+  </div>
+
+  <div id="console-menu">
+    <div class="console-line" onclick="navigateTo('shop')">&gt; shop</div>
+    <div class="console-line" onclick="toggleSubmenu(this)">&gt; collections
+      <div class="submenu">
+        <div class="console-line">- CORE DROP</div>
+        <div class="console-line hidden secret-tag">- FOUNDERS DROP</div>
+      </div>
+    </div>
+    <div class="console-line" onclick="navigateTo('about')">&gt; about</div>
+    <div class="console-line" onclick="navigateTo('contact')">&gt; contact</div>
+    <div class="console-line" onclick="navigateTo('cart')">&gt; cart</div>
+
+    <div class="console-input">
+      <span>&gt;</span>
+      <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
+    </div>
+  </div>
+
+  <div class="newsletter sticky-newsletter">
+    <p>Subscribe to our newsletter:</p>
+    <input type="email" placeholder="youremail@example.com" />
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
