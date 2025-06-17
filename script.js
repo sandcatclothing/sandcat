@@ -1,69 +1,51 @@
-const hackTextElement = document.getElementById("hack-text");
-const hackScreen = document.getElementById("hack-screen");
-
-const hackLines = [
-  "SANDCAT mode: ACTIVATED ✓",
-];
-
-let currentLine = 0;
-let currentChar = 0;
-let revealInterval;
-
-function showNextChar() {
-  const line = hackLines[currentLine];
-  const partial = line.slice(0, currentChar);
-  const randomTail = Array.from({ length: line.length - currentChar }, () =>
-    String.fromCharCode(33 + Math.random() * 94 | 0)
-  ).join("");
-
-  hackTextElement.innerText = partial + randomTail;
-
-  if (currentChar < line.length) {
-    currentChar++;
-  } else {
-    clearInterval(revealInterval);
-    currentLine++;
-    currentChar = 0;
-
-    if (currentLine < hackLines.length) {
-      setTimeout(() => {
-        revealInterval = setInterval(showNextChar, 40);
-      }, 400);
-    } else {
-      setTimeout(() => {
-        hackScreen.style.display = "none";
-      }, 800);
-    }
-  }
-}
-
-window.onload = () => {
-  revealInterval = setInterval(showNextChar, 40);
-};
 
 function handleCommand(e) {
   if (e.key === "Enter") {
     const input = e.target.value.trim().toLowerCase();
-    switch (input) {
-      case "shop":
-        window.location.href = "shop.html";
-        break;
-      case "collections":
-        window.location.href = "collections.html";
-        break;
-      case "about":
-        window.location.href = "about.html";
-        break;
-      case "contact":
-        window.location.href = "contact.html";
-        break;
-      case "paraloschavales":
-        document.querySelector(".secret-tag").classList.remove("hidden");
-        break;
-      default:
-        alert("Unknown command: " + input);
+    if (input === "paraloschavales") {
+      document.querySelector(".secret-tag").classList.remove("hidden");
+    } else if (input === "about" || input === "contact" || input === "collections" || input === "shop" || input === "cart") {
+      navigateTo(input);
     }
     e.target.value = "";
   }
 }
 
+function toggleSubmenu(element) {
+  const submenu = element.querySelector(".submenu");
+  if (submenu) submenu.classList.toggle("hidden");
+}
+
+function navigateTo(page) {
+  window.location.href = `${page}.html`;
+}
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function addToCart(product, price) {
+  cart.push({ product, price });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert(product + " added to cart");
+}
+
+function simulatePaypal() {
+  alert("Redirecting to PayPal...");
+  localStorage.removeItem('cart');
+  document.getElementById('cart-items').innerHTML = "";
+  document.getElementById('cart-total').innerText = "0";
+}
+
+window.onload = () => {
+  if (document.getElementById("cart-items")) {
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    let total = 0;
+    const container = document.getElementById("cart-items");
+    cartItems.forEach(item => {
+      total += item.price;
+      const div = document.createElement("div");
+      div.innerText = `- ${item.product}: €${item.price}`;
+      container.appendChild(div);
+    });
+    document.getElementById("cart-total").innerText = total;
+  }
+};
