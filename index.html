@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,46 +7,53 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Hack intro animation -->
   <div id="hack-screen">
     <div id="hack-text"></div>
   </div>
 
+  <!-- Top bar -->
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" />
     <img src="assets/logo_text.png" class="logo-center" />
-    <div class="menu-icons">
-      <img src="assets/bag.png" id="cart-icon" onclick="toggleCart()" />
-      <div id="cart-count">0</div>
+    <div class="top-icons">
+      <div class="cart-icon" onclick="toggleCart()">
+        🛍️ <span id="cart-count">0</span>
+      </div>
       <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
   </div>
 
+  <!-- Console menu -->
   <div id="console-menu">
     <div class="console-line" onclick="location.href='shop.html'">&gt; shop</div>
-    <div class="console-line">&gt; collections
-      <div class="submenu">
-        <div class="console-line" onclick="location.href='collections/coredrop.html'">- CORE DROP</div>
-      </div>
+    <div class="console-line" onclick="toggleSubmenu(this)">&gt; collections</div>
+    <div class="submenu">
+      <div class="console-line">- CORE DROP (coming soon)</div>
+      <div class="console-line secret-tag hidden">- FOUNDERS DROP</div>
     </div>
     <div class="console-line" onclick="location.href='about.html'">&gt; about</div>
     <div class="console-line" onclick="location.href='contact.html'">&gt; contact</div>
 
+    <!-- Hidden command -->
     <div class="console-input">
       <span>&gt;</span>
       <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
     </div>
-
-    <div class="newsletter sticky-footer">
-      <p>Subscribe to our newsletter:</p>
-      <input type="email" placeholder="youremail@example.com" />
-    </div>
   </div>
 
+  <!-- Newsletter -->
+  <div class="newsletter sticky-newsletter">
+    <p>Subscribe to our newsletter:</p>
+    <input type="email" placeholder="youremail@example.com" />
+  </div>
+
+  <!-- Cart modal -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
-    <div id="cart-total"></div>
-    <button onclick="checkout()">Pay with PayPal</button>
+    <p>Total: €<span id="cart-total">0</span></p>
+    <button onclick="simulatePaypal()">Pay with PayPal</button>
   </div>
 
   <script src="script.js"></script>
