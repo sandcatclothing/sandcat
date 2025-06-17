@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,36 +8,49 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="hack-screen">
+    <div id="hack-text"></div>
+  </div>
+
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" />
     <img src="assets/logo_text.png" class="logo-center" />
-    <div class="hamburger" onclick="window.location.reload()">☰</div>
+    <div class="menu-icons">
+      <img src="assets/bag.png" id="cart-icon" onclick="toggleCart()" />
+      <div id="cart-count">0</div>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </div>
   </div>
 
   <div id="console-menu">
-    <div class="console-line" onclick="navigateTo('shop')">&gt; shop</div>
-    <div class="console-line" onclick="toggleSubmenu(this)">&gt; collections
+    <div class="console-line" onclick="location.href='shop.html'">&gt; shop</div>
+    <div class="console-line">&gt; collections
       <div class="submenu">
-        <div class="console-line">- core drop</div>
-        <div class="console-line" onclick="navigateTo('core drop')">&gt; coredrop</div>
-        <div class="console-line hidden secret-tag">- FOUNDERS DROP</div>
+        <div class="console-line" onclick="location.href='collections/coredrop.html'">- CORE DROP</div>
       </div>
     </div>
-    <div class="console-line" onclick="navigateTo('about')">&gt; about</div>
-    <div class="console-line" onclick="navigateTo('contact')">&gt; contact</div>
-    <div class="console-line" onclick="navigateTo('cart')">&gt; cart</div>
+    <div class="console-line" onclick="location.href='about.html'">&gt; about</div>
+    <div class="console-line" onclick="location.href='contact.html'">&gt; contact</div>
 
     <div class="console-input">
       <span>&gt;</span>
       <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
     </div>
+
+    <div class="newsletter sticky-footer">
+      <p>Subscribe to our newsletter:</p>
+      <input type="email" placeholder="youremail@example.com" />
+    </div>
   </div>
 
-  <div class="newsletter sticky-newsletter">
-    <p>Subscribe to our newsletter:</p>
-    <input type="email" placeholder="youremail@example.com" />
+  <div id="cart-modal" class="cart-modal hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <div id="cart-total"></div>
+    <button onclick="checkout()">Pay with PayPal</button>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
+
