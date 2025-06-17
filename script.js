@@ -2,7 +2,7 @@ const hackTextElement = document.getElementById("hack-text");
 const hackScreen = document.getElementById("hack-screen");
 
 const hackLines = [
-  "SANDCAT mode: ACTIVATED ✓"
+  "SANDCAT mode: ACTIVATED ✓",
 ];
 
 let currentLine = 0;
@@ -27,7 +27,7 @@ function showNextChar() {
 
     if (currentLine < hackLines.length) {
       setTimeout(() => {
-        revealInterval = setInterval(showNextChar, 50);
+        revealInterval = setInterval(showNextChar, 40);
       }, 400);
     } else {
       setTimeout(() => {
@@ -38,14 +38,30 @@ function showNextChar() {
 }
 
 window.onload = () => {
-  revealInterval = setInterval(showNextChar, 50);
+  revealInterval = setInterval(showNextChar, 40);
 };
 
 function handleCommand(e) {
   if (e.key === "Enter") {
     const input = e.target.value.trim().toLowerCase();
-    if (input === "paraloschavales") {
-      document.querySelector(".secret-tag").classList.remove("hidden");
+    switch (input) {
+      case "shop":
+        window.location.href = "shop.html";
+        break;
+      case "collections":
+        window.location.href = "collections.html";
+        break;
+      case "about":
+        window.location.href = "about.html";
+        break;
+      case "contact":
+        window.location.href = "contact.html";
+        break;
+      case "paraloschavales":
+        document.querySelector(".secret-tag").classList.remove("hidden");
+        break;
+      default:
+        alert("Unknown command: " + input);
     }
     e.target.value = "";
   }
