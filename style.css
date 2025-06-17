@@ -122,3 +122,50 @@ body {
   cursor: pointer;
   font-family: monospace;
 }
+
+.top-icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.cart-icon {
+  cursor: pointer;
+  font-size: 20px;
+  position: relative;
+}
+#cart-count {
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+select {
+  margin-top: 10px;
+  padding: 5px;
+  font-family: monospace;
+  background: black;
+  color: white;
+  border: 1px solid white;
+}
+
+#preview-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  flex-direction: column;
+}
+#preview-modal img {
+  max-width: 80%;
+  max-height: 80%;
+}
+#preview-modal span {
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 40px;
+}
