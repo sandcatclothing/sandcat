@@ -2,10 +2,6 @@ const hackTextElement = document.getElementById("hack-text");
 const hackScreen = document.getElementById("hack-screen");
 
 const hackLines = [
-  "Accessing SANDCAT Systems...",
-  "Establishing secure connection...",
-  "Bypassing fashion firewalls...",
-  "Injecting streetwear DNA...",
   "SANDCAT mode: ACTIVATED ✓"
 ];
 
