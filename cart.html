@@ -7,24 +7,58 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Top white bar -->
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" />
     <img src="assets/logo_text.png" class="logo-center" />
-    <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+    <div class="top-icons">
+      <img src="assets/cart-icon.png" class="cart-icon" onclick="window.location.href='cart.html'" />
+      <span class="cart-count" id="cart-count">0</span>
+      <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+    </div>
   </div>
 
+  <!-- Cart page styled like console -->
   <div id="console-menu">
     <div class="console-line">&gt; cart</div>
-    <div id="cart-items"></div>
-    <p>Total: €<span id="cart-total">0</span></p>
-    <button onclick="simulatePaypal()">Pay with PayPal</button>
+    <div id="cart-items" class="cart-items-console"></div>
+    <div class="console-line">
+      Total: €<span id="cart-total">0.00</span>
+    </div>
+    <button class="console-button" onclick="simulatePaypal()">Pay with PayPal</button>
   </div>
 
+  <!-- Sticky newsletter -->
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
   <script src="script.js"></script>
+  <script>
+    // Carga inicial del carrito
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItemsEl = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const cartCountEl = document.getElementById('cart-count');
+
+    let total = 0;
+    cartItemsEl.innerHTML = '';
+    cart.forEach((item, index) => {
+      total += item.price;
+      const div = document.createElement('div');
+      div.classList.add('console-line');
+      div.innerHTML = `- ${item.name} [Size: ${item.size}] - €${item.price.toFixed(2)}`;
+      cartItemsEl.appendChild(div);
+    });
+
+    cartTotalEl.textContent = total.toFixed(2);
+    cartCountEl.textContent = cart.length;
+
+    function simulatePaypal() {
+      alert('Redirecting to PayPal (simulated)...');
+    }
+  </script>
 </body>
 </html>
+
