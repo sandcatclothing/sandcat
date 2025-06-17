@@ -220,3 +220,68 @@ button {
 button:hover {
   background: #ddd;
 }
+#hack-screen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: #00ff00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 2rem;
+  z-index: 99999;
+  transition: opacity 0.3s ease-out;
+}
+
+.glitch-text {
+  position: relative;
+  color: white;
+  animation: glitch 0.6s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 1px); }
+  80% { transform: translate(1px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(class);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  color: #0ff;
+  clip: rect(0, 900px, 0, 0);
+  animation: glitch-clip 0.4s infinite;
+}
+
+.glitch-text::before {
+  top: -2px;
+  left: 2px;
+  color: red;
+}
+
+.glitch-text::after {
+  top: 2px;
+  left: -2px;
+  color: #0ff;
+}
+
+@keyframes glitch-clip {
+  0% {
+    clip: rect(0, 9999px, 0, 0);
+  }
+  50% {
+    clip: rect(0, 9999px, 100%, 0);
+  }
+  100% {
+    clip: rect(0, 9999px, 0, 0);
+  }
+}
+
