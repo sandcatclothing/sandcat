@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Drop - SANDCAT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" onclick="location.href='index.html'" />
+    <img src="assets/logo_text.png" class="logo-center" />
+    <div class="menu-icons">
+      <img src="assets/bag.png" id="cart-icon" onclick="toggleCart()" />
+      <div id="cart-count">0</div>
+      <div class="hamburger" onclick="location.href='index.html'">☰</div>
+    </div>
+  </div>
+  <div id="console-menu">
+    <div class="shop-item">
+      <img src="assets/shirt1.png" alt="Shirt 1" />
+      <p>SANDCAT TEE</p>
+      <select><option>S</option><option>M</option><option>L</option></select>
+      <button onclick="addToCart('SANDCAT TEE', 25)">Add to Cart</button>
+    </div>
+    <div class="shop-item">
+      <img src="assets/hoodie1.png" alt="Hoodie 1" />
+      <p>SANDCAT HOODIE</p>
+      <select><option>S</option><option>M</option><option>L</option></select>
+      <button onclick="addToCart('SANDCAT HOODIE', 50)">Add to Cart</button>
+    </div>
+  </div>
+  <div id="cart-modal" class="cart-modal hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <div id="cart-total"></div>
+    <button onclick="checkout()">Pay with PayPal</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
