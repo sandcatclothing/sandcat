@@ -1,43 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SANDCAT Console</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Hack screen loading animation -->
+  <!-- Animación de hackeo -->
   <div id="hack-screen">
     <div id="hack-text"></div>
   </div>
 
-  <!-- White top bar -->
+  <!-- Barra superior -->
   <div class="white-bar">
-    <img src="logo22.png" class="logo-left" />
-    <img src="logo_text.png" class="logo-center" />
+    <img src="assets/logo22.png" class="logo-left" />
+    <img src="assets/logo_text.png" class="logo-center" />
     <div class="hamburger" onclick="window.location.reload()">☰</div>
   </div>
 
-  <!-- Console menu -->
+  <!-- Menú consola -->
   <div id="console-menu">
-    <div class="console-line">&gt; shop</div>
-    <div class="console-line">&gt; collections
+    <div class="console-line" onclick="window.location.href='shop.html'">> shop</div>
+    <div class="console-line">> collections
       <div class="submenu">
-        <div class="console-line green-tag">- CORE DROP</div>
-        <div class="console-line secret-tag hidden">- FOUNDERS DROP</div>
+        <div class="console-line green-tag" onclick="window.location.href='collections.html?drop=core'">- CORE DROP</div>
+        <div class="console-line secret-tag hidden" onclick="window.location.href='collections.html?drop=founders'">- FOUNDERS DROP</div>
       </div>
     </div>
-    <div class="console-line">&gt; about</div>
-    <div class="console-line">&gt; contact</div>
+    <div class="console-line" onclick="window.location.href='about.html'">> about</div>
+    <div class="console-line" onclick="window.location.href='contact.html'">> contact</div>
 
-    <!-- Secret command -->
     <div class="console-input">
-      <span>&gt;</span>
+      <span>></span>
       <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
     </div>
 
-    <!-- Newsletter -->
     <div class="newsletter">
       <p>Subscribe to our newsletter:</p>
       <input type="email" placeholder="youremail@example.com" />
