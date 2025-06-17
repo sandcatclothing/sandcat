@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SANDCAT Shop</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left"/>
+    <img src="assets/logo_text.png" class="logo-center"/>
+    <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+  </div>
+
+  <div id="shop-container">
+    <h1>Shop</h1>
+
+    <div id="carousel">
+      <div class="slide active"><img src="assets/product1.jpg" alt="Producto 1"></div>
+      <div class="slide"><img src="assets/product2.jpg" alt="Producto 2"></div>
+      <div class="slide"><img src="assets/product3.jpg" alt="Producto 3"></div>
+      <button id="prev">&#10094;</button>
+      <button id="next">&#10095;</button>
+    </div>
+
+    <div id="products">
+      <div class="product">
+        <h2>Producto 1</h2><p>$20.00</p>
+        <button onclick="addToCart('Producto 1',20)">Añadir al carrito</button>
+      </div>
+      <div class="product">
+        <h2>Producto 2</h2><p>$30.00</p>
+        <button onclick="addToCart('Producto 2',30)">Añadir al carrito</button>
+      </div>
+      <div class="product">
+        <h2>Producto 3</h2><p>$25.00</p>
+        <button onclick="addToCart('Producto 3',25)">Añadir al carrito</button>
+      </div>
+    </div>
+
+    <div id="cart">
+      <h2>Carrito</h2>
+      <ul id="cart-items"></ul>
+      <p>Total: $<span id="cart-total">0</span></p>
+      <button id="checkout-btn" onclick="checkout()">Pagar con PayPal</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
