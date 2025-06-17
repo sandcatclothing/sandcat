@@ -32,6 +32,7 @@ body {
 }
 
 .hamburger {
+  color: black;
   font-size: 30px;
   cursor: pointer;
 }
