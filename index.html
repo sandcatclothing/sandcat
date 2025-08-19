@@ -14,11 +14,12 @@
 
   <!-- Top bar -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" />
-    <img src="assets/logo_text.png" class="logo-center" />
+    <img src="assets/logo2.png" class="logo-left" alt="logo" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <div class="cart-icon" onclick="toggleCart()">
-        🛍️ <span id="cart-count">0</span>
+      <div class="cart-icon" onclick="toggleCart()" title="Open cart">
+        <img src="assets/cart-icon.png" alt="Cart" />
+        <span id="cart-count">0</span>
       </div>
       <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
@@ -52,11 +53,10 @@
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
-    <p>Total: €<span id="cart-total">0</span></p>
-    <button onclick="simulatePaypal()">Pay with PayPal</button>
+    <p>Total: €<span id="cart-total">0.00</span></p>
+    <button onclick="checkoutAndThanks()">Pay with PayPal</button>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
