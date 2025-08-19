@@ -2,25 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About - SANDCAT</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" />
-    <img src="assets/logo_text.png" class="logo-center" />
-    <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
+    <div class="top-icons">
+      <img src="assets/cart-icon.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
+      <span class="cart-count" id="cart-count">0</span>
+      <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+    </div>
   </div>
 
   <div id="console-menu">
     <div class="console-line">&gt; about</div>
-    <p>SANDCAT is a digital-native brand with hacker aesthetics and urban attitude.<br>Created to disrupt and inspire through fashion and technology.</p>
+    <div class="console-line">
+      Sandcat es una marca emergente de moda urbana que viene a cambiar el juego.
+      Nuestra web funciona como una consola minimalista para explorar colecciones y comprar, cualquier duda contacta con nosotros a través de nuestras redes sociales.
+    </div>
+    <div class="console-line">
+      Infraestructura: repositorio en GitHub, despliegue en <strong>sandcat.es</strong> y correo corporativo para automatizaciones (confirmaciones y facturas).
+    </div>
   </div>
 
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
     <input type="email" placeholder="youremail@example.com" />
   </div>
+
+  <div id="cart-modal" class="cart-modal hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <p>Total: €<span id="cart-total">0.00</span></p>
+    <button onclick="checkoutAndThanks()">Pay with PayPal</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script>updateCartCount();</script>
 </body>
 </html>
+
