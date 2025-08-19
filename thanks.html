@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thanks - SANDCAT</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
+    <div class="top-icons">
+      <img src="assets/cart-icon.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
+      <span class="cart-count" id="cart-count">0</span>
+      <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+    </div>
+  </div>
+
+  <div id="console-menu">
+    <div class="console-line">&gt; payment_status</div>
+    <div class="console-line">status: <strong>CONFIRMED</strong> ✅</div>
+    <div class="console-line">next_step: check your email for <strong>order confirmation</strong> and <strong>invoice</strong>.</div>
+    <div class="console-line">support: <strong>support@sandcat.es</strong></div>
+    <div class="console-line">tip: follow us to unlock <strong>FOUNDERS DROP</strong>.</div>
+    <div class="console-line" style="margin-top:16px;">
+      <button onclick="window.location.href='shop.html'">Continue Shopping</button>
+      <button onclick="window.location.href='invoice.html'">View / Download Invoice (PDF)</button>
+    </div>
+  </div>
+
+  <div class="newsletter sticky-newsletter">
+    <p>Subscribe to our newsletter:</p>
+    <input type="email" placeholder="youremail@example.com" />
+  </div>
+
+  <div id="cart-modal" class="cart-modal hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <p>Total: €<span id="cart-total">0.00</span></p>
+    <button onclick="checkout()">Pay with PayPal</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    updateCartCount();
+    renderCartModal();
+  </script>
+</body>
+</html>
