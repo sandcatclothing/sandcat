@@ -7,18 +7,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- White top bar -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" />
-    <img src="assets/logo_text.png" class="logo-center" />
+    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/cart-icon.png" class="cart-icon" onclick="window.location.href='cart.html'" />
+      <img src="assets/cart-icon.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">&#9776;</div>
     </div>
   </div>
 
-  <!-- Console-style interface -->
   <div id="console-menu">
     <div class="console-line">&gt; collections</div>
     <div class="submenu">
@@ -29,45 +27,56 @@
     <div id="collection-output" class="collection-output"></div>
   </div>
 
-  <!-- Newsletter -->
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
+  <!-- Cart modal -->
+  <div id="cart-modal" class="cart-modal hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <p>Total: €<span id="cart-total">0.00</span></p>
+    <button onclick="checkoutAndThanks()">Pay with PayPal</button>
+  </div>
+
   <script src="script.js"></script>
   <script>
-    // Cargar contador del carrito
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    document.getElementById("cart-count").textContent = cart.length;
+    updateCartCount();
 
     function showCoreDrop() {
       const container = document.getElementById("collection-output");
       container.innerHTML = `
         <div class="console-line">-- CORE DROP --</div>
-        <div class="product-card">
-          <img src="assets/product1.jpg" class="product-thumb" />
+        <div class="product">
+          <img src="assets/product1.jpg" class="product-thumb" alt="SANDCAT BLACK HOODIE" />
           <div>- SANDCAT BLACK HOODIE - €45</div>
           <select class="size-select">
-            <option>Size</option>
-            <option>S</option>
-            <option>M</option>
-            <option>L</option>
-            <option>XL</option>
+            <option value="">Size</option>
+            <option>S</option><option>M</option><option>L</option><option>XL</option>
           </select>
-          <button onclick="addToCart('SANDCAT BLACK HOODIE', 45, this)">Add to cart</button>
+          <button onclick="
+            const size = this.previousElementSibling.value;
+            if(!size){alert('Please select a size'); return;}
+            addToCart('SANDCAT BLACK HOODIE', 45, size);
+            renderCartModal();
+            toggleCart();
+          ">Add to cart</button>
         </div>
-        <div class="product-card">
-          <img src="assets/product2.jpg" class="product-thumb" />
+        <div class="product">
+          <img src="assets/product2.jpg" class="product-thumb" alt="SANDCAT CORE TEE" />
           <div>- SANDCAT CORE TEE - €25</div>
           <select class="size-select">
-            <option>Size</option>
-            <option>S</option>
-            <option>M</option>
-            <option>L</option>
-            <option>XL</option>
+            <option value="">Size</option>
+            <option>S</option><option>M</option><option>L</option><option>XL</option>
           </select>
-          <button onclick="addToCart('SANDCAT CORE TEE', 25, this)">Add to cart</button>
+          <button onclick="
+            const size = this.previousElementSibling.value;
+            if(!size){alert('Please select a size'); return;}
+            addToCart('SANDCAT CORE TEE', 25, size);
+            renderCartModal();
+            toggleCart();
+          ">Add to cart</button>
         </div>
       `;
     }
@@ -79,22 +88,6 @@
         <div class="console-line">This drop is private. You have unlocked access.</div>
       `;
     }
-
-    function addToCart(name, price, button) {
-      const sizeSelect = button.previousElementSibling;
-      const size = sizeSelect.value;
-      if (size === "Size") {
-        alert("Please select a size");
-        return;
-      }
-
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cart.push({ name, price, size });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      document.getElementById("cart-count").textContent = cart.length;
-      alert(`${name} (Size: ${size}) added to cart.`);
-    }
   </script>
 </body>
 </html>
-
