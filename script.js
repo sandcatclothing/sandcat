@@ -4,9 +4,13 @@ const GAS_ENDPOINT_URL = ''; // p.ej. https://script.google.com/macros/s/.../exe
 const GAS_TOKEN = '';        // Debe coincidir con TOKEN en Apps Script
 
 /* ===================== PASSWORD GATES (SHA-256) ===================== */
-/* IMPORTANTE: pon tus hashes cuando quieras proteger. Mientras, puedes dejarlos vacíos ("") para que no pida clave. */
-const SITE_PASS_HASH  = ''; // hash SHA-256 de tu contraseña de sitio (o "" para desactivar gate)
-const ADMIN_PASS_HASH = ''; // hash SHA-256 de tu contraseña de admin (o "" para desactivar gate)
+/* Ya vienen ACTIVOS con hashes de ejemplo para que lo pruebes YA MISMO.
+   CONTRASEÑAS de ejemplo (cámbialas cuanto antes):
+   - Sitio:        sandcat
+   - Admin panel:  sandcat-admin
+   Para cambiarlas, abre consola y ejecuta genHashFromPrompt() y pega los nuevos hashes aquí. */
+const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
+const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
 
 const AUTH_SITE_KEY  = 'site_auth';
 const AUTH_ADMIN_KEY = 'admin_auth';
@@ -64,7 +68,7 @@ function mountAuthOverlay({ title, onSubmit }) {
   };
 }
 
-/* Gate de sitio (opcional si SITE_PASS_HASH="") */
+/* Gate de sitio (siempre activo porque SITE_PASS_HASH está puesto) */
 async function ensureSiteAccess() {
   if (isSiteAuthed()) return;
   mountAuthOverlay({
@@ -77,7 +81,7 @@ async function ensureSiteAccess() {
   });
 }
 
-/* Gate de admin (opcional si ADMIN_PASS_HASH="") */
+/* Gate de admin (además del de sitio) */
 async function ensureAdminAccess() {
   await ensureSiteAccess();
   if (isAdminAuthed()) return;
@@ -109,6 +113,14 @@ function handleCommand(e) {
 function navigateTo(page) { window.location.href = `${page}.html`; }
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
+
+/* Atajo **Alt+Shift+A** para abrir admin */
+window.addEventListener('keydown', (e) => {
+  if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+    e.preventDefault();
+    window.location.href = 'admin.html';
+  }
+});
 
 /* ===================== Carrito (cantidades/eliminar) ===================== */
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
@@ -283,7 +295,6 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) {
     // Fallback local: leer localStorage.orders (sólo pedidos del navegador actual)
     const raw = JSON.parse(localStorage.getItem('orders') || '[]');
-    // Normalizamos a estructura admin (con timestamp) y filtramos since
     let rows = raw.map(o => ({
       timestamp: o.createdAt || o.timestamp || new Date().toISOString(),
       orderId: o.orderId, method: o.method, status: o.status,
@@ -299,8 +310,6 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
     return rows.slice(0, limit);
   }
-
-  // Lectura real de GAS
   const url = new URL(GAS_ENDPOINT_URL);
   url.searchParams.set('action','list');
   url.searchParams.set('token', GAS_TOKEN);
@@ -310,7 +319,6 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
   const res = await fetch(url.toString(), { method: 'GET' });
   const data = await res.json();
   if (!data.ok) throw new Error(data.error || 'Unknown error');
-  // data.items ya viene con items_json parseado a items en el GAS propuesto
   return (data.items || []).map(r => ({
     timestamp: r.timestamp, orderId: r.orderId, method: r.method, status: r.status,
     name: r.name, email: r.email, address: r.address, zip: r.zip,
@@ -330,7 +338,7 @@ async function loadAdminOrders() {
   try {
     const rows = await fetchOrdersFromSheet({ since });
     const filtered = rows.filter(r => {
-      const byMethod = filterMethod ? (String(r.method || '') === filterMethod) : true;
+      const byMethod = filterMethod ? (String(r.method || '').toLowerCase() === filterMethod.toLowerCase()) : true;
       const byStatus = filterStatus ? (String(r.status || '') === filterStatus) : true;
       return byMethod && byStatus;
     });
@@ -360,15 +368,6 @@ async function loadAdminOrders() {
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-/* ===================== Preview opcional ===================== */
-function previewImage(src) {
-  const modal = document.getElementById("preview-modal");
-  const img = document.getElementById("preview-img");
-  if (!modal || !img) return;
-  modal.classList.remove("hidden"); img.src = src;
-}
-function closePreview() { document.getElementById("preview-modal")?.classList.add("hidden"); }
-
 /* ===================== Hack intro ===================== */
 function startHackAnimation() {
   const hackScreen = document.getElementById("hack-screen");
@@ -387,7 +386,7 @@ window.onload = async () => {
   updateCartCount();
   startHackAnimation();
 
-  // Gate de sitio en todas menos admin (admin tiene su gate propio, que a su vez llama a este)
+  // Gate de sitio en todas menos admin (admin llama a ensureAdminAccess en su propio archivo)
   const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
   if (!isAdminPage) await ensureSiteAccess();
 
