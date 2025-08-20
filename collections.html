@@ -11,7 +11,7 @@
     <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/cart-icon.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
+      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">&#9776;</div>
     </div>
@@ -32,12 +32,32 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
-  <!-- Cart modal -->
+  <!-- Cart modal (con checkout) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
     <p>Total: €<span id="cart-total">0.00</span></p>
-    <button onclick="checkoutAndThanks()">Pay with PayPal</button>
+
+    <div class="console-line" style="cursor:default">
+      <div><strong>Checkout</strong></div>
+      <div style="margin-top:8px; display:grid; gap:8px;">
+        <input id="chk-name" placeholder="Full name" />
+        <input id="chk-email" placeholder="Email (required for PayPal)" />
+        <input id="chk-address" placeholder="Address (street, number, city)" />
+        <input id="chk-zip" placeholder="Postal code (5 digits)" />
+        <select id="chk-method">
+          <option value="paypal">PayPal</option>
+          <option value="cod">Contrareembolso</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="placeOrder()">Confirm Order</button>
+      <button onclick="toggleCart()">Close</button>
+      <button onclick="downloadOrdersJSON()">Export JSON</button>
+      <button onclick="downloadOrdersCSV()">Export CSV</button>
+    </div>
   </div>
 
   <script src="script.js"></script>
@@ -49,7 +69,7 @@
       container.innerHTML = `
         <div class="console-line">-- CORE DROP --</div>
         <div class="product">
-          <img src="assets/product1.jpg" class="product-thumb" alt="SANDCAT BLACK HOODIE" />
+          <img src="assets/core_hoodie.png" class="product-thumb" alt="SANDCAT BLACK HOODIE" />
           <div>- SANDCAT BLACK HOODIE - €45</div>
           <select class="size-select">
             <option value="">Size</option>
@@ -64,7 +84,7 @@
           ">Add to cart</button>
         </div>
         <div class="product">
-          <img src="assets/product2.jpg" class="product-thumb" alt="SANDCAT CORE TEE" />
+          <img src="assets/core_tee.png" class="product-thumb" alt="SANDCAT CORE TEE" />
           <div>- SANDCAT CORE TEE - €25</div>
           <select class="size-select">
             <option value="">Size</option>
@@ -91,3 +111,4 @@
   </script>
 </body>
 </html>
+
