@@ -15,15 +15,14 @@
     }
     .invoice-head{ display:grid; grid-template-columns: 1fr auto; align-items:center; gap:20px; margin-bottom:16px; }
     .invoice-head .brand{ display:flex; align-items:center; gap:12px; }
-    .invoice-head .brand img.logo{ height: 60px; width:auto; object-fit:contain; filter: drop-shadow(0 0 6px rgba(0,255,102,.25)); }
+    .invoice-head .brand img.logo{ height:60px; width:auto; object-fit:contain; filter: drop-shadow(0 0 6px rgba(0,255,102,.25)); }
     .invoice-meta{ border-top:1px dashed #0f4; border-bottom:1px dashed #0f4; padding:10px 0; margin:10px 0 16px 0; display:grid; gap:6px; }
     .invoice-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin: 14px 0 20px 0; }
     .card{ border:1px dashed #0f4; padding:12px; border-radius:6px; }
     .card label{ display:block; font-size:.85rem; color:#6aff9e; margin-bottom:4px; }
     .card input, .card textarea{
       width: 100%; background:#000; color:#00ff66; border:1px solid #0f4;
-      padding: 8px; font-family: inherit; border-radius:6px;
-      box-shadow: 0 0 12px rgba(0,255,102,.12) inset;
+      padding: 8px; font-family: inherit; border-radius:6px; box-shadow: 0 0 12px rgba(0,255,102,.12) inset;
     }
     .items-table{ width:100%; border-collapse:collapse; margin-top:10px; }
     .items-table th, .items-table td{ border-bottom:1px dashed #0f4; padding:8px; text-align:left; }
@@ -31,14 +30,10 @@
     .totals{ display:flex; justify-content:flex-end; margin-top:12px; }
     .totals .total-box{ border:1px solid #0f4; padding:10px 14px; min-width:240px; border-radius:6px; box-shadow: 0 8px 22px rgba(0,255,102,.08); }
     .actions{ display:flex; gap:10px; margin-top:16px; }
-
     @media print{
       body{ background:#fff !important; color:#000 !important; }
-      .white-bar, .newsletter, .actions, #cart-modal{ display:none !important; }
-      .invoice-wrap{
-        border: 1px solid #ccc; background:#fff; color:#000;
-        margin: 0; padding: 16px; box-shadow:none;
-      }
+      .white-bar, .newsletter, .actions{ display:none !important; }
+      .invoice-wrap{ border: 1px solid #ccc; background:#fff; color:#000; margin: 0; padding: 16px; box-shadow:none; }
       .items-table th, .items-table td{ border-bottom:1px solid #ccc; color:#000; }
       .card input, .card textarea{ background:#fff; color:#000; border:1px solid #ccc; }
     }
@@ -49,7 +44,7 @@
     <img src="assets/logo2.png" class="logo-left" onclick="window.location.href='index.html'" alt="logo" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/cart-icon.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
+      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
     </div>
@@ -72,7 +67,7 @@
 
     <div class="invoice-meta">
       <div>Payment status: <strong>CONFIRMED</strong></div>
-      <div>Payment method: PayPal (simulated)</div>
+      <div>Payment method: PayPal/COD</div>
     </div>
 
     <div class="invoice-grid">
@@ -117,13 +112,6 @@
       <button onclick="window.print()">Print / Save PDF</button>
       <button onclick="saveCustomer()">Save Customer Data</button>
     </div>
-  </div>
-
-  <div id="cart-modal" class="cart-modal hidden">
-    <h2>Your Cart</h2>
-    <div id="cart-items"></div>
-    <p>Total: €<span id="cart-total">0.00</span></p>
-    <button onclick="checkout()">Pay with PayPal</button>
   </div>
 
   <script src="script.js"></script>
