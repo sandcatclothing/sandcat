@@ -6,6 +6,7 @@
   <title>SANDCAT Admin</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* Estilos específicos del admin (ligeros, aprovecha style.css) */
     .admin-wrap{ padding:20px; }
     .admin-controls{
       display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;
@@ -28,11 +29,21 @@
     .admin-header{
       display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
     }
+    .admin-actions { display:flex; gap:10px; align-items:center; }
+    .admin-actions button { padding:8px 12px; }
+    .muted { opacity:.8; }
+    @media (max-width:720px){
+      .logo-center{ display:none; }
+    }
   </style>
 </head>
 <body>
+  <!-- (opcional) pantalla de hack animación si usas la intro global -->
+  <div id="hack-screen"><div id="hack-text"></div></div>
+
+  <!-- Barra superior consistente con el resto del sitio -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" onclick="window.location.href='index.html'" alt="logo" />
+    <img src="assets/logo2.png" class="logo-left" onclick="window.location.href='index.html'" alt="SANDCAT logo" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
       <div class="hamburger" onclick="logoutAdmin()" title="Logout admin">⎋</div>
@@ -43,14 +54,16 @@
     <div class="admin-header">
       <div>
         <div class="console-line" style="cursor:default;">&gt; admin/orders</div>
-        <div class="console-line" id="admin-info" style="cursor:default;">Loading…</div>
+        <div class="console-line muted" id="admin-info" style="cursor:default;">Loading…</div>
       </div>
-      <div>
+      <div class="admin-actions">
         <span class="pill">secured</span>
         <span class="pill" id="src-pill">source: …</span>
+        <button onclick="logoutAdmin()" title="Cerrar sesión admin">Logout</button>
       </div>
     </div>
 
+    <!-- Filtros -->
     <div class="admin-controls">
       <label>Method:
         <select id="filter-method" onchange="loadAdminOrders()">
@@ -72,6 +85,7 @@
       <button onclick="loadAdminOrders()">Refresh</button>
     </div>
 
+    <!-- Tabla de pedidos -->
     <div style="overflow:auto;">
       <table class="admin">
         <thead>
@@ -90,19 +104,26 @@
         </tbody>
       </table>
     </div>
+
+    <div class="console-line muted" style="margin-top:8px;">
+      Tip: si no has configurado Google Sheets aún, verás datos del modo <b>Local (this browser)</b>.
+    </div>
   </div>
 
   <script src="script.js"></script>
   <script>
     (async function boot(){
-      // Gate de sitio + admin. Si no has puesto hashes, entra directo.
+      // Pide contraseña de sitio y de admin (si has dejado los hashes por defecto: sitio "sandcat", admin "sandcat-admin")
       await ensureAdminAccess();
+
       // Mostrar fuente (local o GAS) en la pill
       const src = (window.GAS_ENDPOINT_URL && window.GAS_TOKEN) ? 'Google Sheet' : 'Local';
       document.getElementById('src-pill').textContent = 'source: ' + src;
-      // Cargar datos (si ya estaba autenticado no hace falta re-autenticar)
+
+      // Cargar pedidos
       loadAdminOrders();
     })();
   </script>
 </body>
 </html>
+
