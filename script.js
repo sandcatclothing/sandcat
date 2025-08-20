@@ -1,4 +1,9 @@
-/* ===== Navegación consola / comandos ===== */
+/* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
+/* Rellena estos dos valores con tu despliegue de Apps Script */
+/*const GAS_ENDPOINT_URL = 'PEGAR_AQUI_LA_WEB_APP_URL_DE_APPS_SCRIPT'; // p.ej. https://script.google.com/macros/s/.../exec*/
+/*const GAS_TOKEN = 'PON_AQUI_EL_MISMO_TOKEN_QUE_EN_APPS_SCRIPT'; */
+
+/* ===================== Navegación consola / comandos ===================== */
 function handleCommand(e) {
   if (e.key === "Enter") {
     const input = e.target.value.trim().toLowerCase();
@@ -13,39 +18,22 @@ function handleCommand(e) {
     e.target.value = "";
   }
 }
+function navigateTo(page) { window.location.href = `${page}.html`; }
+function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
+function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
 
-function navigateTo(page) {
-  window.location.href = `${page}.html`;
-}
-
-function toggleMenu() {
-  const menu = document.getElementById("console-menu");
-  menu?.classList.toggle("hidden");
-}
-
-/* Submenú (lo llama index.html) */
-function toggleSubmenu() {
-  const sub = document.querySelector(".submenu");
-  if (!sub) return;
-  sub.classList.toggle("hidden");
-}
-
-/* ===== Carrito ===== */
+/* ===================== Carrito ===================== */
 function toggleCart() {
   const cartModal = document.getElementById("cart-modal");
-  if (!cartModal) return; // páginas sin modal
+  if (!cartModal) return;
   cartModal.classList.toggle("hidden");
   renderCartModal();
 }
-
 function updateCartCount() {
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
   const count = cart.length;
-  const countEls = document.querySelectorAll('#cart-count, .cart-count');
-  countEls.forEach(el => el && (el.textContent = count));
+  document.querySelectorAll('#cart-count, .cart-count').forEach(el => el && (el.textContent = count));
 }
-
-/* addToCart compatible con (name, price) o (name, price, size) */
 function addToCart(product, price, size) {
   const finalSize = size || 'N/A';
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -53,7 +41,6 @@ function addToCart(product, price, size) {
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
 }
-
 function renderCartModal() {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
   const container = document.getElementById("cart-items");
@@ -75,11 +62,10 @@ function renderCartModal() {
   else totalEl.innerText = `Total: €${(Math.round(total*100)/100).toFixed(2)}`;
 }
 
-/* Pago simulado */
+/* ===================== Pago simulado (legacy) ===================== */
 function simulatePaypal() {
   alert("Redirecting to PayPal...");
   localStorage.removeItem('cart');
-
   const items = document.getElementById('cart-items');
   const total = document.getElementById('cart-total');
   if (items) items.innerHTML = "";
@@ -89,7 +75,6 @@ function simulatePaypal() {
   }
   updateCartCount();
 }
-
 function checkout() {
   simulatePaypal();
   const cartModal = document.getElementById("cart-modal");
@@ -98,7 +83,7 @@ function checkout() {
   }
 }
 
-/* ===== Factura (last_order) ===== */
+/* ===================== Factura (last_order) ===================== */
 function generateOrderId() {
   const d = new Date();
   const y = d.getFullYear();
@@ -110,14 +95,78 @@ function generateOrderId() {
 function calcTotal(items=[]) {
   return (items.reduce((s, it) => s + (Number(it.price)||0), 0)).toFixed(2);
 }
-function persistOrderFromCart() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+/* ===================== Histórico local + export ===================== */
+function appendOrderHistory(order) {
+  const key = 'orders';
+  const list = JSON.parse(localStorage.getItem(key) || '[]');
+  list.push(order);
+  localStorage.setItem(key, JSON.stringify(list));
+}
+function download(filename, text) {
+  const a = document.createElement('a');
+  a.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  a.setAttribute('download', filename);
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+function downloadOrdersJSON(){
+  const list = JSON.parse(localStorage.getItem('orders') || '[]');
+  download('orders.json', JSON.stringify(list, null, 2));
+}
+function downloadOrdersCSV(){
+  const list = JSON.parse(localStorage.getItem('orders') || '[]');
+  const headers = ['orderId','createdAt','method','status','name','email','address','zip','total','currency','items'];
+  const rows = list.map(o => [
+    o.orderId, o.createdAt, o.method, o.status,
+    o.customer?.name||'', o.customer?.email||'', o.customer?.address||'', o.customer?.zip||'',
+    o.total, o.currency || 'EUR',
+    (o.items||[]).map(i=>`${i.name} (size:${i.size}) €${i.price}`).join(' | ')
+  ]);
+  const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
+  download('orders.csv', csv);
+}
+
+/* ===================== Envío a Google Sheets (Apps Script) ===================== */
+async function sendOrderToSheet(order) {
+  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, skipped:true, reason:'No GAS config' };
+  try {
+    const res = await fetch(GAS_ENDPOINT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: GAS_TOKEN, order })
+    });
+    return { ok: res.ok, status: res.status };
+  } catch (err) {
+    console.warn('sendOrderToSheet error:', err);
+    return { ok:false, error:String(err) };
+  }
+}
+
+/* ===================== Checkout con validación + persistencia + remoto ===================== */
+function validateCheckoutData({name, email, address, zip, method}) {
+  const errors = [];
+  if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
+  if (method === 'paypal') {
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.');
+  }
+  if (!address || address.trim().length < 10) errors.push('Address looks too short.');
+  if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
+  if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
+  return errors;
+}
+function buildOrder({name, email, address, zip, method}) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   if (!cart.length) return null;
 
   const order = {
     orderId: generateOrderId(),
     createdAt: new Date().toISOString(),
     currency: 'EUR',
+    method, // 'paypal' | 'cod'
+    status: method === 'paypal' ? 'PAID' : 'COD_PENDING',
     items: cart.map(it => ({
       name: it.product || it.name || 'Product',
       size: it.size || 'N/A',
@@ -125,26 +174,65 @@ function persistOrderFromCart() {
     })),
     total: calcTotal(cart),
     customer: {
-      name: '',
-      email: '',
-      address: '',
-      vatid: ''
+      name: name.trim(),
+      email: (email || '').trim(),
+      address: address.trim(),
+      zip: zip.trim(),
+      vatid: '' // editable luego en invoice.html
     }
   };
+
   localStorage.setItem('last_order', JSON.stringify(order));
+  appendOrderHistory(order);
   return order;
 }
-function checkoutAndThanks(){
-  persistOrderFromCart();
-  simulatePaypal();
-  const cartModal = document.getElementById("cart-modal");
+async function placeOrder(){
+  const name = (document.getElementById('chk-name')?.value || '').trim();
+  const email = (document.getElementById('chk-email')?.value || '').trim();
+  const address = (document.getElementById('chk-address')?.value || '').trim();
+  const zip = (document.getElementById('chk-zip')?.value || '').trim();
+  const method = (document.getElementById('chk-method')?.value || 'paypal');
+
+  const errs = validateCheckoutData({name, email, address, zip, method});
+  if (errs.length){
+    alert('Please fix:\n- ' + errs.join('\n- '));
+    return;
+  }
+
+  const order = buildOrder({name, email, address, zip, method});
+  if (!order){
+    alert('Your cart is empty.');
+    return;
+  }
+
+  const remote = await sendOrderToSheet(order);
+  if (!remote.ok && !remote.skipped) {
+    console.warn('Order not saved remotely:', remote);
+  }
+
+  localStorage.removeItem('cart');
+  updateCartCount();
+  const items = document.getElementById('cart-items');
+  const total = document.getElementById('cart-total');
+  if (items) items.innerHTML = '';
+  if (total) {
+    if (total.tagName === 'SPAN') total.textContent = "0.00";
+    else total.innerText = "Total: €0.00";
+  }
+  const cartModal = document.getElementById('cart-modal');
   if (cartModal && !cartModal.classList.contains('hidden')) {
     cartModal.classList.add('hidden');
   }
-  setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
+
+  if (method === 'paypal'){
+    alert(`Payment confirmed via PayPal. Order: ${order.orderId}`);
+  } else {
+    alert(`Order confirmed as Cash on Delivery. Order: ${order.orderId}`);
+  }
+  setTimeout(()=> { window.location.href = 'thanks.html'; }, 500);
 }
 
-/* ===== Preview opcional ===== */
+/* ===================== Preview opcional ===================== */
 function previewImage(src) {
   const modal = document.getElementById("preview-modal");
   const img = document.getElementById("preview-img");
@@ -152,11 +240,9 @@ function previewImage(src) {
   modal.classList.remove("hidden");
   img.src = src;
 }
-function closePreview() {
-  document.getElementById("preview-modal")?.classList.add("hidden");
-}
+function closePreview() { document.getElementById("preview-modal")?.classList.add("hidden"); }
 
-/* ===== Hack intro ===== */
+/* ===================== Hack intro ===================== */
 function startHackAnimation() {
   const hackScreen = document.getElementById("hack-screen");
   const hackText = document.getElementById("hack-text");
@@ -164,19 +250,17 @@ function startHackAnimation() {
     hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
     setTimeout(() => {
       hackScreen.style.opacity = "0";
-      setTimeout(() => {
-        hackScreen.style.display = "none";
-      }, 300);
+      setTimeout(() => { hackScreen.style.display = "none"; }, 300);
     }, 700);
   }
 }
 
-/* ===== Init ===== */
+/* ===================== Init ===================== */
 window.onload = () => {
   updateCartCount();
   startHackAnimation();
 
-  // Si estamos en cart.html, rellenar totales y líneas
+  // Si estamos en cart.html, pintar líneas/total
   const cartItemsContainer = document.getElementById("cart-items");
   const cartTotalEl = document.getElementById("cart-total");
 
@@ -197,3 +281,4 @@ window.onload = () => {
     else cartTotalEl.innerText = `Total: €${(Math.round(total*100)/100).toFixed(2)}`;
   }
 };
+
