@@ -14,7 +14,7 @@
     <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/cart-icon.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
+      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
     </div>
@@ -37,17 +37,9 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
-  <div id="cart-modal" class="cart-modal hidden">
-    <h2>Your Cart</h2>
-    <div id="cart-items"></div>
-    <p>Total: €<span id="cart-total">0.00</span></p>
-    <button onclick="checkout()">Pay with PayPal</button>
-  </div>
-
   <script src="script.js"></script>
   <script>
     updateCartCount();
-    renderCartModal();
   </script>
 </body>
 </html>
