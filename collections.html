@@ -32,7 +32,7 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
-  <!-- Cart modal (con checkout) -->
+  <!-- Cart modal (sin export) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
@@ -55,8 +55,6 @@
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button onclick="placeOrder()">Confirm Order</button>
       <button onclick="toggleCart()">Close</button>
-      <button onclick="downloadOrdersJSON()">Export JSON</button>
-      <button onclick="downloadOrdersCSV()">Export CSV</button>
     </div>
   </div>
 
@@ -64,39 +62,43 @@
   <script>
     updateCartCount();
 
+    // 👉 CORE DROP muestra los 2 productos de Shop
     function showCoreDrop() {
       const container = document.getElementById("collection-output");
       container.innerHTML = `
         <div class="console-line">-- CORE DROP --</div>
-        <div class="product">
-          <img src="assets/core_hoodie.png" class="product-thumb" alt="SANDCAT BLACK HOODIE" />
-          <div>- SANDCAT BLACK HOODIE - €45</div>
-          <select class="size-select">
-            <option value="">Size</option>
-            <option>S</option><option>M</option><option>L</option><option>XL</option>
-          </select>
-          <button onclick="
-            const size = this.previousElementSibling.value;
-            if(!size){alert('Please select a size'); return;}
-            addToCart('SANDCAT BLACK HOODIE', 45, size);
-            renderCartModal();
-            toggleCart();
-          ">Add to cart</button>
-        </div>
-        <div class="product">
-          <img src="assets/core_tee.png" class="product-thumb" alt="SANDCAT CORE TEE" />
-          <div>- SANDCAT CORE TEE - €25</div>
-          <select class="size-select">
-            <option value="">Size</option>
-            <option>S</option><option>M</option><option>L</option><option>XL</option>
-          </select>
-          <button onclick="
-            const size = this.previousElementSibling.value;
-            if(!size){alert('Please select a size'); return;}
-            addToCart('SANDCAT CORE TEE', 25, size);
-            renderCartModal();
-            toggleCart();
-          ">Add to cart</button>
+        <div class="shop-grid">
+          <div class="product">
+            <img src="assets/core_tee.png" class="product-thumb" alt="SANDCAT TEE" />
+            <div>- SANDCAT TEE - €25</div>
+            <select class="size-select">
+              <option value="">Size</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button onclick="
+              const size = this.previousElementSibling.value;
+              if(!size){alert('Please select a size'); return;}
+              addToCart('SANDCAT TEE', 25, size);
+              renderCartModal();
+              toggleCart();
+            ">Add to cart</button>
+          </div>
+
+          <div class="product">
+            <img src="assets/core_hoodie.png" class="product-thumb" alt="SANDCAT BLACK HOODIE" />
+            <div>- SANDCAT HOODIE - €50</div>
+            <select class="size-select">
+              <option value="">Size</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button onclick="
+              const size = this.previousElementSibling.value;
+              if(!size){alert('Please select a size'); return;}
+              addToCart('SANDCAT HOODIE', 50, size);
+              renderCartModal();
+              toggleCart();
+            ">Add to cart</button>
+          </div>
         </div>
       `;
     }
@@ -108,7 +110,9 @@
         <div class="console-line">This drop is private. You have unlocked access.</div>
       `;
     }
+
+    // Carga por defecto el Core Drop al entrar en la página
+    showCoreDrop();
   </script>
 </body>
 </html>
-
