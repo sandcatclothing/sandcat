@@ -1,284 +1,224 @@
-/* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
-/* Rellena estos dos valores con tu despliegue de Apps Script */
-/*const GAS_ENDPOINT_URL = 'PEGAR_AQUI_LA_WEB_APP_URL_DE_APPS_SCRIPT'; // p.ej. https://script.google.com/macros/s/.../exec*/
-/*const GAS_TOKEN = 'PON_AQUI_EL_MISMO_TOKEN_QUE_EN_APPS_SCRIPT';*/
-
-/* ===================== Navegación consola / comandos ===================== */
-function handleCommand(e) {
-  if (e.key === "Enter") {
-    const input = e.target.value.trim().toLowerCase();
-    if (input === "paraloschavales") {
-      document.querySelector(".secret-tag")?.classList.remove("hidden");
-    } else if (
-      input === "about" || input === "contact" ||
-      input === "collections" || input === "shop" || input === "cart"
-    ) {
-      navigateTo(input);
-    }
-    e.target.value = "";
-  }
-}
-function navigateTo(page) { window.location.href = `${page}.html`; }
-function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
-function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
-
-/* ===================== Carrito ===================== */
-function toggleCart() {
-  const cartModal = document.getElementById("cart-modal");
-  if (!cartModal) return;
-  cartModal.classList.toggle("hidden");
-  renderCartModal();
-}
-function updateCartCount() {
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const count = cart.length;
-  document.querySelectorAll('#cart-count, .cart-count').forEach(el => el && (el.textContent = count));
-}
-function addToCart(product, price, size) {
-  const finalSize = size || 'N/A';
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  cart.push({ product, price, size: finalSize });
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartCount();
-}
-function renderCartModal() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const container = document.getElementById("cart-items");
-  const totalEl = document.getElementById("cart-total");
-  if (!container || !totalEl) return;
-
-  container.innerHTML = "";
-  let total = 0;
-
-  cart.forEach(item => {
-    const div = document.createElement("div");
-    const priceStr = typeof item.price === 'number' ? item.price.toFixed(2) : item.price;
-    div.innerText = `- ${item.product} (${item.size || 'N/A'}): €${priceStr}`;
-    container.appendChild(div);
-    total += Number(item.price) || 0;
-  });
-
-  if (totalEl.tagName === 'SPAN') totalEl.textContent = (Math.round(total*100)/100).toFixed(2);
-  else totalEl.innerText = `Total: €${(Math.round(total*100)/100).toFixed(2)}`;
+/* ===== BASE CLÁSICA (tuya, preservada) ===== */
+stlye_body {
+  margin: 0;
+  background: black;
+  color: white;
+  font-family: 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-/* ===================== Pago simulado (legacy) ===================== */
-function simulatePaypal() {
-  alert("Redirecting to PayPal...");
-  localStorage.removeItem('cart');
-  const items = document.getElementById('cart-items');
-  const total = document.getElementById('cart-total');
-  if (items) items.innerHTML = "";
-  if (total) {
-    if (total.tagName === 'SPAN') total.textContent = "0.00";
-    else total.innerText = "Total: €0.00";
-  }
-  updateCartCount();
-}
-function checkout() {
-  simulatePaypal();
-  const cartModal = document.getElementById("cart-modal");
-  if (cartModal && !cartModal.classList.contains('hidden')) {
-    cartModal.classList.add('hidden');
-  }
+/* ===== APLICAR AL <body> Y VERDE CONSOLA ===== */
+body{
+  margin: 0;
+  background: #000;
+  color: #00ff66; /* verde consola */
+  font-family: 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* ===================== Factura (last_order) ===================== */
-function generateOrderId() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `SC-${y}${m}${day}-${rand}`;
-}
-function calcTotal(items=[]) {
-  return (items.reduce((s, it) => s + (Number(it.price)||0), 0)).toFixed(2);
-}
-
-/* ===================== Histórico local + export ===================== */
-function appendOrderHistory(order) {
-  const key = 'orders';
-  const list = JSON.parse(localStorage.getItem(key) || '[]');
-  list.push(order);
-  localStorage.setItem(key, JSON.stringify(list));
-}
-function download(filename, text) {
-  const a = document.createElement('a');
-  a.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  a.setAttribute('download', filename);
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-function downloadOrdersJSON(){
-  const list = JSON.parse(localStorage.getItem('orders') || '[]');
-  download('orders.json', JSON.stringify(list, null, 2));
-}
-function downloadOrdersCSV(){
-  const list = JSON.parse(localStorage.getItem('orders') || '[]');
-  const headers = ['orderId','createdAt','method','status','name','email','address','zip','total','currency','items'];
-  const rows = list.map(o => [
-    o.orderId, o.createdAt, o.method, o.status,
-    o.customer?.name||'', o.customer?.email||'', o.customer?.address||'', o.customer?.zip||'',
-    o.total, o.currency || 'EUR',
-    (o.items||[]).map(i=>`${i.name} (size:${i.size}) €${i.price}`).join(' | ')
-  ]);
-  const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
-  download('orders.csv', csv);
+/* ===== Header ===== */
+.white-bar {
+  background: white;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #eee;
 }
 
-/* ===================== Envío a Google Sheets (Apps Script) ===================== */
-async function sendOrderToSheet(order) {
-  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, skipped:true, reason:'No GAS config' };
-  try {
-    const res = await fetch(GAS_ENDPOINT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: GAS_TOKEN, order })
-    });
-    return { ok: res.ok, status: res.status };
-  } catch (err) {
-    console.warn('sendOrderToSheet error:', err);
-    return { ok:false, error:String(err) };
-  }
+.logo-left { height: 90px; }
+
+.logo-center {
+  height: 160px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/* ===================== Checkout con validación + persistencia + remoto ===================== */
-function validateCheckoutData({name, email, address, zip, method}) {
-  const errors = [];
-  if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
-  if (method === 'paypal') {
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.');
-  }
-  if (!address || address.trim().length < 10) errors.push('Address looks too short.');
-  if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
-  if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
-  return errors;
-}
-function buildOrder({name, email, address, zip, method}) {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  if (!cart.length) return null;
-
-  const order = {
-    orderId: generateOrderId(),
-    createdAt: new Date().toISOString(),
-    currency: 'EUR',
-    method, // 'paypal' | 'cod'
-    status: method === 'paypal' ? 'PAID' : 'COD_PENDING',
-    items: cart.map(it => ({
-      name: it.product || it.name || 'Product',
-      size: it.size || 'N/A',
-      price: Number(it.price) || 0
-    })),
-    total: calcTotal(cart),
-    customer: {
-      name: name.trim(),
-      email: (email || '').trim(),
-      address: address.trim(),
-      zip: zip.trim(),
-      vatid: '' // editable luego en invoice.html
-    }
-  };
-
-  localStorage.setItem('last_order', JSON.stringify(order));
-  appendOrderHistory(order);
-  return order;
-}
-async function placeOrder(){
-  const name = (document.getElementById('chk-name')?.value || '').trim();
-  const email = (document.getElementById('chk-email')?.value || '').trim();
-  const address = (document.getElementById('chk-address')?.value || '').trim();
-  const zip = (document.getElementById('chk-zip')?.value || '').trim();
-  const method = (document.getElementById('chk-method')?.value || 'paypal');
-
-  const errs = validateCheckoutData({name, email, address, zip, method});
-  if (errs.length){
-    alert('Please fix:\n- ' + errs.join('\n- '));
-    return;
-  }
-
-  const order = buildOrder({name, email, address, zip, method});
-  if (!order){
-    alert('Your cart is empty.');
-    return;
-  }
-
-  const remote = await sendOrderToSheet(order);
-  if (!remote.ok && !remote.skipped) {
-    console.warn('Order not saved remotely:', remote);
-  }
-
-  localStorage.removeItem('cart');
-  updateCartCount();
-  const items = document.getElementById('cart-items');
-  const total = document.getElementById('cart-total');
-  if (items) items.innerHTML = '';
-  if (total) {
-    if (total.tagName === 'SPAN') total.textContent = "0.00";
-    else total.innerText = "Total: €0.00";
-  }
-  const cartModal = document.getElementById('cart-modal');
-  if (cartModal && !cartModal.classList.contains('hidden')) {
-    cartModal.classList.add('hidden');
-  }
-
-  if (method === 'paypal'){
-    alert(`Payment confirmed via PayPal. Order: ${order.orderId}`);
-  } else {
-    alert(`Order confirmed as Cash on Delivery. Order: ${order.orderId}`);
-  }
-  setTimeout(()=> { window.location.href = 'thanks.html'; }, 500);
+.hamburger {
+  color: black;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 2;
 }
 
-/* ===================== Preview opcional ===================== */
-function previewImage(src) {
-  const modal = document.getElementById("preview-modal");
-  const img = document.getElementById("preview-img");
-  if (!modal || !img) return;
-  modal.classList.remove("hidden");
-  img.src = src;
-}
-function closePreview() { document.getElementById("preview-modal")?.classList.add("hidden"); }
-
-/* ===================== Hack intro ===================== */
-function startHackAnimation() {
-  const hackScreen = document.getElementById("hack-screen");
-  const hackText = document.getElementById("hack-text");
-  if (hackScreen && hackText) {
-    hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
-    setTimeout(() => {
-      hackScreen.style.opacity = "0";
-      setTimeout(() => { hackScreen.style.display = "none"; }, 300);
-    }, 700);
-  }
+/* ===== Consola ===== */
+#console-menu {
+  background: black;
+  color: #00ff66;
+  padding: 20px;
+  font-size: 1.2rem;
+  flex-grow: 1;
+  animation: fadeIn .45s ease both;
 }
 
-/* ===================== Init ===================== */
-window.onload = () => {
-  updateCartCount();
-  startHackAnimation();
+.console-line {
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: transform .1s ease, text-shadow .2s ease, color .2s ease;
+}
+.console-line:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 0 8px rgba(0,255,102,.6), 0 0 18px rgba(0,255,102,.35);
+  color: #6aff9e;
+}
 
-  // Si estamos en cart.html, pintar líneas/total
-  const cartItemsContainer = document.getElementById("cart-items");
-  const cartTotalEl = document.getElementById("cart-total");
+.console-input { display: flex; align-items: center; margin-top: 20px; }
+.console-input input{
+  background: black;
+  color: #00ff66;
+  border: none;
+  outline: none;
+  font-family: monospace;
+  font-size: 1rem;
+  padding-left: 5px;
+  width: 300px;
+  text-shadow: 0 0 6px rgba(0,255,102,.4);
+}
 
-  if (cartItemsContainer && cartTotalEl) {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let total = 0;
+.submenu { margin-left: 20px; }
 
-    cartItemsContainer.innerHTML = '';
-    cart.forEach(item => {
-      const div = document.createElement("div");
-      const priceStr = typeof item.price === 'number' ? item.price.toFixed(2) : item.price;
-      div.innerText = `- ${item.product} (${item.size || 'N/A'}): €${priceStr}`;
-      cartItemsContainer.appendChild(div);
-      total += Number(item.price) || 0;
-    });
+/* ===== Newsletter ===== */
+.newsletter {
+  background: black;
+  color: #00ff66;
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px dashed #0f4;
+}
+.sticky-newsletter { position: sticky; bottom: 0; z-index: 5; }
+.newsletter input{
+  padding: 10px; font-size: 1rem; margin-top: 10px; width: 300px; max-width: 90%;
+  background: #000; color: #00ff66; border: 1px solid #0f4;
+  box-shadow: 0 0 12px rgba(0,255,102,.15) inset;
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.newsletter input:focus{ border-color:#6aff9e; box-shadow:0 0 12px rgba(0,255,102,.35) inset; }
 
-    if (cartTotalEl.tagName === 'SPAN') cartTotalEl.textContent = (Math.round(total*100)/100).toFixed(2);
-    else cartTotalEl.innerText = `Total: €${(Math.round(total*100)/100).toFixed(2)}`;
-  }
-};
+.hidden { display: none; }
 
+/* ===== Tienda ===== */
+.shop-grid {
+  display: flex; gap: 30px; flex-wrap: wrap; padding: 20px; justify-content: center;
+}
+.product{
+  border: 1px solid #0f4; padding: 20px; width: 220px; text-align:center; background:#000;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  border-radius: 8px;
+}
+.product:hover{ transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,255,102,.08); border-color:#36ff99; }
+.product img{
+  display:block; width:100%; max-width:100%; height:auto; max-height:220px; object-fit:contain;
+  filter: drop-shadow(0 0 6px rgba(0,255,102,.12));
+}
+.product button{
+  margin-top: 10px; background:#00ff66; color:#001a0c; border:none; padding:8px 15px; cursor:pointer;
+  font-family: monospace; transition: background .2s ease, transform .06s ease; border-radius:6px;
+}
+.product button:hover{ background:#6aff9e; transform: translateY(-1px); }
+
+select{
+  margin-top: 10px; padding: 5px; font-family: monospace; background:#000; color:#00ff66;
+  border: 1px solid #0f4; border-radius: 6px;
+}
+
+/* ===== Top icons ===== */
+.top-icons { display:flex; gap:15px; align-items:center; }
+.cart-icon{ cursor:pointer; font-size:20px; position:relative; display:flex; align-items:center; }
+
+/* Fix iconos y productos (bag.png + iconos) */
+.menu-icons #cart-icon, .top-icons img.cart-icon, .cart-icon img {
+  height: 26px; width: auto; max-width: 100%; object-fit: contain; image-rendering: auto;
+}
+img.cart-icon { height: 26px; width: auto; max-width: 100%; object-fit: contain; }
+
+#cart-count, .cart-count{
+  font-weight: bold; margin-left: 5px; background:#00ff66; color:#001a0c;
+  padding: 2px 6px; border-radius: 50%; font-size: 0.8rem; box-shadow: 0 0 10px rgba(0,255,102,.35);
+}
+
+/* ===== Preview modal (opcional) ===== */
+#preview-modal{
+  position: fixed; inset: 0; background: rgba(0,0,0,.9);
+  display:flex; justify-content:center; align-items:center; z-index:10000; flex-direction:column;
+}
+#preview-modal img{ max-width:80%; max-height:80%; box-shadow: 0 0 15px #0f4; }
+#preview-modal span{
+  color:#00ff66; font-size:2rem; cursor:pointer; position:absolute; top:20px; right:40px;
+}
+
+/* ===== Carrito: lista compacta ===== */
+#cart-items{ max-height: 300px; overflow-y: auto; margin-bottom: 10px; }
+#cart-items div{ padding: 5px 0; border-bottom: 1px solid #044d2a; }
+
+/* ===== Botones globales ===== */
+button{
+  background:#00ff66; color:#001a0c; border:none; padding:10px 20px; cursor:pointer;
+  font-family: monospace; border-radius: 8px;
+  transition: transform .06s ease, background .2s ease, box-shadow .2s ease;
+}
+button:hover{ background:#6aff9e; transform: translateY(-1px); box-shadow:0 6px 16px rgba(0,255,102,.18); }
+
+/* ===== Hack/Glitch intro ===== */
+#hack-screen{
+  position: fixed; inset: 0; background: #000; color: #00ff00;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace; font-size: 2rem; z-index: 99999;
+  transition: opacity 0.3s ease-out;
+}
+.glitch-text{
+  position: relative; color: #aaffcc; animation: glitch .6s infinite, pulseGlow 2.2s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(0,255,102,.6);
+}
+@keyframes glitch{
+  0%{transform:translate(0);} 20%{transform:translate(-2px,2px);} 40%{transform:translate(2px,-1px);}
+  60%{transform:translate(-1px,1px);} 80%{transform:translate(1px,-2px);} 100%{transform:translate(0);}
+}
+@keyframes pulseGlow{
+  0%,100%{ text-shadow:0 0 6px rgba(0,255,102,.45), 0 0 14px rgba(0,255,102,.25);}
+  50%{ text-shadow:0 0 14px rgba(0,255,102,.8), 0 0 26px rgba(0,255,102,.35);}
+}
+.glitch-text::before, .glitch-text::after{
+  content: attr(class); position: absolute; left: 0; width: 100%; overflow: hidden; color: #0ff;
+  clip: rect(0, 900px, 0, 0); animation: glitch-clip 0.4s infinite;
+}
+.glitch-text::before{ top: -2px; left: 2px; color: red; }
+.glitch-text::after{ top:  2px; left:-2px; color: #0ff; }
+@keyframes glitch-clip{
+  0%{clip:rect(0,9999px,0,0);} 50%{clip:rect(0,9999px,100%,0);} 100%{clip:rect(0,9999px,0,0);}
+}
+
+/* ===== Modal carrito reutilizable ===== */
+.cart-modal{
+  position: fixed; inset: 0; background: rgba(0,0,0,.8);
+  display: flex; flex-direction: column; gap: 12px; padding: 20px; z-index: 10000; backdrop-filter: blur(2px);
+}
+.cart-modal.hidden{ display: none; }
+
+/* Consola en cart.html */
+.cart-items-console{ margin: 10px 0; }
+
+/* Inputs del checkout en el modal */
+#cart-modal input, #cart-modal select{
+  width: 100%; background: #000; color:#00ff66; border: 1px solid #0f4;
+  padding: 8px; font-family: 'Courier New', monospace; border-radius: 6px;
+}
+#cart-modal input:focus, #cart-modal select:focus{
+  outline: none; border-color: #6aff9e; box-shadow: 0 0 12px rgba(0,255,102,.35) inset;
+}
+
+/* Anti-overlap newsletter */
+#console-menu{ padding-bottom: 90px; }
+
+/* ===== Animación entrada ===== */
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
