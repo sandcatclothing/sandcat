@@ -11,7 +11,7 @@
     <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/cart-icon.png" class="cart-icon" onclick="window.location.href='cart.html'" alt="Cart" />
+      <img src="assets/bag.png" class="cart-icon" onclick="window.location.href='cart.html'" alt="Cart" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
     </div>
@@ -20,10 +20,8 @@
   <div id="console-menu">
     <div class="console-line">&gt; cart</div>
     <div id="cart-items" class="cart-items-console"></div>
-    <div class="console-line">
-      Total: €<span id="cart-total">0.00</span>
-    </div>
-    <button class="console-button" onclick="checkoutAndThanks()">Pay with PayPal</button>
+    <div class="console-line">Total: €<span id="cart-total">0.00</span></div>
+    <button class="console-button" onclick="toggleCart()">Open Modal Checkout</button>
   </div>
 
   <div class="newsletter sticky-newsletter">
@@ -31,7 +29,34 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
+  <!-- Modal checkout para este flujo también -->
+  <div id="cart-modal" class="cart-modal hidden">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <p>Total: €<span id="cart-total">0.00</span></p>
+
+    <div class="console-line" style="cursor:default">
+      <div><strong>Checkout</strong></div>
+      <div style="margin-top:8px; display:grid; gap:8px;">
+        <input id="chk-name" placeholder="Full name" />
+        <input id="chk-email" placeholder="Email (required for PayPal)" />
+        <input id="chk-address" placeholder="Address (street, number, city)" />
+        <input id="chk-zip" placeholder="Postal code (5 digits)" />
+        <select id="chk-method">
+          <option value="paypal">PayPal</option>
+          <option value="cod">Contrareembolso</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="placeOrder()">Confirm Order</button>
+      <button onclick="toggleCart()">Close</button>
+      <button onclick="downloadOrdersJSON()">Export JSON</button>
+      <button onclick="downloadOrdersCSV()">Export CSV</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
-
