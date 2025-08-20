@@ -11,7 +11,7 @@
     <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/bag.png" class="cart-icon" onclick="window.location.href='cart.html'" alt="Cart" />
+      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
     </div>
@@ -21,7 +21,8 @@
     <div class="console-line">&gt; cart</div>
     <div id="cart-items" class="cart-items-console"></div>
     <div class="console-line">Total: €<span id="cart-total">0.00</span></div>
-    <button class="console-button" onclick="toggleCart()">Open Modal Checkout</button>
+    <!-- Botón único para abrir checkout -->
+    <button class="console-button" onclick="toggleCart()">Open Checkout</button>
   </div>
 
   <div class="newsletter sticky-newsletter">
@@ -29,7 +30,7 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
-  <!-- Modal checkout para este flujo también -->
+  <!-- Modal checkout (sin export) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
@@ -52,8 +53,6 @@
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button onclick="placeOrder()">Confirm Order</button>
       <button onclick="toggleCart()">Close</button>
-      <button onclick="downloadOrdersJSON()">Export JSON</button>
-      <button onclick="downloadOrdersCSV()">Export CSV</button>
     </div>
   </div>
 
