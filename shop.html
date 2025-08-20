@@ -19,7 +19,7 @@
 
   <div id="console-menu" class="shop-grid">
     <div class="product">
-      <img src="assets/shirt1.png" alt="SANDCAT TEE" />
+      <img src="assets/core_tee.png" alt="SANDCAT TEE" />
       <p>SANDCAT TEE</p>
       <select>
         <option value="">Size</option>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="product">
-      <img src="assets/hoodie1.png" alt="SANDCAT HOODIE" />
+      <img src="assets/core_hoodie.png" alt="SANDCAT HOODIE" />
       <p>SANDCAT HOODIE</p>
       <select>
         <option value="">Size</option>
@@ -51,12 +51,32 @@
     </div>
   </div>
 
-  <!-- Cart modal -->
+  <!-- Cart modal (con checkout) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
     <p>Total: €<span id="cart-total">0.00</span></p>
-    <button onclick="checkoutAndThanks()">Pay with PayPal</button>
+
+    <div class="console-line" style="cursor:default">
+      <div><strong>Checkout</strong></div>
+      <div style="margin-top:8px; display:grid; gap:8px;">
+        <input id="chk-name" placeholder="Full name" />
+        <input id="chk-email" placeholder="Email (required for PayPal)" />
+        <input id="chk-address" placeholder="Address (street, number, city)" />
+        <input id="chk-zip" placeholder="Postal code (5 digits)" />
+        <select id="chk-method">
+          <option value="paypal">PayPal</option>
+          <option value="cod">Contrareembolso</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="placeOrder()">Confirm Order</button>
+      <button onclick="toggleCart()">Close</button>
+      <button onclick="downloadOrdersJSON()">Export JSON</button>
+      <button onclick="downloadOrdersCSV()">Export CSV</button>
+    </div>
   </div>
 
   <div class="newsletter sticky-newsletter">
