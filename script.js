@@ -1,7 +1,95 @@
 /* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
-/* Rellena estos dos valores con tu despliegue de Apps Script */
-/*const GAS_ENDPOINT_URL = 'PEGAR_AQUI_LA_WEB_APP_URL_DE_APPS_SCRIPT'; // p.ej. https://script.google.com/macros/s/.../exec*/
-/*const GAS_TOKEN = 'PON_AQUI_EL_MISMO_TOKEN_QUE_EN_APPS_SCRIPT'; */
+/* Puedes dejarlos vacíos y usar solo el modo local (fallback) */
+const GAS_ENDPOINT_URL = ''; // p.ej. https://script.google.com/macros/s/.../exec
+const GAS_TOKEN = '';        // Debe coincidir con TOKEN en Apps Script
+
+/* ===================== PASSWORD GATES (SHA-256) ===================== */
+/* IMPORTANTE: pon tus hashes cuando quieras proteger. Mientras, puedes dejarlos vacíos ("") para que no pida clave. */
+const SITE_PASS_HASH  = ''; // hash SHA-256 de tu contraseña de sitio (o "" para desactivar gate)
+const ADMIN_PASS_HASH = ''; // hash SHA-256 de tu contraseña de admin (o "" para desactivar gate)
+
+const AUTH_SITE_KEY  = 'site_auth';
+const AUTH_ADMIN_KEY = 'admin_auth';
+
+async function sha256Hex(text) {
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* Utilidad para generar hashes desde el navegador: ejecuta genHashFromPrompt() en consola */
+async function genHashFromPrompt() {
+  const pwd = prompt('Introduce contraseña a hashear (no se guarda):');
+  if (!pwd) return;
+  const h = await sha256Hex(pwd);
+  console.log('SHA-256:', h);
+  alert('Hash generado. Copia el valor desde la consola y pégalo en script.js');
+}
+
+function isSiteAuthed()  { return localStorage.getItem(AUTH_SITE_KEY)  === '1' || !SITE_PASS_HASH; }
+function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' || !ADMIN_PASS_HASH; }
+function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
+function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
+
+/* Overlay de login con “mostrar contraseña” */
+function mountAuthOverlay({ title, onSubmit }) {
+  const overlay = document.createElement('div');
+  overlay.id = 'auth-overlay';
+  overlay.style.cssText = `
+    position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:999999;
+    display:flex; align-items:center; justify-content:center; font-family:'Courier New',monospace; color:#00ff66;
+  `;
+  overlay.innerHTML = `
+    <div style="border:1px solid #0f4; padding:20px; width:min(92vw,420px); background:#000; box-shadow:0 12px 36px rgba(0,255,102,.12); border-radius:8px;">
+      <div style="font-size:1.2rem; margin-bottom:10px;">${title}</div>
+      <input id="auth-pass" type="password" placeholder="Password" style="width:100%; background:#000; color:#00ff66; border:1px solid #0f4; padding:10px; border-radius:6px;">
+      <label style="display:flex; align-items:center; gap:8px; margin:8px 0;">
+        <input id="auth-show" type="checkbox" />
+        <span>Show password</span>
+      </label>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button id="auth-submit" style="background:#00ff66; color:#001a0c; border:none; padding:10px 14px; border-radius:6px; cursor:pointer;">Unlock</button>
+        <button id="auth-cancel" style="background:transparent; border:1px solid #0f4; color:#6aff9e; padding:10px 14px; border-radius:6px; cursor:pointer;">Cancel</button>
+      </div>
+      <div id="auth-msg" style="margin-top:10px; min-height:20px; color:#ff6b6b;"></div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const passInput = overlay.querySelector('#auth-pass');
+  overlay.querySelector('#auth-show').onchange = (e)=> { passInput.type = e.target.checked ? 'text':'password'; };
+  overlay.querySelector('#auth-cancel').onclick = () => { history.back(); };
+  overlay.querySelector('#auth-submit').onclick = async () => {
+    const pass = passInput.value || '';
+    try { await onSubmit(pass, overlay); } catch(err){ console.warn(err); }
+  };
+}
+
+/* Gate de sitio (opcional si SITE_PASS_HASH="") */
+async function ensureSiteAccess() {
+  if (isSiteAuthed()) return;
+  mountAuthOverlay({
+    title: 'SANDCAT – Access required',
+    onSubmit: async (pass, overlay) => {
+      const hex = await sha256Hex(pass);
+      if (hex === SITE_PASS_HASH) { localStorage.setItem(AUTH_SITE_KEY, '1'); overlay.remove(); }
+      else overlay.querySelector('#auth-msg').textContent = 'Invalid password';
+    }
+  });
+}
+
+/* Gate de admin (opcional si ADMIN_PASS_HASH="") */
+async function ensureAdminAccess() {
+  await ensureSiteAccess();
+  if (isAdminAuthed()) return;
+  mountAuthOverlay({
+    title: 'SANDCAT – Admin login',
+    onSubmit: async (pass, overlay) => {
+      const hex = await sha256Hex(pass);
+      if (hex === ADMIN_PASS_HASH) { localStorage.setItem(AUTH_ADMIN_KEY, '1'); overlay.remove(); loadAdminOrders(); }
+      else overlay.querySelector('#auth-msg').textContent = 'Invalid admin password';
+    }
+  });
+}
 
 /* ===================== Navegación consola / comandos ===================== */
 function handleCommand(e) {
@@ -11,7 +99,7 @@ function handleCommand(e) {
       document.querySelector(".secret-tag")?.classList.remove("hidden");
     } else if (
       input === "about" || input === "contact" ||
-      input === "collections" || input === "shop" || input === "cart"
+      input === "collections" || input === "shop" || input === "cart" || input === "admin"
     ) {
       navigateTo(input);
     }
@@ -22,114 +110,101 @@ function navigateTo(page) { window.location.href = `${page}.html`; }
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
 
-/* ===================== Carrito ===================== */
+/* ===================== Carrito (cantidades/eliminar) ===================== */
+function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
+function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCartCount(); }
+function updateCartCount() {
+  const cart = getCart();
+  const count = cart.reduce((n, it) => n + (it.qty || 1), 0);
+  document.querySelectorAll('#cart-count, .cart-count').forEach(el => el && (el.textContent = count));
+}
+function addToCart(product, price, size) {
+  const finalSize = size || 'N/A';
+  let cart = getCart();
+  const idx = cart.findIndex(it => it.product === product && it.size === finalSize);
+  if (idx >= 0) cart[idx].qty = (cart[idx].qty || 1) + 1;
+  else cart.push({ product, price: Number(price), size: finalSize, qty: 1 });
+  setCart(cart); renderCartModal();
+}
+function changeQty(index, delta) {
+  let cart = getCart();
+  if (index < 0 || index >= cart.length) return;
+  cart[index].qty = Math.max(1, (cart[index].qty || 1) + delta);
+  setCart(cart); renderCartModal(); renderCartPage();
+}
+function removeFromCart(index) {
+  let cart = getCart();
+  if (index < 0 || index >= cart.length) return;
+  cart.splice(index, 1);
+  setCart(cart); renderCartModal(); renderCartPage();
+}
+function calcCartTotal(cart) { return cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0); }
 function toggleCart() {
   const cartModal = document.getElementById("cart-modal");
   if (!cartModal) return;
   cartModal.classList.toggle("hidden");
   renderCartModal();
 }
-function updateCartCount() {
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const count = cart.length;
-  document.querySelectorAll('#cart-count, .cart-count').forEach(el => el && (el.textContent = count));
-}
-function addToCart(product, price, size) {
-  const finalSize = size || 'N/A';
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  cart.push({ product, price, size: finalSize });
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartCount();
-}
 function renderCartModal() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = getCart();
   const container = document.getElementById("cart-items");
   const totalEl = document.getElementById("cart-total");
   if (!container || !totalEl) return;
 
   container.innerHTML = "";
-  let total = 0;
-
-  cart.forEach(item => {
-    const div = document.createElement("div");
-    const priceStr = typeof item.price === 'number' ? item.price.toFixed(2) : item.price;
-    div.innerText = `- ${item.product} (${item.size || 'N/A'}): €${priceStr}`;
-    container.appendChild(div);
-    total += Number(item.price) || 0;
+  cart.forEach((item, i) => {
+    const row = document.createElement("div");
+    row.className = "cart-row";
+    const info = document.createElement("div");
+    info.className = "info";
+    info.textContent = `${item.product} (${item.size}) – €${Number(item.price).toFixed(2)}`;
+    const controls = document.createElement("div");
+    controls.className = "controls";
+    controls.innerHTML = `
+      <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+      <span>${item.qty || 1}</span>
+      <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+      <button class="remove-btn" onclick="removeFromCart(${i})">✖</button>`;
+    row.appendChild(info); row.appendChild(controls); container.appendChild(row);
   });
-
-  if (totalEl.tagName === 'SPAN') totalEl.textContent = (Math.round(total*100)/100).toFixed(2);
-  else totalEl.innerText = `Total: €${(Math.round(total*100)/100).toFixed(2)}`;
+  const total = calcCartTotal(cart);
+  if (totalEl.tagName === 'SPAN') totalEl.textContent = total.toFixed(2);
+  else totalEl.innerText = `Total: €${total.toFixed(2)}`;
+}
+function renderCartPage() {
+  const cartList = document.getElementById('cart-items');
+  const totalEl = document.getElementById('cart-total');
+  if (!cartList || !totalEl) return;
+  const cart = getCart();
+  cartList.innerHTML = '';
+  cart.forEach((item, i) => {
+    const line = document.createElement('div');
+    line.className = 'console-line';
+    line.innerHTML =
+      `- ${item.product} [Size: ${item.size}] – €${Number(item.price).toFixed(2)} × ${item.qty || 1}
+       <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+       <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+       <button class="remove-btn" onclick="removeFromCart(${i})">✖</button>`;
+    cartList.appendChild(line);
+  });
+  totalEl.textContent = calcCartTotal(cart).toFixed(2);
 }
 
-/* ===================== Pago simulado (legacy) ===================== */
-function simulatePaypal() {
-  alert("Redirecting to PayPal...");
-  localStorage.removeItem('cart');
-  const items = document.getElementById('cart-items');
-  const total = document.getElementById('cart-total');
-  if (items) items.innerHTML = "";
-  if (total) {
-    if (total.tagName === 'SPAN') total.textContent = "0.00";
-    else total.innerText = "Total: €0.00";
-  }
-  updateCartCount();
-}
-function checkout() {
-  simulatePaypal();
-  const cartModal = document.getElementById("cart-modal");
-  if (cartModal && !cartModal.classList.contains('hidden')) {
-    cartModal.classList.add('hidden');
-  }
-}
-
-/* ===================== Factura (last_order) ===================== */
+/* ===================== Pedido / Factura ===================== */
 function generateOrderId() {
   const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `SC-${y}${m}${day}-${rand}`;
 }
-function calcTotal(items=[]) {
-  return (items.reduce((s, it) => s + (Number(it.price)||0), 0)).toFixed(2);
-}
-
-/* ===================== Histórico local + export ===================== */
 function appendOrderHistory(order) {
   const key = 'orders';
   const list = JSON.parse(localStorage.getItem(key) || '[]');
   list.push(order);
   localStorage.setItem(key, JSON.stringify(list));
 }
-function download(filename, text) {
-  const a = document.createElement('a');
-  a.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  a.setAttribute('download', filename);
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-function downloadOrdersJSON(){
-  const list = JSON.parse(localStorage.getItem('orders') || '[]');
-  download('orders.json', JSON.stringify(list, null, 2));
-}
-function downloadOrdersCSV(){
-  const list = JSON.parse(localStorage.getItem('orders') || '[]');
-  const headers = ['orderId','createdAt','method','status','name','email','address','zip','total','currency','items'];
-  const rows = list.map(o => [
-    o.orderId, o.createdAt, o.method, o.status,
-    o.customer?.name||'', o.customer?.email||'', o.customer?.address||'', o.customer?.zip||'',
-    o.total, o.currency || 'EUR',
-    (o.items||[]).map(i=>`${i.name} (size:${i.size}) €${i.price}`).join(' | ')
-  ]);
-  const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
-  download('orders.csv', csv);
-}
 
-/* ===================== Envío a Google Sheets (Apps Script) ===================== */
+/* ===================== Envío a Google Sheets (opcional) ===================== */
 async function sendOrderToSheet(order) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, skipped:true, reason:'No GAS config' };
   try {
@@ -145,7 +220,7 @@ async function sendOrderToSheet(order) {
   }
 }
 
-/* ===================== Checkout con validación + persistencia + remoto ===================== */
+/* ===================== Checkout ===================== */
 function validateCheckoutData({name, email, address, zip, method}) {
   const errors = [];
   if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
@@ -158,30 +233,23 @@ function validateCheckoutData({name, email, address, zip, method}) {
   return errors;
 }
 function buildOrder({name, email, address, zip, method}) {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const cart = getCart();
   if (!cart.length) return null;
-
   const order = {
     orderId: generateOrderId(),
     createdAt: new Date().toISOString(),
     currency: 'EUR',
-    method, // 'paypal' | 'cod'
+    method,
     status: method === 'paypal' ? 'PAID' : 'COD_PENDING',
     items: cart.map(it => ({
       name: it.product || it.name || 'Product',
       size: it.size || 'N/A',
-      price: Number(it.price) || 0
+      price: Number(it.price) || 0,
+      qty: it.qty || 1
     })),
-    total: calcTotal(cart),
-    customer: {
-      name: name.trim(),
-      email: (email || '').trim(),
-      address: address.trim(),
-      zip: zip.trim(),
-      vatid: '' // editable luego en invoice.html
-    }
+    total: cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0).toFixed(2),
+    customer: { name: name.trim(), email: (email||'').trim(), address: address.trim(), zip: zip.trim(), vatid: '' }
   };
-
   localStorage.setItem('last_order', JSON.stringify(order));
   appendOrderHistory(order);
   return order;
@@ -194,51 +262,110 @@ async function placeOrder(){
   const method = (document.getElementById('chk-method')?.value || 'paypal');
 
   const errs = validateCheckoutData({name, email, address, zip, method});
-  if (errs.length){
-    alert('Please fix:\n- ' + errs.join('\n- '));
-    return;
-  }
+  if (errs.length){ alert('Please fix:\n- ' + errs.join('\n- ')); return; }
 
   const order = buildOrder({name, email, address, zip, method});
-  if (!order){
-    alert('Your cart is empty.');
-    return;
-  }
+  if (!order){ alert('Your cart is empty.'); return; }
 
   const remote = await sendOrderToSheet(order);
-  if (!remote.ok && !remote.skipped) {
-    console.warn('Order not saved remotely:', remote);
-  }
+  if (!remote.ok && !remote.skipped) console.warn('Order not saved remotely:', remote);
 
-  localStorage.removeItem('cart');
-  updateCartCount();
-  const items = document.getElementById('cart-items');
-  const total = document.getElementById('cart-total');
-  if (items) items.innerHTML = '';
-  if (total) {
-    if (total.tagName === 'SPAN') total.textContent = "0.00";
-    else total.innerText = "Total: €0.00";
-  }
+  localStorage.removeItem('cart'); updateCartCount(); renderCartModal(); renderCartPage();
   const cartModal = document.getElementById('cart-modal');
-  if (cartModal && !cartModal.classList.contains('hidden')) {
-    cartModal.classList.add('hidden');
-  }
+  if (cartModal && !cartModal.classList.contains('hidden')) cartModal.classList.add('hidden');
 
-  if (method === 'paypal'){
-    alert(`Payment confirmed via PayPal. Order: ${order.orderId}`);
-  } else {
-    alert(`Order confirmed as Cash on Delivery. Order: ${order.orderId}`);
-  }
+  alert(`${method === 'paypal' ? 'Payment confirmed via PayPal' : 'Order confirmed as Cash on Delivery'}.\nOrder: ${order.orderId}`);
   setTimeout(()=> { window.location.href = 'thanks.html'; }, 500);
 }
+
+/* ===================== Admin – lectura GAS o fallback local ===================== */
+async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
+  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) {
+    // Fallback local: leer localStorage.orders (sólo pedidos del navegador actual)
+    const raw = JSON.parse(localStorage.getItem('orders') || '[]');
+    // Normalizamos a estructura admin (con timestamp) y filtramos since
+    let rows = raw.map(o => ({
+      timestamp: o.createdAt || o.timestamp || new Date().toISOString(),
+      orderId: o.orderId, method: o.method, status: o.status,
+      name: o.customer?.name, email: o.customer?.email,
+      address: o.customer?.address, zip: o.customer?.zip,
+      total: o.total, currency: o.currency || 'EUR',
+      items: o.items || []
+    }));
+    if (since) {
+      const dt = new Date(since);
+      if (!isNaN(dt)) rows = rows.filter(r => new Date(r.timestamp) >= dt);
+    }
+    rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
+    return rows.slice(0, limit);
+  }
+
+  // Lectura real de GAS
+  const url = new URL(GAS_ENDPOINT_URL);
+  url.searchParams.set('action','list');
+  url.searchParams.set('token', GAS_TOKEN);
+  url.searchParams.set('limit', String(limit));
+  if (since) url.searchParams.set('since', since);
+
+  const res = await fetch(url.toString(), { method: 'GET' });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || 'Unknown error');
+  // data.items ya viene con items_json parseado a items en el GAS propuesto
+  return (data.items || []).map(r => ({
+    timestamp: r.timestamp, orderId: r.orderId, method: r.method, status: r.status,
+    name: r.name, email: r.email, address: r.address, zip: r.zip,
+    total: r.total, currency: r.currency || 'EUR',
+    items: Array.isArray(r.items) ? r.items : []
+  }));
+}
+
+async function loadAdminOrders() {
+  const table = document.getElementById('admin-table-body');
+  const info  = document.getElementById('admin-info');
+  const filterMethod = document.getElementById('filter-method').value;
+  const filterStatus = document.getElementById('filter-status').value;
+  const since = document.getElementById('filter-since').value; // YYYY-MM-DD
+
+  table.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
+  try {
+    const rows = await fetchOrdersFromSheet({ since });
+    const filtered = rows.filter(r => {
+      const byMethod = filterMethod ? (String(r.method || '') === filterMethod) : true;
+      const byStatus = filterStatus ? (String(r.status || '') === filterStatus) : true;
+      return byMethod && byStatus;
+    });
+    table.innerHTML = '';
+    if (!filtered.length) {
+      table.innerHTML = '<tr><td colspan="7">No data</td></tr>';
+    } else {
+      for (const r of filtered) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(r.orderId || '')}</td>
+          <td>${escapeHtml(new Date(r.timestamp).toLocaleString())}</td>
+          <td>${escapeHtml((r.method || '').toUpperCase())}<br><small>${escapeHtml(r.status || '')}</small></td>
+          <td>${escapeHtml(r.name || '')}<br><small>${escapeHtml(r.email || '')}</small></td>
+          <td>${escapeHtml(r.address || '')}<br><small>${escapeHtml(r.zip || '')}</small></td>
+          <td>€${Number(r.total || 0).toFixed(2)} ${escapeHtml(r.currency || 'EUR')}</td>
+          <td>${Array.isArray(r.items) ? r.items.map(it => `${escapeHtml(it.name||'')} (${escapeHtml(it.size||'')}) × ${Number(it.qty||1)} – €${Number(it.price||0).toFixed(2)}`).join('<br>') : ''}</td>
+        `;
+        table.appendChild(tr);
+      }
+    }
+    info.textContent = `Rows: ${filtered.length}  |  Source: ${GAS_ENDPOINT_URL && GAS_TOKEN ? 'Google Sheet' : 'Local (this browser)'}`;
+  } catch (err) {
+    table.innerHTML = `<tr><td colspan="7">Error: ${escapeHtml(String(err.message||err))}</td></tr>`;
+    info.textContent = 'Error loading data';
+  }
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 /* ===================== Preview opcional ===================== */
 function previewImage(src) {
   const modal = document.getElementById("preview-modal");
   const img = document.getElementById("preview-img");
   if (!modal || !img) return;
-  modal.classList.remove("hidden");
-  img.src = src;
+  modal.classList.remove("hidden"); img.src = src;
 }
 function closePreview() { document.getElementById("preview-modal")?.classList.add("hidden"); }
 
@@ -256,29 +383,13 @@ function startHackAnimation() {
 }
 
 /* ===================== Init ===================== */
-window.onload = () => {
+window.onload = async () => {
   updateCartCount();
   startHackAnimation();
 
-  // Si estamos en cart.html, pintar líneas/total
-  const cartItemsContainer = document.getElementById("cart-items");
-  const cartTotalEl = document.getElementById("cart-total");
+  // Gate de sitio en todas menos admin (admin tiene su gate propio, que a su vez llama a este)
+  const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
+  if (!isAdminPage) await ensureSiteAccess();
 
-  if (cartItemsContainer && cartTotalEl) {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let total = 0;
-
-    cartItemsContainer.innerHTML = '';
-    cart.forEach(item => {
-      const div = document.createElement("div");
-      const priceStr = typeof item.price === 'number' ? item.price.toFixed(2) : item.price;
-      div.innerText = `- ${item.product} (${item.size || 'N/A'}): €${priceStr}`;
-      cartItemsContainer.appendChild(div);
-      total += Number(item.price) || 0;
-    });
-
-    if (cartTotalEl.tagName === 'SPAN') cartTotalEl.textContent = (Math.round(total*100)/100).toFixed(2);
-    else cartTotalEl.innerText = `Total: €${(Math.round(total*100)/100).toFixed(2)}`;
-  }
+  renderCartPage(); // si estamos en cart.html
 };
-
