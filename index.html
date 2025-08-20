@@ -26,11 +26,14 @@
   <!-- Console menu -->
   <div id="console-menu">
     <div class="console-line" onclick="location.href='shop.html'">&gt; shop</div>
+
     <div class="console-line" onclick="toggleSubmenu(this)">&gt; collections</div>
     <div class="submenu">
-      <div class="console-line">- CORE DROP (coming soon)</div>
+      <!-- 👉 clicable y sin “coming soon” -->
+      <div class="console-line" onclick="location.href='collections.html'">- CORE DROP</div>
       <div class="console-line secret-tag hidden">- FOUNDERS DROP</div>
     </div>
+
     <div class="console-line" onclick="location.href='about.html'">&gt; about</div>
     <div class="console-line" onclick="location.href='contact.html'">&gt; contact</div>
 
@@ -47,7 +50,7 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
-  <!-- Cart modal (con checkout) -->
+  <!-- Cart modal (sin export para clientes) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
@@ -70,12 +73,9 @@
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button onclick="placeOrder()">Confirm Order</button>
       <button onclick="toggleCart()">Close</button>
-      <button onclick="downloadOrdersJSON()">Export JSON</button>
-      <button onclick="downloadOrdersCSV()">Export CSV</button>
     </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
