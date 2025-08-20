@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SANDCAT Admin</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-wrap{ padding:20px; }
+    .admin-controls{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;
+    }
+    .admin-controls select, .admin-controls input{
+      background:#000; color:#00ff66; border:1px solid #0f4; padding:8px; border-radius:6px;
+    }
+    table.admin{
+      width:100%; border-collapse:collapse; border:1px solid #0f4; background:#000; color:#00ff66;
+      box-shadow: 0 12px 36px rgba(0,255,102,.06);
+    }
+    table.admin th, table.admin td{
+      border-bottom:1px dashed #0f4; padding:8px; text-align:left; vertical-align:top;
+    }
+    table.admin th{ color:#6aff9e; font-weight:normal; background:#001a0c; }
+    .pill{
+      display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #0f4; margin-right:6px;
+      background:#001a0c; color:#00ff66;
+    }
+    .admin-header{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" onclick="window.location.href='index.html'" alt="logo" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
+    <div class="top-icons">
+      <div class="hamburger" onclick="logoutAdmin()" title="Logout admin">⎋</div>
+    </div>
+  </div>
+
+  <div id="console-menu" class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <div class="console-line" style="cursor:default;">&gt; admin/orders</div>
+        <div class="console-line" id="admin-info" style="cursor:default;">Loading…</div>
+      </div>
+      <div>
+        <span class="pill">secured</span>
+        <span class="pill" id="src-pill">source: …</span>
+      </div>
+    </div>
+
+    <div class="admin-controls">
+      <label>Method:
+        <select id="filter-method" onchange="loadAdminOrders()">
+          <option value="">All</option>
+          <option value="paypal">PayPal</option>
+          <option value="cod">Cash on Delivery</option>
+        </select>
+      </label>
+      <label>Status:
+        <select id="filter-status" onchange="loadAdminOrders()">
+          <option value="">All</option>
+          <option value="PAID">PAID</option>
+          <option value="COD_PENDING">COD_PENDING</option>
+        </select>
+      </label>
+      <label>Since:
+        <input id="filter-since" type="date" onchange="loadAdminOrders()" />
+      </label>
+      <button onclick="loadAdminOrders()">Refresh</button>
+    </div>
+
+    <div style="overflow:auto;">
+      <table class="admin">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Timestamp</th>
+            <th>Method / Status</th>
+            <th>Customer</th>
+            <th>Address</th>
+            <th>Total</th>
+            <th>Items</th>
+          </tr>
+        </thead>
+        <tbody id="admin-table-body">
+          <tr><td colspan="7">Waiting…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    (async function boot(){
+      // Gate de sitio + admin. Si no has puesto hashes, entra directo.
+      await ensureAdminAccess();
+      // Mostrar fuente (local o GAS) en la pill
+      const src = (window.GAS_ENDPOINT_URL && window.GAS_TOKEN) ? 'Google Sheet' : 'Local';
+      document.getElementById('src-pill').textContent = 'source: ' + src;
+      // Cargar datos (si ya estaba autenticado no hace falta re-autenticar)
+      loadAdminOrders();
+    })();
+  </script>
+</body>
+</html>
