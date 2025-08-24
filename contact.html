@@ -2,28 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact - SANDCAT</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="hack-screen"><div id="hack-text"></div></div>
+
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
+    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
-      <span class="cart-count" id="cart-count">0</span>
-      <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+      <div class="cart-icon" onclick="toggleCart()" title="Open cart">
+        <img src="assets/bag.png" alt="Cart" />
+        <span id="cart-count">0</span>
+      </div>
+      <div class="hamburger" onclick="location.href='index.html'">☰</div>
     </div>
   </div>
 
   <div id="console-menu">
     <div class="console-line">&gt; contact</div>
-    <div class="console-line">
-      Para consultas o soporte, escríbenos a: <strong>support@sandcat.es</strong>.
-    </div>
-    <div class="console-line">
-      Responde al correo de confirmación de tu pedido para cambios o incidencias.
+    <div class="console-line" style="cursor:default">
+      Email: support@sandcat.es<br/>
+      Instagram: @sandcat<br/>
+      Response times: 24–48h
     </div>
   </div>
 
@@ -32,6 +35,7 @@
     <input type="email" placeholder="youremail@example.com" />
   </div>
 
+  <!-- Cart modal (LIMPIO) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
@@ -54,12 +58,9 @@
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button onclick="placeOrder()">Confirm Order</button>
       <button onclick="toggleCart()">Close</button>
-      <button onclick="downloadOrdersJSON()">Export JSON</button>
-      <button onclick="downloadOrdersCSV()">Export CSV</button>
     </div>
   </div>
 
   <script src="script.js"></script>
-  <script>updateCartCount();</script>
 </body>
 </html>
