@@ -2,26 +2,32 @@
 /* Puedes dejarlos vacíos y usar solo el modo local (fallback) */
 const GAS_ENDPOINT_URL = ''; // p.ej. https://script.google.com/macros/s/.../exec
 const GAS_TOKEN = '';        // Debe coincidir con TOKEN en Apps Script
+// Exponer para admin.html (que lee window.*)
+window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
+window.GAS_TOKEN = GAS_TOKEN;
+
+/* ============ Page Loader config ============ */
+const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; // <- tu imagen de loader
 
 /* ===================== PASSWORD GATES (SHA-256) ===================== */
-/* Ya vienen ACTIVOS con hashes de ejemplo para que lo pruebes YA MISMO.
-   CONTRASEÑAS de ejemplo (cámbialas cuanto antes):
+/* ACTIVAS con hashes de ejemplo para que pruebes YA:
    - Sitio:        sandcat
    - Admin panel:  sandcat-admin
-   Para cambiarlas, abre consola y ejecuta genHashFromPrompt() y pega los nuevos hashes aquí. */
+   Cambia los hashes con genHashFromPrompt() cuando quieras. */
 const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
 const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
 
 const AUTH_SITE_KEY  = 'site_auth';
 const AUTH_ADMIN_KEY = 'admin_auth';
 
+/* ===================== Utils ===================== */
 async function sha256Hex(text) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-/* Utilidad para generar hashes desde el navegador: ejecuta genHashFromPrompt() en consola */
+/* Generar hashes desde navegador: ejecuta genHashFromPrompt() en consola */
 async function genHashFromPrompt() {
   const pwd = prompt('Introduce contraseña a hashear (no se guarda):');
   if (!pwd) return;
@@ -35,7 +41,7 @@ function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' |
 function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
 function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
 
-/* Overlay de login con “mostrar contraseña” */
+/* ===================== Overlay de login ===================== */
 function mountAuthOverlay({ title, onSubmit }) {
   const overlay = document.createElement('div');
   overlay.id = 'auth-overlay';
@@ -68,7 +74,7 @@ function mountAuthOverlay({ title, onSubmit }) {
   };
 }
 
-/* Gate de sitio (siempre activo porque SITE_PASS_HASH está puesto) */
+/* Gates */
 async function ensureSiteAccess() {
   if (isSiteAuthed()) return;
   mountAuthOverlay({
@@ -80,8 +86,6 @@ async function ensureSiteAccess() {
     }
   });
 }
-
-/* Gate de admin (además del de sitio) */
 async function ensureAdminAccess() {
   await ensureSiteAccess();
   if (isAdminAuthed()) return;
@@ -93,6 +97,48 @@ async function ensureAdminAccess() {
       else overlay.querySelector('#auth-msg').textContent = 'Invalid admin password';
     }
   });
+}
+
+/* ===================== Page Loader (entre páginas) ===================== */
+function ensurePageLoaderMounted() {
+  if (document.getElementById('page-loader')) return;
+  const el = document.createElement('div');
+  el.id = 'page-loader';
+  el.innerHTML = `<img src="${LOADER_LOGO_SRC}" alt="Loading...">`;
+  document.body.appendChild(el);
+}
+function showPageLoader() {
+  ensurePageLoaderMounted();
+  const el = document.getElementById('page-loader');
+  if (el) el.style.display = 'flex';
+}
+function hidePageLoader() {
+  const el = document.getElementById('page-loader');
+  if (el) el.style.display = 'none';
+}
+
+/* ===================== Hack intro (solo primera visita) ===================== */
+function startHackAnimation() {
+  const hackScreen = document.getElementById("hack-screen");
+  const hackText = document.getElementById("hack-text");
+  if (!hackScreen || !hackText) return;
+
+  const already = sessionStorage.getItem('introShown') === '1';
+  if (already) {
+    hackScreen.style.display = 'none';
+    return;
+  }
+
+  hackScreen.style.display = 'flex';
+  hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
+
+  setTimeout(() => {
+    hackScreen.style.opacity = "0";
+    setTimeout(() => {
+      hackScreen.style.display = "none";
+      sessionStorage.setItem('introShown', '1');
+    }, 300);
+  }, 700);
 }
 
 /* ===================== Navegación consola / comandos ===================== */
@@ -368,27 +414,51 @@ async function loadAdminOrders() {
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-/* ===================== Hack intro ===================== */
-function startHackAnimation() {
-  const hackScreen = document.getElementById("hack-screen");
-  const hackText = document.getElementById("hack-text");
-  if (hackScreen && hackText) {
-    hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
-    setTimeout(() => {
-      hackScreen.style.opacity = "0";
-      setTimeout(() => { hackScreen.style.display = "none"; }, 300);
-    }, 700);
-  }
-}
-
-/* ===================== Init ===================== */
+/* ===================== INIT con loader premium ===================== */
 window.onload = async () => {
   updateCartCount();
+
+  // Intro: solo 1ª vez de la sesión
   startHackAnimation();
 
-  // Gate de sitio en todas menos admin (admin llama a ensureAdminAccess en su propio archivo)
+  // Loader de página + fade-out premium
+  ensurePageLoaderMounted();
+  hidePageLoader();
+
+  // Al navegar fuera (cerrar/recargar): fade-out y loader
+  window.addEventListener('beforeunload', () => {
+    document.body.classList.add('fade-out');
+    showPageLoader();
+  });
+
+  // Si usas navigateTo() mostramos fade-out + loader
+  const oldNavigateTo = window.navigateTo;
+  window.navigateTo = function(page) {
+    document.body.classList.add('fade-out');
+    showPageLoader();
+    setTimeout(() => {
+      oldNavigateTo ? oldNavigateTo(page) : (window.location.href = `${page}.html`);
+    }, 350);
+  };
+
+  // Delegación para enlaces internos <a>
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    const url = a.getAttribute('href') || '';
+    const isInternal = url && !/^https?:\/\//i.test(url) && !url.startsWith('#') && (url.endsWith('.html') || !url.includes('.'));
+    if (isInternal) {
+      e.preventDefault();
+      document.body.classList.add('fade-out');
+      showPageLoader();
+      setTimeout(() => { window.location.href = url; }, 350);
+    }
+  });
+
+  // Gates
   const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
   if (!isAdminPage) await ensureSiteAccess();
 
-  renderCartPage(); // si estamos en cart.html
+  // Si estamos en cart.html, puebla lista
+  renderCartPage();
 };
