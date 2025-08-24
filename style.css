@@ -1,16 +1,5 @@
-/* ===== BASE CLÁSICA (tuya, preservada) ===== */
-stlye_body {
-  margin: 0;
-  background: black;
-  color: white;
-  font-family: 'Courier New', monospace;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* ===== APLICAR AL <body> Y VERDE CONSOLA ===== */
-body{
+/* ===== BASE ===== */
+body {
   margin: 0;
   background: #000;
   color: #00ff66; /* verde consola */
@@ -20,6 +9,12 @@ body{
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: opacity .35s ease; /* para fade-out premium */
+}
+
+/* ===== Fade-out premium ===== */
+body.fade-out {
+  opacity: 0;
 }
 
 /* ===== Header ===== */
@@ -36,11 +31,12 @@ body{
   border-bottom: 1px solid #eee;
 }
 
+/* Logo gato más grande */
 .logo-left {
-  height: 110px;         /* antes 90px → ahora un poco más grande */
-  width: auto;           /* mantiene proporción */
-  margin-left: 10px;     /* da un respiro al borde izquierdo */
-  object-fit: contain;   /* asegura que no se deforme */
+  height: 110px;  /* antes 90px */
+  width: auto;
+  margin-left: 10px;
+  object-fit: contain;
 }
 
 .logo-center {
@@ -137,22 +133,20 @@ select{
   border: 1px solid #0f4; border-radius: 6px;
 }
 
-/* ===== Top icons ===== */
+/* ===== Top icons / Cart icon ===== */
 .top-icons { display:flex; gap:15px; align-items:center; }
-.cart-icon{ cursor:pointer; font-size:20px; position:relative; display:flex; align-items:center; }
 
-/* Fix iconos y productos (bag.png + iconos) */
-.menu-icons #cart-icon, .top-icons img.cart-icon, .cart-icon img {
+.menu-icons #cart-icon, .top-icons img.cart-icon, .cart-icon img, #cart-icon {
   height: 26px; width: auto; max-width: 100%; object-fit: contain; image-rendering: auto;
 }
-img.cart-icon { height: 26px; width: auto; max-width: 100%; object-fit: contain; }
 
+.cart-icon{ cursor:pointer; font-size:20px; position:relative; display:flex; align-items:center; }
 #cart-count, .cart-count{
   font-weight: bold; margin-left: 5px; background:#00ff66; color:#001a0c;
   padding: 2px 6px; border-radius: 50%; font-size: 0.8rem; box-shadow: 0 0 10px rgba(0,255,102,.35);
 }
 
-/* ===== Preview modal (opcional) ===== */
+/* ===== Preview modal ===== */
 #preview-modal{
   position: fixed; inset: 0; background: rgba(0,0,0,.9);
   display:flex; justify-content:center; align-items:center; z-index:10000; flex-direction:column;
@@ -162,11 +156,50 @@ img.cart-icon { height: 26px; width: auto; max-width: 100%; object-fit: contain;
   color:#00ff66; font-size:2rem; cursor:pointer; position:absolute; top:20px; right:40px;
 }
 
-/* ===== Carrito: lista compacta ===== */
-#cart-items{ max-height: 300px; overflow-y: auto; margin-bottom: 10px; }
-#cart-items div{ padding: 5px 0; border-bottom: 1px solid #044d2a; }
+/* ===== Modal carrito ===== */
+.cart-modal{
+  position: fixed; inset: 0; background: rgba(0,0,0,.8);
+  display: flex; flex-direction: column; gap: 12px; padding: 20px; z-index: 10000; backdrop-filter: blur(2px);
+}
+.cart-modal.hidden{ display: none; }
 
-/* ===== Botones globales ===== */
+#cart-items{ max-height: 300px; overflow-y: auto; margin-bottom: 10px; }
+#cart-items .cart-row{
+  display:flex; align-items:center; justify-content: space-between; gap:10px;
+  border-bottom: 1px solid #044d2a; padding: 6px 0;
+}
+.cart-row .info{ flex:1; }
+.cart-row .controls{
+  display:flex; align-items:center; gap:6px;
+}
+.qty-btn{
+  background:#001a0c; color:#00ff66; border:1px solid #0f4; padding:4px 8px; border-radius:6px; cursor:pointer;
+}
+.qty-btn:hover{ background:#00331a; }
+.remove-btn{
+  background:transparent; color:#ff6b6b; border:1px solid #ff6b6b; padding:4px 8px; border-radius:6px; cursor:pointer;
+}
+.remove-btn:hover{ background:#3b0000; color:#fff; }
+
+/* Consola en cart.html */
+.cart-items-console{ margin: 10px 0; }
+
+/* Inputs checkout */
+#cart-modal input, #cart-modal select{
+  width: 100%; background: #000; color:#00ff66; border: 1px solid #0f4;
+  padding: 8px; font-family: 'Courier New', monospace; border-radius: 6px;
+}
+#cart-modal input:focus, #cart-modal select:focus{
+  outline: none; border-color: #6aff9e; box-shadow: 0 0 12px rgba(0,255,102,.35) inset;
+}
+
+/* Anti-overlap newsletter */
+#console-menu{ padding-bottom: 90px; }
+
+/* Animaciones generales */
+@keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+
+/* Botones globales */
 button{
   background:#00ff66; color:#001a0c; border:none; padding:10px 20px; cursor:pointer;
   font-family: monospace; border-radius: 8px;
@@ -174,13 +207,22 @@ button{
 }
 button:hover{ background:#6aff9e; transform: translateY(-1px); box-shadow:0 6px 16px rgba(0,255,102,.18); }
 
-/* ===== Hack/Glitch intro ===== */
-#hack-screen{
-  position: fixed; inset: 0; background: #000; color: #00ff00;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Courier New', monospace; font-size: 2rem; z-index: 99999;
+/* ===== Access Granted ===== */
+#hack-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #00ff00;
+  display: none; /* oculto por defecto */
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 2rem;
+  z-index: 99999;
   transition: opacity 0.3s ease-out;
 }
+
+/* Glitch anim */
 .glitch-text{
   position: relative; color: #aaffcc; animation: glitch .6s infinite, pulseGlow 2.2s ease-in-out infinite;
   text-shadow: 0 0 10px rgba(0,255,102,.6);
@@ -203,27 +245,24 @@ button:hover{ background:#6aff9e; transform: translateY(-1px); box-shadow:0 6px 
   0%{clip:rect(0,9999px,0,0);} 50%{clip:rect(0,9999px,100%,0);} 100%{clip:rect(0,9999px,0,0);}
 }
 
-/* ===== Modal carrito reutilizable ===== */
-.cart-modal{
-  position: fixed; inset: 0; background: rgba(0,0,0,.8);
-  display: flex; flex-direction: column; gap: 12px; padding: 20px; z-index: 10000; backdrop-filter: blur(2px);
+/* ===== Page Loader con logo ===== */
+#page-loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.92);
+  display: none; /* se activa por JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 99998;
+  backdrop-filter: blur(2px);
 }
-.cart-modal.hidden{ display: none; }
-
-/* Consola en cart.html */
-.cart-items-console{ margin: 10px 0; }
-
-/* Inputs del checkout en el modal */
-#cart-modal input, #cart-modal select{
-  width: 100%; background: #000; color:#00ff66; border: 1px solid #0f4;
-  padding: 8px; font-family: 'Courier New', monospace; border-radius: 6px;
+#page-loader img {
+  max-width: min(42vw, 260px);
+  height: auto;
+  filter: drop-shadow(0 0 18px rgba(0,255,102,.25));
+  animation: loaderPop .22s ease-out both;
 }
-#cart-modal input:focus, #cart-modal select:focus{
-  outline: none; border-color: #6aff9e; box-shadow: 0 0 12px rgba(0,255,102,.35) inset;
+@keyframes loaderPop {
+  from { transform: scale(.95); opacity: .0; }
+  to   { transform: scale(1);   opacity: 1; }
 }
-
-/* Anti-overlap newsletter */
-#console-menu{ padding-bottom: 90px; }
-
-/* ===== Animación entrada ===== */
-@keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
