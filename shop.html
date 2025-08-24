@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Intro (opcional, mismo efecto que el resto) -->
+  <div id="hack-screen"><div id="hack-text"></div></div>
+
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
@@ -51,7 +54,7 @@
     </div>
   </div>
 
-  <!-- Cart modal (con checkout) -->
+  <!-- Cart modal (checkout sin exportaciones) -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
@@ -74,8 +77,6 @@
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button onclick="placeOrder()">Confirm Order</button>
       <button onclick="toggleCart()">Close</button>
-      <button onclick="downloadOrdersJSON()">Export JSON</button>
-      <button onclick="downloadOrdersCSV()">Export CSV</button>
     </div>
   </div>
 
