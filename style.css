@@ -36,7 +36,12 @@ body{
   border-bottom: 1px solid #eee;
 }
 
-.logo-left { height: 90px; }
+.logo-left {
+  height: 110px;         /* antes 90px → ahora un poco más grande */
+  width: auto;           /* mantiene proporción */
+  margin-left: 10px;     /* da un respiro al borde izquierdo */
+  object-fit: contain;   /* asegura que no se deforme */
+}
 
 .logo-center {
   height: 160px;
