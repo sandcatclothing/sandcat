@@ -1,5 +1,4 @@
 /* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
-/* Puedes dejarlos vacíos y usar solo el modo local (fallback) */
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
 
