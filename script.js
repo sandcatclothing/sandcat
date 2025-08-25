@@ -262,7 +262,7 @@ function appendOrderHistory(order) {
   localStorage.setItem(key, JSON.stringify(list));
 }
 
-/* ===================== Envío a Google Sheets (opcional) ===================== */
+/* ===================== Envío a Google Sheets ===================== */
 async function sendOrderToSheet(order) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, skipped:true, reason:'No GAS config' };
   try {
@@ -271,7 +271,9 @@ async function sendOrderToSheet(order) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: GAS_TOKEN, order })
     });
-    return { ok: res.ok, status: res.status };
+    const data = await res.json().catch(()=> ({}));
+    console.log('[GAS]', res.status, data);
+    return data; // { ok:true, saved:{...} } o { ok:false, error:'...' }
   } catch (err) {
     console.warn('sendOrderToSheet error:', err);
     return { ok:false, error:String(err) };
@@ -326,7 +328,9 @@ async function placeOrder(){
   if (!order){ alert('Your cart is empty.'); return; }
 
   const remote = await sendOrderToSheet(order);
-  if (!remote.ok && !remote.skipped) console.warn('Order not saved remotely:', remote);
+  if (!remote?.ok && !remote?.skipped) {
+    console.warn('Order not saved remotely:', remote);
+  }
 
   localStorage.removeItem('cart'); updateCartCount(); renderCartModal(); renderCartPage();
   const cartModal = document.getElementById('cart-modal');
@@ -376,9 +380,11 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
 async function loadAdminOrders() {
   const table = document.getElementById('admin-table-body');
   const info  = document.getElementById('admin-info');
-  const filterMethod = document.getElementById('filter-method').value;
-  const filterStatus = document.getElementById('filter-status').value;
-  const since = document.getElementById('filter-since').value; // YYYY-MM-DD
+  const filterMethod = document.getElementById('filter-method')?.value || '';
+  const filterStatus = document.getElementById('filter-status')?.value || '';
+  const since = document.getElementById('filter-since')?.value || ''; // YYYY-MM-DD
+
+  if (!table) return;
 
   table.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
   try {
@@ -406,13 +412,42 @@ async function loadAdminOrders() {
         table.appendChild(tr);
       }
     }
-    info.textContent = `Rows: ${filtered.length}  |  Source: ${GAS_ENDPOINT_URL && GAS_TOKEN ? 'Google Sheet' : 'Local (this browser)'}`;
+    if (info) info.textContent = `Rows: ${filtered.length}  |  Source: ${GAS_ENDPOINT_URL && GAS_TOKEN ? 'Google Sheet' : 'Local (this browser)'}`;
   } catch (err) {
     table.innerHTML = `<tr><td colspan="7">Error: ${escapeHtml(String(err.message||err))}</td></tr>`;
-    info.textContent = 'Error loading data';
+    if (info) info.textContent = 'Error loading data';
   }
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ===================== Newsletter ===================== */
+async function sendNewsletterEmail(email) {
+  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return false;
+  try {
+    const res = await fetch(GAS_ENDPOINT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } })
+    });
+    const data = await res.json().catch(()=> ({}));
+    console.log('[GAS Newsletter]', res.status, data);
+    return data?.ok === true;
+  } catch {
+    return false;
+  }
+}
+function wireNewsletter() {
+  const btn = document.getElementById('newsletter-btn');
+  const inp = document.getElementById('newsletter-email');
+  if (!btn || !inp) return;
+  btn.onclick = async () => {
+    const email = (inp.value||'').trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) { alert('Email inválido'); return; }
+    const ok = await sendNewsletterEmail(email);
+    alert(ok ? 'Suscripción realizada' : 'Error al suscribirse');
+    if (ok) inp.value = '';
+  };
+}
 
 /* ===================== INIT con loader premium ===================== */
 window.onload = async () => {
@@ -456,9 +491,19 @@ window.onload = async () => {
   });
 
   // Gates
-  const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
-  if (!isAdminPage) await ensureSiteAccess();
+  const isAdminPage =
+    location.pathname.endsWith('/admin.html') ||
+    location.pathname.endsWith('admin.html');
+
+  if (isAdminPage) {
+    await ensureAdminAccess();   // pass de sitio + admin
+  } else {
+    await ensureSiteAccess();    // pass de sitio
+  }
 
   // Si estamos en cart.html, puebla lista
   renderCartPage();
+
+  // Newsletter
+  wireNewsletter();
 };
