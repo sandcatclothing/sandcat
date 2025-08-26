@@ -2,6 +2,7 @@
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
 
+
 // Exponer para admin.html (que lee window.*)
 window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
