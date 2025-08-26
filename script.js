@@ -490,7 +490,7 @@ window.onload = async () => {
     }
   });
 
-  // Gates
+  // Gates: sitio vs admin
   const isAdminPage =
     location.pathname.endsWith('/admin.html') ||
     location.pathname.endsWith('admin.html');
@@ -507,3 +507,4 @@ window.onload = async () => {
   // Newsletter
   wireNewsletter();
 };
+
