@@ -14,17 +14,18 @@
   </div>
 
   <!-- Top bar -->
-  <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="SANDCAT logo"/>
-    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT text"/>
-    <div class="top-icons">
-      <div class="cart-icon" onclick="toggleCart()">
-        <img src="assets/bag.png" alt="Cart"/>
-        <span id="cart-count">0</span>
-      </div>
-      <div class="hamburger" onclick="toggleMenu()">☰</div>
+ <div class="white-bar">
+  <img src="assets/logo2.png" class="logo-left" alt="SANDCAT logo" onclick="location.href='index.html'"/>
+  <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT"/>
+  <div class="top-icons">
+    <div class="cart-icon" onclick="toggleCart()">
+      <img src="assets/bag.png" class="cart-icon-img" alt="Cart"/>
+      <span class="cart-count" id="cart-count">0</span>
     </div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
   </div>
+</div>
+
 
   <!-- Console menu -->
   <div id="console-menu">
