@@ -2,79 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SANDCAT Console</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Hack intro animation -->
+  <!-- Intro solo 1ª vez -->
   <div id="hack-screen"><div id="hack-text"></div></div>
 
   <!-- Top bar -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="logo" />
-    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
+    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="location.href='index.html'"/>
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT"/>
     <div class="top-icons">
-      <div class="cart-icon" onclick="toggleCart()" title="Open cart">
-        <img src="assets/bag.png" alt="Cart" />
-        <span id="cart-count">0</span>
-      </div>
+      <img src="assets/bag.png" class="bag-icon" alt="Cart" onclick="toggleCart()"/>
+      <span id="cart-count">0</span>
       <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
   </div>
 
   <!-- Console menu -->
   <div id="console-menu">
-    <div class="console-line" onclick="location.href='shop.html'">&gt; shop</div>
+    <div class="console-line clickable" onclick="navigateTo('shop')">&gt; shop</div>
+    <div class="console-line clickable" onclick="navigateTo('collections')">&gt; collections</div>
+    <div class="console-line clickable" onclick="navigateTo('about')">&gt; about</div>
+    <div class="console-line clickable" onclick="navigateTo('contact')">&gt; contact</div>
 
-    <div class="console-line" onclick="toggleSubmenu(this)">&gt; collections</div>
-    <div class="submenu">
-      <!-- Clicable y sin 'coming soon' -->
-      <div class="console-line" onclick="location.href='collections.html'">- CORE DROP</div>
-      <div class="console-line secret-tag hidden">- FOUNDERS DROP</div>
-    </div>
-
-    <div class="console-line" onclick="location.href='about.html'">&gt; about</div>
-    <div class="console-line" onclick="location.href='contact.html'">&gt; contact</div>
-
-    <!-- Hidden command -->
     <div class="console-input">
       <span>&gt;</span>
-      <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
+      <input type="text" placeholder="type command..." onkeydown="handleCommand(event)"/>
     </div>
   </div>
 
   <!-- Newsletter -->
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
-    <input type="email" placeholder="youremail@example.com" />
+    <div class="newsletter-row">
+      <input id="newsletter-email" type="email" placeholder="youremail@example.com"/>
+      <button id="newsletter-btn">Subscribe</button>
+    </div>
   </div>
 
-  <!-- Cart modal (LIMPIO: sin exportación) -->
+  <!-- Cart modal + Checkout -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
     <p>Total: €<span id="cart-total">0.00</span></p>
-
-    <div class="console-line" style="cursor:default">
-      <div><strong>Checkout</strong></div>
-      <div style="margin-top:8px; display:grid; gap:8px;">
-        <input id="chk-name" placeholder="Full name" />
-        <input id="chk-email" placeholder="Email (required for PayPal)" />
-        <input id="chk-address" placeholder="Address (street, number, city)" />
-        <input id="chk-zip" placeholder="Postal code (5 digits)" />
-        <select id="chk-method">
-          <option value="paypal">PayPal</option>
-          <option value="cod">Contrareembolso</option>
-        </select>
+    <div class="checkout-box">
+      <h3>Checkout</h3>
+      <input id="chk-name" placeholder="Full name"/>
+      <input id="chk-email" placeholder="Email (required for PayPal)"/>
+      <input id="chk-address" placeholder="Address (street, number, city)"/>
+      <input id="chk-zip" placeholder="Postal code (5 digits)"/>
+      <select id="chk-method">
+        <option value="paypal">PayPal</option>
+        <option value="cod">Contrareembolso</option>
+      </select>
+      <div class="checkout-actions">
+        <button onclick="placeOrder()">Confirm Order</button>
+        <button class="secondary" onclick="toggleCart()">Close</button>
       </div>
     </div>
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button onclick="placeOrder()">Confirm Order</button>
-      <button onclick="toggleCart()">Close</button>
-    </div>
   </div>
+
+  <!-- Loader entre páginas -->
+  <div id="page-loader"><img src="assets/sandcatloading.png" alt="Loading..."/></div>
 
   <script src="script.js"></script>
 </body>
