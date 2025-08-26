@@ -40,11 +40,20 @@ body {
   align-items: center;
 }
 
-.cart-icon,
+/* contenedor del carrito (index usa <div>, otras páginas usan <img>) */
+.cart-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* todas las variantes de la imagen de carrito */
+.cart-icon img,
 #cart-icon,
 .cart-icon-img {
   width: 28px;
   height: auto;
+  display: block;
   cursor: pointer;
 }
 
@@ -89,11 +98,11 @@ body {
 .console-input input {
   background: black;
   color: #00ff66;
-  border: none;
+  border: 1px solid #00ff66;
   outline: none;
   font-family: monospace;
   font-size: 1rem;
-  padding-left: 5px;
+  padding: 8px 10px;
   width: 300px;
 }
 
@@ -128,6 +137,7 @@ body {
   background: black;
   color: #00ff66;
   border: 1px solid #00ff66;
+  outline: none;
 }
 
 .newsletter button {
@@ -145,6 +155,31 @@ body {
 .newsletter button:hover {
   background: #00cc55;
   transform: scale(1.05);
+}
+
+/* ========== Inputs de Checkout (nombre, dirección, CP, etc.) ========== */
+#chk-name, #chk-email, #chk-address, #chk-zip, #chk-method {
+  background: black;
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 10px;
+  font-family: monospace;
+  margin-top: 8px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#chk-method {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+#chk-name:focus, #chk-email:focus, #chk-address:focus, #chk-zip:focus, #chk-method:focus {
+  outline: none;
+  border-color: #00cc55;
+  box-shadow: 0 0 6px #00ff66;
 }
 
 /* ========== Productos tienda ========== */
@@ -315,5 +350,4 @@ button:disabled {
   80% { transform: translate(1px, -2px); }
   100% { transform: translate(0); }
 }
-
 
