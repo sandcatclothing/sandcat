@@ -2,21 +2,16 @@
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
 
-// Exponer para admin.html (que lee window.*)
+// Exponer para admin.html
 window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
 /* ============ Page Loader config ============ */
-const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; // imagen de loader
+const LOADER_LOGO_SRC = 'assets/sandcatloading.png';
 
 /* ===================== PASSWORD GATES (SHA-256) ===================== */
-/* ACTIVAS con hashes de ejemplo:
-   - Sitio:        sandcat
-   - Admin panel:  sandcat-admin
-   Cambia los hashes con genHashFromPrompt() cuando quieras. */
 const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
 const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
-
 const AUTH_SITE_KEY  = 'site_auth';
 const AUTH_ADMIN_KEY = 'admin_auth';
 
@@ -27,7 +22,7 @@ async function sha256Hex(text) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-/* Generar hashes desde navegador: ejecuta genHashFromPrompt() en consola */
+/* Generar hashes desde navegador */
 async function genHashFromPrompt() {
   const pwd = prompt('Introduce contraseña a hashear (no se guarda):');
   if (!pwd) return;
@@ -41,7 +36,7 @@ function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' |
 function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
 function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
 
-/* ====== Toast mínimo ====== */
+/* ====== Toast ====== */
 function showToast(msg, ok=true) {
   let el = document.getElementById('sandcat-toast');
   if (!el) {
@@ -120,7 +115,7 @@ async function ensureAdminAccess() {
   });
 }
 
-/* ===================== Page Loader (entre páginas) ===================== */
+/* ===================== Loader entre páginas ===================== */
 function ensurePageLoaderMounted() {
   if (document.getElementById('page-loader')) return;
   const el = document.createElement('div');
@@ -128,37 +123,24 @@ function ensurePageLoaderMounted() {
   el.innerHTML = `<img src="${LOADER_LOGO_SRC}" alt="Loading...">`;
   document.body.appendChild(el);
 }
-function showPageLoader() {
-  ensurePageLoaderMounted();
-  const el = document.getElementById('page-loader');
-  if (el) el.style.display = 'flex';
-}
-function hidePageLoader() {
-  const el = document.getElementById('page-loader');
-  if (el) el.style.display = 'none';
-}
+function showPageLoader() { ensurePageLoaderMounted(); document.getElementById('page-loader').style.display = 'flex'; }
+function hidePageLoader() { const el = document.getElementById('page-loader'); if (el) el.style.display = 'none'; }
 
-/* ===================== Hack intro (solo primera visita) ===================== */
+/* ===================== Intro (solo primera visita) ===================== */
 function startHackAnimation() {
   const hackScreen = document.getElementById("hack-screen");
   const hackText = document.getElementById("hack-text");
   if (!hackScreen || !hackText) return;
 
   const already = sessionStorage.getItem('introShown') === '1';
-  if (already) {
-    hackScreen.style.display = 'none';
-    return;
-  }
+  if (already) { hackScreen.style.display = 'none'; return; }
 
   hackScreen.style.display = 'flex';
   hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
 
   setTimeout(() => {
     hackScreen.style.opacity = "0";
-    setTimeout(() => {
-      hackScreen.style.display = "none";
-      sessionStorage.setItem('introShown', '1');
-    }, 300);
+    setTimeout(() => { hackScreen.style.display = "none"; sessionStorage.setItem('introShown', '1'); }, 300);
   }, 700);
 }
 
@@ -168,10 +150,7 @@ function handleCommand(e) {
     const input = e.target.value.trim().toLowerCase();
     if (input === "paraloschavales") {
       document.querySelector(".secret-tag")?.classList.remove("hidden");
-    } else if (
-      input === "about" || input === "contact" ||
-      input === "collections" || input === "shop" || input === "cart" || input === "admin"
-    ) {
+    } else if (["about","contact","collections","shop","cart","admin"].includes(input)) {
       navigateTo(input);
     }
     e.target.value = "";
@@ -181,15 +160,14 @@ function navigateTo(page) { window.location.href = `${page}.html`; }
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
 
-/* Atajo **Alt+Shift+A** para abrir admin */
+/* Atajo Alt+Shift+A -> admin */
 window.addEventListener('keydown', (e) => {
   if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-    e.preventDefault();
-    window.location.href = 'admin.html';
+    e.preventDefault(); window.location.href = 'admin.html';
   }
 });
 
-/* ===================== Carrito (cantidades/eliminar) ===================== */
+/* ===================== Carrito ===================== */
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
 function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCartCount(); }
 function updateCartCount() {
@@ -269,7 +247,7 @@ function renderCartPage() {
   totalEl.textContent = calcCartTotal(cart).toFixed(2);
 }
 
-/* ===================== Pedido / Factura ===================== */
+/* ===================== Pedido ===================== */
 function generateOrderId() {
   const d = new Date();
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
@@ -283,7 +261,7 @@ function appendOrderHistory(order) {
   localStorage.setItem(key, JSON.stringify(list));
 }
 
-/* ===================== Fallback CORS genérico ===================== */
+/* ===================== Fallback CORS ===================== */
 async function fetchJSONWithCORSFallback(url, options) {
   try {
     const res = await fetch(url, options);
@@ -292,7 +270,6 @@ async function fetchJSONWithCORSFallback(url, options) {
   } catch (e) {
     try {
       const res2 = await fetch(url, { ...options, mode: 'no-cors' });
-      // Respuesta opaca: no se puede leer, pero la request se envió
       return { ok: true, opaque: true, status: 0, data: null };
     } catch (e2) {
       return { ok: false, error: String(e2) };
@@ -313,67 +290,89 @@ async function sendOrderToSheet(order) {
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
-/* ===== NUEVO: flag anti-doble click ===== */
+/* ===== Cerrojo anti doble click ===== */
 let isPlacingOrder = false;
 
-/* Helper: habilitar/deshabilitar botón de confirmación */
+/* Des/activar todos los botones "Confirm Order" visibles */
 function setConfirmButtonEnabled(enabled) {
-  const btn = document.getElementById('confirm-order-btn');
-  if (btn) {
+  // Por si hay modal + página con otro botón
+  const btns = Array.from(document.querySelectorAll('#confirm-order-btn'));
+  btns.forEach(btn => {
     btn.disabled = !enabled;
     btn.style.opacity = enabled ? '1' : '.6';
     btn.style.pointerEvents = enabled ? 'auto' : 'none';
-  }
+  });
 }
 
-/* === placeOrder con cerrojo + loader === */
+/* Helper de lectura segura */
+function $val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+/* === placeOrder robusto === */
 async function placeOrder(){
-  if (isPlacingOrder) return;                  // anti doble click
+  if (isPlacingOrder) return;
   isPlacingOrder = true;
   setConfirmButtonEnabled(false);
-  showPageLoader();                            // muestra assets/sandcatloading.png
 
   try {
-    const name = (document.getElementById('chk-name')?.value || '').trim();
-    const email = (document.getElementById('chk-email')?.value || '').trim();
-    const address = (document.getElementById('chk-address')?.value || '').trim();
-    const zip = (document.getElementById('chk-zip')?.value || '').trim();
-    const method = (document.getElementById('chk-method')?.value || 'paypal');
+    // Si no existen inputs de checkout en esta página, abre el modal (si existe)
+    const fieldsExist =
+      document.getElementById('chk-name') &&
+      document.getElementById('chk-email') &&
+      document.getElementById('chk-address') &&
+      document.getElementById('chk-zip') &&
+      document.getElementById('chk-method');
 
+    if (!fieldsExist) {
+      const modal = document.getElementById('cart-modal');
+      if (modal && modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden'); // mostramos el checkout
+        showToast('Completa tus datos para finalizar el pedido', false);
+      } else {
+        showToast('El checkout está en la ventana del carrito.', false);
+      }
+      return;
+    }
+
+    // Leer datos
+    const name = $val('chk-name');
+    const email = $val('chk-email');
+    const address = $val('chk-address');
+    const zip = $val('chk-zip');
+    const method = $val('chk-method') || 'paypal';
+
+    // Validar primero (sin loader)
     const errs = validateCheckoutData({name, email, address, zip, method});
     if (errs.length){ showToast('Revisa datos: ' + errs.join(' · '), false); return; }
+
+    // Si todo OK, ahora sí mostramos loader
+    showPageLoader();
 
     const order = buildOrder({name, email, address, zip, method});
     if (!order){ showToast('Tu carrito está vacío', false); return; }
 
-    const remote = await sendOrderToSheet(order);       // guarda en Google Sheet (con fallback CORS)
-    if (!remote?.ok) {
-      showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false);
-      return;
-    }
+    const remote = await sendOrderToSheet(order);
+    if (!remote?.ok) { showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false); return; }
 
-    // OK: vaciar y redirigir
-    localStorage.removeItem('cart'); 
+    // OK
+    localStorage.removeItem('cart');
     updateCartCount(); renderCartModal(); renderCartPage();
     const cartModal = document.getElementById('cart-modal');
     if (cartModal && !cartModal.classList.contains('hidden')) cartModal.classList.add('hidden');
 
     showToast('Pedido confirmado: ' + order.orderId, true);
-    // El email de confirmación lo envía el backend automáticamente (sendOrderEmail)
     setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
 
   } finally {
-    // Solo se ejecuta si no hemos redirigido todavía (en error/validación)
+    // Solo si no hemos navegado aún (errores/validación)
     isPlacingOrder = false;
     setConfirmButtonEnabled(true);
     hidePageLoader();
   }
 }
 
-/* ===================== Admin – lectura GAS o fallback local ===================== */
+/* ===================== Admin – lectura ===================== */
 async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) {
-    // Fallback local: pedidos de este navegador (debug)
     const raw = JSON.parse(localStorage.getItem('orders') || '[]');
     let rows = raw.map(o => ({
       timestamp: o.createdAt || o.timestamp || new Date().toISOString(),
@@ -383,15 +382,11 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
       total: o.total, currency: o.currency || 'EUR',
       items: o.items || []
     }));
-    if (since) {
-      const dt = new Date(since);
-      if (!isNaN(dt)) rows = rows.filter(r => new Date(r.timestamp) >= dt);
-    }
+    if (since) { const dt = new Date(since); if (!isNaN(dt)) rows = rows.filter(r => new Date(r.timestamp) >= dt); }
     rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
     return rows.slice(0, limit);
   }
 
-  // Intento normal (GET JSON)
   const url = new URL(GAS_ENDPOINT_URL);
   url.searchParams.set('action','list');
   url.searchParams.set('token', GAS_TOKEN);
@@ -414,10 +409,9 @@ async function loadAdminOrders() {
   const info  = document.getElementById('admin-info');
   const filterMethod = document.getElementById('filter-method')?.value || '';
   const filterStatus = document.getElementById('filter-status')?.value || '';
-  const since = document.getElementById('filter-since')?.value || ''; // YYYY-MM-DD
+  const since = document.getElementById('filter-since')?.value || '';
 
   if (!table) return;
-
   table.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
   try {
     const rows = await fetchOrdersFromSheet({ since });
@@ -470,63 +464,41 @@ function wireNewsletter() {
   if (!btn || !inp) return;
 
   let sending = false;
-
   async function submitNewsletter() {
     if (sending) return;
     const email = (inp.value||'').trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Email inválido', false); return; }
 
-    sending = true;
-    btn.disabled = true; btn.style.opacity = '.6';
-
+    sending = true; btn.disabled = true; btn.style.opacity = '.6';
     const resp = await sendNewsletterEmail(email);
-
-    if (resp?.ok) {
-      showToast('Suscripción realizada ✅', true);
-      inp.value = '';
-    } else {
-      console.warn('Newsletter failed:', resp);
-      showToast('Error newsletter: ' + (resp?.error || 'CORS/Conexión'), false);
-    }
-
-    sending = false;
-    btn.disabled = false; btn.style.opacity = '1';
+    if (resp?.ok) { showToast('Suscripción realizada ✅', true); inp.value = ''; }
+    else { console.warn('Newsletter failed:', resp); showToast('Error newsletter: ' + (resp?.error || 'CORS/Conexión'), false); }
+    sending = false; btn.disabled = false; btn.style.opacity = '1';
   }
-
   btn.onclick = submitNewsletter;
-  inp.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') submitNewsletter();
-  });
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitNewsletter(); });
 }
 
-/* ===================== INIT con loader premium ===================== */
+/* ===================== INIT ===================== */
 window.onload = async () => {
   updateCartCount();
-
-  // Intro: solo 1ª vez de la sesión
   startHackAnimation();
 
-  // Loader de página + fade-out premium
   ensurePageLoaderMounted();
   hidePageLoader();
 
-  // Al navegar fuera (cerrar/recargar): fade-out y loader
   window.addEventListener('beforeunload', () => {
     document.body.classList.add('fade-out');
     showPageLoader();
   });
 
-  // Si usas navigateTo() mostramos fade-out + loader
   const oldNavigateTo = window.navigateTo;
   window.navigateTo = function(page) {
     document.body.classList.add('fade-out');
     showPageLoader();
-    setTimeout(() => {
-      oldNavigateTo ? oldNavigateTo(page) : (window.location.href = `${page}.html`);
-    }, 350);
+    setTimeout(() => { oldNavigateTo ? oldNavigateTo(page) : (window.location.href = `${page}.html`); }, 350);
   };
 
-  // Delegación para enlaces internos <a>
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     if (!a) return;
@@ -540,21 +512,9 @@ window.onload = async () => {
     }
   });
 
-  // Gates: sitio vs admin
-  const isAdminPage =
-    location.pathname.endsWith('/admin.html') ||
-    location.pathname.endsWith('admin.html');
+  const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
+  if (isAdminPage) { await ensureAdminAccess(); } else { await ensureSiteAccess(); }
 
-  if (isAdminPage) {
-    await ensureAdminAccess();   // pass de sitio + admin
-  } else {
-    await ensureSiteAccess();    // pass de sitio
-  }
-
-  // Si estamos en cart.html, puebla lista
   renderCartPage();
-
-  // Newsletter
   wireNewsletter();
 };
-
