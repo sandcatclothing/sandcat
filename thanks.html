@@ -2,44 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thanks - SANDCAT</title>
-  <link rel="stylesheet" href="style.css" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanks – SANDCAT</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Top bar -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
+    <img src="assets/logo2.png" class="logo-left" alt="SANDCAT logo" onclick="location.href='index.html'" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
-      <span class="cart-count" id="cart-count">0</span>
-      <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
+      <img src="assets/bag.png" class="cart-icon-img" onclick="location.href='cart.html'" alt="Cart"/>
+      <div id="cart-count">0</div>
+      <div class="hamburger" onclick="location.href='index.html'">☰</div>
     </div>
   </div>
 
+  <!-- Console menu -->
   <div id="console-menu">
-    <div class="console-line">&gt; payment_status</div>
-    <div class="console-line">status: <strong>CONFIRMED</strong> ✅</div>
-    <div class="console-line">next_step: check your email for <strong>order confirmation</strong> and <strong>invoice</strong>.</div>
-    <div class="console-line">support: <strong>support@sandcat.es</strong></div>
-    <div class="console-line">tip: follow us to unlock <strong>FOUNDERS DROP</strong>.</div>
-    <div class="console-line" style="margin-top:16px;">
-      <button onclick="window.location.href='shop.html'">Continue Shopping</button>
-      <button onclick="window.location.href='invoice.html'">View / Download Invoice (PDF)</button>
+    <div class="console-line">&gt; Thanks for your order</div>
+    <div id="order-summary" class="order-summary"></div>
+    <div class="console-line" style="margin-top:20px;">
+      <button onclick="location.href='shop.html'">Continue shopping</button>
     </div>
   </div>
 
+  <!-- Newsletter -->
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
-    <input type="email" placeholder="youremail@example.com" />
+    <input id="newsletter-email" type="email" placeholder="youremail@example.com" />
+    <button id="newsletter-btn" type="button">Subscribe</button>
   </div>
 
   <script src="script.js"></script>
   <script>
-    updateCartCount();
+    // Mostrar resumen del último pedido
+    (function showSummary(){
+      const summaryEl = document.getElementById('order-summary');
+      const raw = localStorage.getItem('last_order');
+      if (!raw) {
+        summaryEl.innerHTML = '<p>No order found.</p>';
+        return;
+      }
+      const order = JSON.parse(raw);
+      let html = `
+        <p><b>Order ID:</b> ${order.orderId}</p>
+        <p><b>Date:</b> ${new Date(order.createdAt).toLocaleString()}</p>
+        <p><b>Name:</b> ${order.customer.name}</p>
+        <p><b>Address:</b> ${order.customer.address}, ${order.customer.zip}</p>
+        <table style="margin-top:10px; border-collapse:collapse; width:100%; font-size:0.9rem;">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Product</th>
+              <th>Size</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (const it of order.items) {
+        const subtotal = (Number(it.price)*Number(it.qty)).toFixed(2);
+        html += `<tr>
+          <td>${it.name}</td>
+          <td>${it.size}</td>
+          <td>${it.qty}</td>
+          <td>€${Number(it.price).toFixed(2)}</td>
+          <td>€${subtotal}</td>
+        </tr>`;
+      }
+      html += `</tbody></table>
+        <p style="margin-top:10px;"><b>Total:</b> €${order.total}</p>
+        <p><b>Payment:</b> ${order.method.toUpperCase()}</p>
+      `;
+      summaryEl.innerHTML = html;
+    })();
   </script>
 </body>
 </html>
