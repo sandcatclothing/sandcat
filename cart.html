@@ -5,58 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cart - SANDCAT</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
+  <!-- Top white bar -->
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="window.location.href='index.html'" />
-    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
+    <img src="assets/logo2.png" class="logo-left" />
+    <img src="assets/logo_text.png" class="logo-center" />
     <div class="top-icons">
-      <img src="assets/bag.png" class="cart-icon" onclick="toggleCart()" alt="Cart" />
+      <img src="assets/bag.png" class="cart-icon" onclick="window.location.href='cart.html'" />
       <span class="cart-count" id="cart-count">0</span>
       <div class="hamburger" onclick="window.location.href='index.html'">☰</div>
     </div>
   </div>
 
+  <!-- Cart page styled like console -->
   <div id="console-menu">
     <div class="console-line">&gt; cart</div>
     <div id="cart-items" class="cart-items-console"></div>
-    <div class="console-line">Total: €<span id="cart-total">0.00</span></div>
-    <!-- Botón único para abrir checkout -->
-    <button class="console-button" onclick="toggleCart()">Open Checkout</button>
+    <div class="console-line">
+      Total: €<span id="cart-total">0.00</span>
+    </div>
+    <button id="confirm-order-btn" onclick="placeOrder()">Confirm Order</button>
   </div>
 
+  <!-- Sticky newsletter -->
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
-    <input type="email" placeholder="youremail@example.com" />
+    <input type="email" id="newsletter-email" placeholder="youremail@example.com" />
+    <button id="newsletter-btn">Subscribe</button>
   </div>
-
-  <!-- Modal checkout (sin export) -->
-  <div id="cart-modal" class="cart-modal hidden">
-    <h2>Your Cart</h2>
-    <div id="cart-items"></div>
-    <p>Total: €<span id="cart-total">0.00</span></p>
-
-    <div class="console-line" style="cursor:default">
-      <div><strong>Checkout</strong></div>
-      <div style="margin-top:8px; display:grid; gap:8px;">
-        <input id="chk-name" placeholder="Full name" />
-        <input id="chk-email" placeholder="Email (required for PayPal)" />
-        <input id="chk-address" placeholder="Address (street, number, city)" />
-        <input id="chk-zip" placeholder="Postal code (5 digits)" />
-        <select id="chk-method">
-          <option value="paypal">PayPal</option>
-          <option value="cod">Contrareembolso</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button onclick="placeOrder()">Confirm Order</button>
-      <button onclick="toggleCart()">Close</button>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
+
 
