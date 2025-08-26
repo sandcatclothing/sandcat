@@ -7,13 +7,13 @@ window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
 /* ============ Page Loader config ============ */
-const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; // <- tu imagen de loader
+const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; //  imagen de loader
 
 /* ===================== PASSWORD GATES (SHA-256) ===================== */
-/* ACTIVAS con hashes de ejemplo para que pruebes YA:
+/* ACTIVAS :
    - Sitio:        sandcat
    - Admin panel:  sandcat-admin
-   Cambia los hashes con genHashFromPrompt() cuando quieras. */
+   */
 const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
 const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
 
@@ -40,6 +40,27 @@ function isSiteAuthed()  { return localStorage.getItem(AUTH_SITE_KEY)  === '1' |
 function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' || !ADMIN_PASS_HASH; }
 function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
 function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
+
+/* ====== Toast mínimo ====== */
+function showToast(msg, ok=true) {
+  let el = document.getElementById('sandcat-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'sandcat-toast';
+    el.style.cssText = `
+      position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+      background: ${ok ? '#00ff66' : '#ff6b6b'}; color: #001a0c;
+      padding: 10px 14px; border-radius: 8px; z-index: 100000;
+      font-family: 'Courier New', monospace; box-shadow: 0 10px 24px rgba(0,0,0,.35);
+    `;
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.background = ok ? '#00ff66' : '#ff6b6b';
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(()=> { el.style.display = 'none'; }, 2400);
+}
 
 /* ===================== Overlay de login ===================== */
 function mountAuthOverlay({ title, onSubmit }) {
@@ -264,7 +285,7 @@ function appendOrderHistory(order) {
 
 /* ===================== Envío a Google Sheets ===================== */
 async function sendOrderToSheet(order) {
-  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, skipped:true, reason:'No GAS config' };
+  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   try {
     const res = await fetch(GAS_ENDPOINT_URL, {
       method: 'POST',
@@ -272,7 +293,7 @@ async function sendOrderToSheet(order) {
       body: JSON.stringify({ token: GAS_TOKEN, order })
     });
     const data = await res.json().catch(()=> ({}));
-    console.log('[GAS]', res.status, data);
+    console.log('[GAS Order]', res.status, data);
     return data; // { ok:true, saved:{...} } o { ok:false, error:'...' }
   } catch (err) {
     console.warn('sendOrderToSheet error:', err);
@@ -322,28 +343,32 @@ async function placeOrder(){
   const method = (document.getElementById('chk-method')?.value || 'paypal');
 
   const errs = validateCheckoutData({name, email, address, zip, method});
-  if (errs.length){ alert('Please fix:\n- ' + errs.join('\n- ')); return; }
+  if (errs.length){ showToast('Revisa datos: ' + errs.join(' · '), false); return; }
 
   const order = buildOrder({name, email, address, zip, method});
-  if (!order){ alert('Your cart is empty.'); return; }
+  if (!order){ showToast('Tu carrito está vacío', false); return; }
 
+  // Guardar remoto (Apps Script)
   const remote = await sendOrderToSheet(order);
-  if (!remote?.ok && !remote?.skipped) {
+  if (!remote?.ok) {
     console.warn('Order not saved remotely:', remote);
+    showToast('No se pudo guardar el pedido en servidor', false);
+    return; // no cerramos ni vaciamos si falla
   }
 
+  // OK: vaciar carrito, cerrar modal y redirigir
   localStorage.removeItem('cart'); updateCartCount(); renderCartModal(); renderCartPage();
   const cartModal = document.getElementById('cart-modal');
   if (cartModal && !cartModal.classList.contains('hidden')) cartModal.classList.add('hidden');
 
-  alert(`${method === 'paypal' ? 'Payment confirmed via PayPal' : 'Order confirmed as Cash on Delivery'}.\nOrder: ${order.orderId}`);
-  setTimeout(()=> { window.location.href = 'thanks.html'; }, 500);
+  showToast('Pedido confirmado: ' + order.orderId, true);
+  setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
 }
 
 /* ===================== Admin – lectura GAS o fallback local ===================== */
 async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) {
-    // Fallback local: leer localStorage.orders (sólo pedidos del navegador actual)
+    // Fallback local: pedidos de este navegador (debug)
     const raw = JSON.parse(localStorage.getItem('orders') || '[]');
     let rows = raw.map(o => ({
       timestamp: o.createdAt || o.timestamp || new Date().toISOString(),
@@ -422,18 +447,18 @@ function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','
 
 /* ===================== Newsletter ===================== */
 async function sendNewsletterEmail(email) {
-  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return false;
+  if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   try {
     const res = await fetch(GAS_ENDPOINT_URL, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } })
     });
-    const data = await res.json().catch(()=> ({}));
+    const data = await res.json().catch(() => ({}));
     console.log('[GAS Newsletter]', res.status, data);
-    return data?.ok === true;
-  } catch {
-    return false;
+    return data; // { ok:true } o { ok:false, error:'...' }
+  } catch (err) {
+    return { ok:false, error:String(err) };
   }
 }
 function wireNewsletter() {
@@ -442,10 +467,15 @@ function wireNewsletter() {
   if (!btn || !inp) return;
   btn.onclick = async () => {
     const email = (inp.value||'').trim();
-    if (!/^\S+@\S+\.\S+$/.test(email)) { alert('Email inválido'); return; }
-    const ok = await sendNewsletterEmail(email);
-    alert(ok ? 'Suscripción realizada' : 'Error al suscribirse');
-    if (ok) inp.value = '';
+    if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Email inválido', false); return; }
+    const resp = await sendNewsletterEmail(email);
+    if (resp?.ok) {
+      showToast('Suscripción realizada ✅', true);
+      inp.value = '';
+    } else {
+      console.warn('Newsletter failed:', resp);
+      showToast('Error al suscribirse', false);
+    }
   };
 }
 
@@ -507,4 +537,3 @@ window.onload = async () => {
   // Newsletter
   wireNewsletter();
 };
-
