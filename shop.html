@@ -1,83 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shop - SANDCAT</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
   <div class="white-bar">
-    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="location.href='index.html'"/>
-    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT"/>
+    <img src="assets/logo2.png" class="logo-left" alt="logo" onclick="location.href='index.html'" />
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
     <div class="top-icons">
-      <img src="assets/bag.png" class="bag-icon" alt="Cart" onclick="toggleCart()"/>
-      <span id="cart-count">0</span>
-      <div class="hamburger" onclick="navigateTo('index')">☰</div>
+      <img src="assets/bag.png" id="cart-icon" onclick="toggleCart()" alt="Cart"/>
+      <div id="cart-count">0</div>
+      <div class="hamburger" onclick="location.href='index.html'">☰</div>
     </div>
   </div>
 
   <div id="console-menu" class="shop-grid">
     <div class="product">
-      <img src="assets/core_tee.png" alt="SANDCAT TEE"/>
+      <img src="assets/core_tee.png" alt="SANDCAT TEE" />
       <p>SANDCAT TEE</p>
       <select>
-        <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        <option value="">Size</option>
+        <option>S</option><option>M</option><option>L</option><option>XL</option>
       </select>
       <button onclick="
-        const s=this.previousElementSibling.value;
-        if(!s){alert('Please select a size'); return;}
-        addToCart('SANDCAT TEE', 25, s); renderCartModal(); toggleCart();
+        const size1 = this.previousElementSibling.value;
+        if(!size1){alert('Please select a size'); return;}
+        addToCart('SANDCAT TEE', 25, size1);
+        renderCartModal();
+        toggleCart();
       ">Add to Cart</button>
     </div>
 
     <div class="product">
-      <img src="assets/core_hoodie.png" alt="SANDCAT HOODIE"/>
+      <img src="assets/core_hoodie.png" alt="SANDCAT HOODIE" />
       <p>SANDCAT HOODIE</p>
       <select>
-        <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        <option value="">Size</option>
+        <option>S</option><option>M</option><option>L</option><option>XL</option>
       </select>
       <button onclick="
-        const s=this.previousElementSibling.value;
-        if(!s){alert('Please select a size'); return;}
-        addToCart('SANDCAT HOODIE', 50, s); renderCartModal(); toggleCart();
+        const size2 = this.previousElementSibling.value;
+        if(!size2){alert('Please select a size'); return;}
+        addToCart('SANDCAT HOODIE', 50, size2);
+        renderCartModal();
+        toggleCart();
       ">Add to Cart</button>
     </div>
   </div>
 
-  <!-- Newsletter -->
-  <div class="newsletter sticky-newsletter">
-    <p>Subscribe to our newsletter:</p>
-    <div class="newsletter-row">
-      <input id="newsletter-email" type="email" placeholder="youremail@example.com"/>
-      <button id="newsletter-btn">Subscribe</button>
-    </div>
-  </div>
-
-  <!-- Cart modal + Checkout -->
+  <!-- Cart modal -->
   <div id="cart-modal" class="cart-modal hidden">
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
     <p>Total: €<span id="cart-total">0.00</span></p>
-    <div class="checkout-box">
-      <h3>Checkout</h3>
-      <input id="chk-name" placeholder="Full name"/>
-      <input id="chk-email" placeholder="Email (required for PayPal)"/>
-      <input id="chk-address" placeholder="Address (street, number, city)"/>
-      <input id="chk-zip" placeholder="Postal code (5 digits)"/>
-      <select id="chk-method">
-        <option value="paypal">PayPal</option>
-        <option value="cod">Contrareembolso</option>
-      </select>
-      <div class="checkout-actions">
-        <button onclick="placeOrder()">Confirm Order</button>
-        <button class="secondary" onclick="toggleCart()">Close</button>
+
+    <div class="console-line" style="cursor:default">
+      <div><strong>Checkout</strong></div>
+      <div style="margin-top:8px; display:grid; gap:8px;">
+        <input id="chk-name" placeholder="Full name" />
+        <input id="chk-email" placeholder="Email (required for PayPal)" />
+        <input id="chk-address" placeholder="Address (street, number, city)" />
+        <input id="chk-zip" placeholder="Postal code (5 digits)" />
+        <select id="chk-method">
+          <option value="paypal">PayPal</option>
+          <option value="cod">Contrareembolso</option>
+        </select>
       </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button id="confirm-order-btn" onclick="placeOrder()">Confirm Order</button>
+      <button onclick="toggleCart()">Close</button>
     </div>
   </div>
 
-  <div id="page-loader"><img src="assets/sandcatloading.png" alt="Loading..."/></div>
-  <script src="script.js"></script>
+  <div class="newsletter sticky-newsletter">
+    <p>Subscribe to our newsletter:</p>
+    <input type="email" id="newsletter-email" placeholder="youremail@example.com" />
+    <button id="newsletter-btn">Subscribe</button>
+  </div>
 </body>
 </html>
-
