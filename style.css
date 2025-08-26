@@ -169,3 +169,14 @@ button { cursor: pointer; }
   #cart-count { font-size: 0.75rem; }
   .qty-btn, .remove-btn { padding: 6px 8px; }
 }
+.order-summary table, 
+.order-summary th, 
+.order-summary td {
+  border: 1px solid #555;
+  padding: 6px;
+}
+.order-summary th {
+  background: #111;
+  color: #0f0;
+}
+
