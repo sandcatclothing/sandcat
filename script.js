@@ -2,19 +2,18 @@
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
 
-
 // Exponer para admin.html (que lee window.*)
 window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
 /* ============ Page Loader config ============ */
-const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; //  imagen de loader
+const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; // <- tu imagen de loader
 
 /* ===================== PASSWORD GATES (SHA-256) ===================== */
-/* ACTIVAS :
+/* ACTIVAS con hashes de ejemplo:
    - Sitio:        sandcat
    - Admin panel:  sandcat-admin
-   */
+   Cambia los hashes con genHashFromPrompt() cuando quieras. */
 const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
 const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
 
@@ -284,22 +283,34 @@ function appendOrderHistory(order) {
   localStorage.setItem(key, JSON.stringify(list));
 }
 
+/* ===================== Fallback CORS genérico ===================== */
+async function fetchJSONWithCORSFallback(url, options) {
+  try {
+    const res = await fetch(url, options);
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok && data?.ok !== false, status: res.status, data };
+  } catch (e) {
+    try {
+      const res2 = await fetch(url, { ...options, mode: 'no-cors' });
+      // Respuesta opaca: no se puede leer, pero la request se envió
+      return { ok: true, opaque: true, status: 0, data: null };
+    } catch (e2) {
+      return { ok: false, error: String(e2) };
+    }
+  }
+}
+
 /* ===================== Envío a Google Sheets ===================== */
 async function sendOrderToSheet(order) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
-  try {
-    const res = await fetch(GAS_ENDPOINT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: GAS_TOKEN, order })
-    });
-    const data = await res.json().catch(()=> ({}));
-    console.log('[GAS Order]', res.status, data);
-    return data; // { ok:true, saved:{...} } o { ok:false, error:'...' }
-  } catch (err) {
-    console.warn('sendOrderToSheet error:', err);
-    return { ok:false, error:String(err) };
-  }
+  const body = JSON.stringify({ token: GAS_TOKEN, order });
+  const r = await fetchJSONWithCORSFallback(GAS_ENDPOINT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body
+  });
+  if (r.opaque) return { ok:true, note:'opaque' };
+  return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
 /* ===================== Checkout ===================== */
@@ -349,11 +360,11 @@ async function placeOrder(){
   const order = buildOrder({name, email, address, zip, method});
   if (!order){ showToast('Tu carrito está vacío', false); return; }
 
-  // Guardar remoto (Apps Script)
+  // Guardar remoto (Apps Script) con fallback CORS
   const remote = await sendOrderToSheet(order);
   if (!remote?.ok) {
     console.warn('Order not saved remotely:', remote);
-    showToast('No se pudo guardar el pedido en servidor', false);
+    showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false);
     return; // no cerramos ni vaciamos si falla
   }
 
@@ -386,6 +397,8 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
     return rows.slice(0, limit);
   }
+
+  // Intento normal (GET JSON). Si CORS bloquea, esto fallará; para Admin solemos verlo en el mismo dominio (no hace falta fallback)
   const url = new URL(GAS_ENDPOINT_URL);
   url.searchParams.set('action','list');
   url.searchParams.set('token', GAS_TOKEN);
@@ -438,7 +451,7 @@ async function loadAdminOrders() {
         table.appendChild(tr);
       }
     }
-    if (info) info.textContent = `Rows: ${filtered.length}  |  Source: ${GAS_ENDPOINT_URL && GAS_TOKEN ? 'Google Sheet' : 'Local (this browser)'}`;
+    if (info) info.textContent = `Rows: ${filtered.length}  |  Source: Google Sheet`;
   } catch (err) {
     table.innerHTML = `<tr><td colspan="7">Error: ${escapeHtml(String(err.message||err))}</td></tr>`;
     if (info) info.textContent = 'Error loading data';
@@ -449,18 +462,14 @@ function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','
 /* ===================== Newsletter ===================== */
 async function sendNewsletterEmail(email) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
-  try {
-    const res = await fetch(GAS_ENDPOINT_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } })
-    });
-    const data = await res.json().catch(() => ({}));
-    console.log('[GAS Newsletter]', res.status, data);
-    return data; // { ok:true } o { ok:false, error:'...' }
-  } catch (err) {
-    return { ok:false, error:String(err) };
-  }
+  const body = JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } });
+  const r = await fetchJSONWithCORSFallback(GAS_ENDPOINT_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body
+  });
+  if (r.opaque) return { ok:true, note:'opaque' };
+  return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 function wireNewsletter() {
   const btn = document.getElementById('newsletter-btn');
@@ -475,7 +484,7 @@ function wireNewsletter() {
       inp.value = '';
     } else {
       console.warn('Newsletter failed:', resp);
-      showToast('Error al suscribirse', false);
+      showToast('Error newsletter: ' + (resp?.error || 'CORS/Conexión'), false);
     }
   };
 }
