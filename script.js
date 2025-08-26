@@ -7,7 +7,7 @@ window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
 /* ============ Page Loader config ============ */
-const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; // <- tu imagen de loader
+const LOADER_LOGO_SRC = 'assets/sandcatloading.png'; // imagen de loader
 
 /* ===================== PASSWORD GATES (SHA-256) ===================== */
 /* ACTIVAS con hashes de ejemplo:
@@ -313,68 +313,61 @@ async function sendOrderToSheet(order) {
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
-/* ===================== Checkout ===================== */
-function validateCheckoutData({name, email, address, zip, method}) {
-  const errors = [];
-  if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
-  if (method === 'paypal') {
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.');
+/* ===== NUEVO: flag anti-doble click ===== */
+let isPlacingOrder = false;
+
+/* Helper: habilitar/deshabilitar botón de confirmación */
+function setConfirmButtonEnabled(enabled) {
+  const btn = document.getElementById('confirm-order-btn');
+  if (btn) {
+    btn.disabled = !enabled;
+    btn.style.opacity = enabled ? '1' : '.6';
+    btn.style.pointerEvents = enabled ? 'auto' : 'none';
   }
-  if (!address || address.trim().length < 10) errors.push('Address looks too short.');
-  if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
-  if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
-  return errors;
 }
-function buildOrder({name, email, address, zip, method}) {
-  const cart = getCart();
-  if (!cart.length) return null;
-  const order = {
-    orderId: generateOrderId(),
-    createdAt: new Date().toISOString(),
-    currency: 'EUR',
-    method,
-    status: method === 'paypal' ? 'PAID' : 'COD_PENDING',
-    items: cart.map(it => ({
-      name: it.product || it.name || 'Product',
-      size: it.size || 'N/A',
-      price: Number(it.price) || 0,
-      qty: it.qty || 1
-    })),
-    total: cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0).toFixed(2),
-    customer: { name: name.trim(), email: (email||'').trim(), address: address.trim(), zip: zip.trim(), vatid: '' }
-  };
-  localStorage.setItem('last_order', JSON.stringify(order));
-  appendOrderHistory(order);
-  return order;
-}
+
+/* === placeOrder con cerrojo + loader === */
 async function placeOrder(){
-  const name = (document.getElementById('chk-name')?.value || '').trim();
-  const email = (document.getElementById('chk-email')?.value || '').trim();
-  const address = (document.getElementById('chk-address')?.value || '').trim();
-  const zip = (document.getElementById('chk-zip')?.value || '').trim();
-  const method = (document.getElementById('chk-method')?.value || 'paypal');
+  if (isPlacingOrder) return;                  // anti doble click
+  isPlacingOrder = true;
+  setConfirmButtonEnabled(false);
+  showPageLoader();                            // muestra assets/sandcatloading.png
 
-  const errs = validateCheckoutData({name, email, address, zip, method});
-  if (errs.length){ showToast('Revisa datos: ' + errs.join(' · '), false); return; }
+  try {
+    const name = (document.getElementById('chk-name')?.value || '').trim();
+    const email = (document.getElementById('chk-email')?.value || '').trim();
+    const address = (document.getElementById('chk-address')?.value || '').trim();
+    const zip = (document.getElementById('chk-zip')?.value || '').trim();
+    const method = (document.getElementById('chk-method')?.value || 'paypal');
 
-  const order = buildOrder({name, email, address, zip, method});
-  if (!order){ showToast('Tu carrito está vacío', false); return; }
+    const errs = validateCheckoutData({name, email, address, zip, method});
+    if (errs.length){ showToast('Revisa datos: ' + errs.join(' · '), false); return; }
 
-  // Guardar remoto (Apps Script) con fallback CORS
-  const remote = await sendOrderToSheet(order);
-  if (!remote?.ok) {
-    console.warn('Order not saved remotely:', remote);
-    showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false);
-    return; // no cerramos ni vaciamos si falla
+    const order = buildOrder({name, email, address, zip, method});
+    if (!order){ showToast('Tu carrito está vacío', false); return; }
+
+    const remote = await sendOrderToSheet(order);       // guarda en Google Sheet (con fallback CORS)
+    if (!remote?.ok) {
+      showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false);
+      return;
+    }
+
+    // OK: vaciar y redirigir
+    localStorage.removeItem('cart'); 
+    updateCartCount(); renderCartModal(); renderCartPage();
+    const cartModal = document.getElementById('cart-modal');
+    if (cartModal && !cartModal.classList.contains('hidden')) cartModal.classList.add('hidden');
+
+    showToast('Pedido confirmado: ' + order.orderId, true);
+    // El email de confirmación lo envía el backend automáticamente (sendOrderEmail)
+    setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
+
+  } finally {
+    // Solo se ejecuta si no hemos redirigido todavía (en error/validación)
+    isPlacingOrder = false;
+    setConfirmButtonEnabled(true);
+    hidePageLoader();
   }
-
-  // OK: vaciar carrito, cerrar modal y redirigir
-  localStorage.removeItem('cart'); updateCartCount(); renderCartModal(); renderCartPage();
-  const cartModal = document.getElementById('cart-modal');
-  if (cartModal && !cartModal.classList.contains('hidden')) cartModal.classList.add('hidden');
-
-  showToast('Pedido confirmado: ' + order.orderId, true);
-  setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
 }
 
 /* ===================== Admin – lectura GAS o fallback local ===================== */
@@ -398,7 +391,7 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     return rows.slice(0, limit);
   }
 
-  // Intento normal (GET JSON). Si CORS bloquea, esto fallará; para Admin solemos verlo en el mismo dominio (no hace falta fallback)
+  // Intento normal (GET JSON)
   const url = new URL(GAS_ENDPOINT_URL);
   url.searchParams.set('action','list');
   url.searchParams.set('token', GAS_TOKEN);
@@ -475,10 +468,19 @@ function wireNewsletter() {
   const btn = document.getElementById('newsletter-btn');
   const inp = document.getElementById('newsletter-email');
   if (!btn || !inp) return;
-  btn.onclick = async () => {
+
+  let sending = false;
+
+  async function submitNewsletter() {
+    if (sending) return;
     const email = (inp.value||'').trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Email inválido', false); return; }
+
+    sending = true;
+    btn.disabled = true; btn.style.opacity = '.6';
+
     const resp = await sendNewsletterEmail(email);
+
     if (resp?.ok) {
       showToast('Suscripción realizada ✅', true);
       inp.value = '';
@@ -486,7 +488,15 @@ function wireNewsletter() {
       console.warn('Newsletter failed:', resp);
       showToast('Error newsletter: ' + (resp?.error || 'CORS/Conexión'), false);
     }
-  };
+
+    sending = false;
+    btn.disabled = false; btn.style.opacity = '1';
+  }
+
+  btn.onclick = submitNewsletter;
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submitNewsletter();
+  });
 }
 
 /* ===================== INIT con loader premium ===================== */
@@ -547,3 +557,4 @@ window.onload = async () => {
   // Newsletter
   wireNewsletter();
 };
+
