@@ -34,7 +34,116 @@ function showToast(msg, ok=true) {
   el._t = setTimeout(()=> { el.style.display = 'none'; }, 2400);
 }
 
-/* ===================== Overlay de login ===================== */
+/* ===================== Loader entre páginas ===================== */
+function ensurePageLoaderMounted() {
+  if (document.getElementById('page-loader')) return;
+  const el = document.createElement('div');
+  el.id = 'page-loader';
+  el.innerHTML = `<img src="${LOADER_LOGO_SRC}" alt="Loading...">`;
+  document.body.appendChild(el);
+}
+function showPageLoader() { ensurePageLoaderMounted(); document.getElementById('page-loader').style.display = 'flex'; }
+function hidePageLoader() { const el = document.getElementById('page-loader'); if (el) el.style.display = 'none'; }
+
+/* ===================== Intro (solo primera visita) ===================== */
+function startHackAnimation() {
+  const hackScreen = document.getElementById("hack-screen");
+  const hackText = document.getElementById("hack-text");
+  if (!hackScreen || !hackText) return;
+  const already = sessionStorage.getItem('introShown') === '1';
+  if (already) { hackScreen.style.display = 'none'; return; }
+  hackScreen.style.display = 'flex';
+  hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
+  setTimeout(() => {
+    hackScreen.style.opacity = "0";
+    setTimeout(() => { hackScreen.style.display = "none"; sessionStorage.setItem('introShown', '1'); }, 300);
+  }, 700);
+}
+
+/* ===================== CÓDIGO SECRETO (desktop + móvil) ===================== */
+const SECRET_WORD = 'sorpresa';
+let secretBuf = '';
+
+function revealSecret() {
+  localStorage.setItem('secret_unlocked', '1');
+  document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
+  showToast('Secret drop unlocked ✨', true);
+}
+
+function ensureSecretInput(){
+  let el = document.getElementById('secret-input');
+  if (!el) {
+    el = document.createElement('input');
+    el.id = 'secret-input';
+    el.autocapitalize = 'off';
+    el.autocomplete = 'off';
+    el.spellcheck = false;
+    document.body.appendChild(el);
+    el.addEventListener('input', (e) => {
+      const v = e.target.value || '';
+      for (const ch of v) {
+        if (ch && ch.length === 1) {
+          secretBuf = (secretBuf + ch.toLowerCase()).slice(-SECRET_WORD.length);
+          if (secretBuf === SECRET_WORD) { revealSecret(); secretBuf = ''; }
+        }
+      }
+      e.target.value = '';
+    });
+  }
+  return el;
+}
+
+function secretUnlockInit() {
+  // Query ?unlock=sorpresa
+  try {
+    const params = new URLSearchParams(location.search);
+    if ((params.get('unlock') || '').toLowerCase() === SECRET_WORD) revealSecret();
+  } catch(_) {}
+
+  // Si ya estaba desbloqueado
+  if (localStorage.getItem('secret_unlocked') === '1') {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
+    });
+  }
+
+  // Desktop: teclado global (si no estás escribiendo en otros inputs)
+  document.addEventListener('keydown', (e) => {
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    const editable = document.activeElement && (document.activeElement.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
+    if (editable) return;
+    const key = e.key.length === 1 ? e.key.toLowerCase() : '';
+    if (!key) return;
+    secretBuf = (secretBuf + key).slice(-SECRET_WORD.length);
+    if (secretBuf === SECRET_WORD) { revealSecret(); secretBuf = ''; }
+  });
+
+  // Móvil: al tocar consola, enfocamos input oculto para abrir teclado
+  const focusTargets = ['console-menu'];
+  function focusHidden() {
+    const el = ensureSecretInput();
+    try { el.focus(); } catch(_) {}
+  }
+  focusTargets.forEach(id => {
+    const t = document.getElementById(id);
+    if (t) {
+      t.addEventListener('click', focusHidden);
+      t.addEventListener('touchstart', focusHidden, { passive: true });
+    }
+  });
+}
+
+/* ===================== Navegación / menú ============== */
+function navigateTo(page) { window.location.href = `${page}.html`; }
+function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
+function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
+window.addEventListener('keydown', (e) => {
+  if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+    e.preventDefault(); window.location.href = 'admin.html';
+  }
+});
+
+/* ===================== Password gates ===================== */
 async function sha256Hex(text) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -99,81 +208,6 @@ async function ensureAdminAccess() {
     }
   });
 }
-
-/* ===================== Loader entre páginas ===================== */
-function ensurePageLoaderMounted() {
-  if (document.getElementById('page-loader')) return;
-  const el = document.createElement('div');
-  el.id = 'page-loader';
-  el.innerHTML = `<img src="${LOADER_LOGO_SRC}" alt="Loading...">`;
-  document.body.appendChild(el);
-}
-function showPageLoader() { ensurePageLoaderMounted(); document.getElementById('page-loader').style.display = 'flex'; }
-function hidePageLoader() { const el = document.getElementById('page-loader'); if (el) el.style.display = 'none'; }
-
-/* ===================== Intro (solo primera visita) ===================== */
-function startHackAnimation() {
-  const hackScreen = document.getElementById("hack-screen");
-  const hackText = document.getElementById("hack-text");
-  if (!hackScreen || !hackText) return;
-  const already = sessionStorage.getItem('introShown') === '1';
-  if (already) { hackScreen.style.display = 'none'; return; }
-  hackScreen.style.display = 'flex';
-  hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
-  setTimeout(() => {
-    hackScreen.style.opacity = "0";
-    setTimeout(() => { hackScreen.style.display = "none"; sessionStorage.setItem('introShown', '1'); }, 300);
-  }, 700);
-}
-
-/* ===================== CÓDIGO SECRETO GLOBAL ===================== */
-const SECRET_WORD = 'sorpresa';
-function revealSecret() {
-  localStorage.setItem('secret_unlocked', '1');
-  document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
-  showToast('Secret drop unlocked ✨', true);
-}
-function secretUnlockInit() {
-  // Desbloqueo por query: ?unlock=sorpresa
-  try {
-    const params = new URLSearchParams(location.search);
-    if ((params.get('unlock') || '').toLowerCase() === SECRET_WORD) revealSecret();
-  } catch(_) {}
-
-  // Si ya estaba desbloqueado, mostrarlo
-  if (localStorage.getItem('secret_unlocked') === '1') {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
-    });
-  }
-
-  // Buffer de teclas global (ignore inputs)
-  let buf = '';
-  document.addEventListener('keydown', (e) => {
-    const tag = (document.activeElement && document.activeElement.tagName) || '';
-    const editable = document.activeElement && (document.activeElement.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
-    // Capturamos aunque haya inputs? Mejor solo si NO está en input, para no molestar al usuario:
-    if (editable) return;
-
-    const key = e.key.length === 1 ? e.key.toLowerCase() : '';
-    if (!key) return;
-    buf = (buf + key).slice(-SECRET_WORD.length);
-    if (buf === SECRET_WORD) {
-      revealSecret();
-      buf = '';
-    }
-  });
-}
-
-/* ===================== Navegación / menú ============== */
-function navigateTo(page) { window.location.href = `${page}.html`; }
-function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
-function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
-window.addEventListener('keydown', (e) => {
-  if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-    e.preventDefault(); window.location.href = 'admin.html';
-  }
-});
 
 /* ===================== Carrito (lógica) ===================== */
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
@@ -496,21 +530,20 @@ window.onload = async () => {
   ensurePageLoaderMounted();
   hidePageLoader();
 
-  // Secret code global
+  // Secret code (desktop + móvil)
   secretUnlockInit();
 
+  // Navegación suave
   window.addEventListener('beforeunload', () => {
     document.body.classList.add('fade-out');
     showPageLoader();
   });
-
   const oldNavigateTo = window.navigateTo;
   window.navigateTo = function(page) {
     document.body.classList.add('fade-out');
     showPageLoader();
     setTimeout(() => { oldNavigateTo ? oldNavigateTo(page) : (window.location.href = `${page}.html`); }, 350);
   };
-
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     if (!a) return;
@@ -524,9 +557,12 @@ window.onload = async () => {
     }
   });
 
+  // Password gate
   const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
   if (isAdminPage) { await ensureAdminAccess(); } else { await ensureSiteAccess(); }
 
+  // Carrito / newsletter
   renderCartPage();
   wireNewsletter();
 };
+
