@@ -21,8 +21,6 @@ async function sha256Hex(text) {
   const buf = await crypto.subtle.digest('SHA-256', enc);
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-
-/* Generar hashes desde navegador */
 async function genHashFromPrompt() {
   const pwd = prompt('Introduce contraseña a hashear (no se guarda):');
   if (!pwd) return;
@@ -30,7 +28,6 @@ async function genHashFromPrompt() {
   console.log('SHA-256:', h);
   alert('Hash generado. Copia el valor desde la consola y pégalo en script.js');
 }
-
 function isSiteAuthed()  { return localStorage.getItem(AUTH_SITE_KEY)  === '1' || !SITE_PASS_HASH; }
 function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' || !ADMIN_PASS_HASH; }
 function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
@@ -89,8 +86,6 @@ function mountAuthOverlay({ title, onSubmit }) {
     try { await onSubmit(pass, overlay); } catch(err){ console.warn(err); }
   };
 }
-
-/* Gates */
 async function ensureSiteAccess() {
   if (isSiteAuthed()) return;
   mountAuthOverlay({
@@ -131,13 +126,10 @@ function startHackAnimation() {
   const hackScreen = document.getElementById("hack-screen");
   const hackText = document.getElementById("hack-text");
   if (!hackScreen || !hackText) return;
-
   const already = sessionStorage.getItem('introShown') === '1';
   if (already) { hackScreen.style.display = 'none'; return; }
-
   hackScreen.style.display = 'flex';
   hackText.innerHTML = '<span class="glitch-text">ACCESS GRANTED</span>';
-
   setTimeout(() => {
     hackScreen.style.opacity = "0";
     setTimeout(() => { hackScreen.style.display = "none"; sessionStorage.setItem('introShown', '1'); }, 300);
@@ -159,8 +151,6 @@ function handleCommand(e) {
 function navigateTo(page) { window.location.href = `${page}.html`; }
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
-
-/* Atajo Alt+Shift+A -> admin */
 window.addEventListener('keydown', (e) => {
   if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
     e.preventDefault(); window.location.href = 'admin.html';
@@ -207,7 +197,6 @@ function renderCartModal() {
   const container = document.getElementById("cart-items");
   const totalEl = document.getElementById("cart-total");
   if (!container || !totalEl) return;
-
   container.innerHTML = "";
   cart.forEach((item, i) => {
     const row = document.createElement("div");
@@ -247,7 +236,18 @@ function renderCartPage() {
   totalEl.textContent = calcCartTotal(cart).toFixed(2);
 }
 
-/* ===================== Pedido ===================== */
+/* ===================== Validación + construcción de pedido ===================== */
+function validateCheckoutData({name, email, address, zip, method}) {
+  const errors = [];
+  if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
+  if (method === 'paypal') {
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.');
+  }
+  if (!address || address.trim().length < 10) errors.push('Address looks too short.');
+  if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
+  if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
+  return errors;
+}
 function generateOrderId() {
   const d = new Date();
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
@@ -259,6 +259,28 @@ function appendOrderHistory(order) {
   const list = JSON.parse(localStorage.getItem(key) || '[]');
   list.push(order);
   localStorage.setItem(key, JSON.stringify(list));
+}
+function buildOrder({name, email, address, zip, method}) {
+  const cart = getCart();
+  if (!cart.length) return null;
+  const order = {
+    orderId: generateOrderId(),
+    createdAt: new Date().toISOString(),
+    currency: 'EUR',
+    method,
+    status: method === 'paypal' ? 'PAID' : 'COD_PENDING',
+    items: cart.map(it => ({
+      name: it.product || it.name || 'Product',
+      size: it.size || 'N/A',
+      price: Number(it.price) || 0,
+      qty: it.qty || 1
+    })),
+    total: cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0).toFixed(2),
+    customer: { name: name.trim(), email: (email||'').trim(), address: address.trim(), zip: zip.trim(), vatid: '' }
+  };
+  localStorage.setItem('last_order', JSON.stringify(order));
+  appendOrderHistory(order);
+  return order;
 }
 
 /* ===================== Fallback CORS ===================== */
@@ -292,10 +314,7 @@ async function sendOrderToSheet(order) {
 
 /* ===== Cerrojo anti doble click ===== */
 let isPlacingOrder = false;
-
-/* Des/activar todos los botones "Confirm Order" visibles */
 function setConfirmButtonEnabled(enabled) {
-  // Por si hay modal + página con otro botón
   const btns = Array.from(document.querySelectorAll('#confirm-order-btn'));
   btns.forEach(btn => {
     btn.disabled = !enabled;
@@ -303,8 +322,6 @@ function setConfirmButtonEnabled(enabled) {
     btn.style.pointerEvents = enabled ? 'auto' : 'none';
   });
 }
-
-/* Helper de lectura segura */
 function $val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 
 /* === placeOrder robusto === */
@@ -314,18 +331,18 @@ async function placeOrder(){
   setConfirmButtonEnabled(false);
 
   try {
-    // Si no existen inputs de checkout en esta página, abre el modal (si existe)
-    const fieldsExist =
+    // ¿Hay inputs de checkout en esta página?
+    const hasFields =
       document.getElementById('chk-name') &&
       document.getElementById('chk-email') &&
       document.getElementById('chk-address') &&
       document.getElementById('chk-zip') &&
       document.getElementById('chk-method');
 
-    if (!fieldsExist) {
+    if (!hasFields) {
       const modal = document.getElementById('cart-modal');
       if (modal && modal.classList.contains('hidden')) {
-        modal.classList.remove('hidden'); // mostramos el checkout
+        modal.classList.remove('hidden');
         showToast('Completa tus datos para finalizar el pedido', false);
       } else {
         showToast('El checkout está en la ventana del carrito.', false);
@@ -333,18 +350,15 @@ async function placeOrder(){
       return;
     }
 
-    // Leer datos
     const name = $val('chk-name');
     const email = $val('chk-email');
     const address = $val('chk-address');
     const zip = $val('chk-zip');
     const method = $val('chk-method') || 'paypal';
 
-    // Validar primero (sin loader)
     const errs = validateCheckoutData({name, email, address, zip, method});
     if (errs.length){ showToast('Revisa datos: ' + errs.join(' · '), false); return; }
 
-    // Si todo OK, ahora sí mostramos loader
     showPageLoader();
 
     const order = buildOrder({name, email, address, zip, method});
@@ -353,7 +367,6 @@ async function placeOrder(){
     const remote = await sendOrderToSheet(order);
     if (!remote?.ok) { showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false); return; }
 
-    // OK
     localStorage.removeItem('cart');
     updateCartCount(); renderCartModal(); renderCartPage();
     const cartModal = document.getElementById('cart-modal');
@@ -363,7 +376,6 @@ async function placeOrder(){
     setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
 
   } finally {
-    // Solo si no hemos navegado aún (errores/validación)
     isPlacingOrder = false;
     setConfirmButtonEnabled(true);
     hidePageLoader();
@@ -386,7 +398,6 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
     return rows.slice(0, limit);
   }
-
   const url = new URL(GAS_ENDPOINT_URL);
   url.searchParams.set('action','list');
   url.searchParams.set('token', GAS_TOKEN);
@@ -403,14 +414,12 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     items: Array.isArray(r.items) ? r.items : []
   }));
 }
-
 async function loadAdminOrders() {
   const table = document.getElementById('admin-table-body');
   const info  = document.getElementById('admin-info');
   const filterMethod = document.getElementById('filter-method')?.value || '';
   const filterStatus = document.getElementById('filter-status')?.value || '';
   const since = document.getElementById('filter-since')?.value || '';
-
   if (!table) return;
   table.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
   try {
@@ -462,13 +471,11 @@ function wireNewsletter() {
   const btn = document.getElementById('newsletter-btn');
   const inp = document.getElementById('newsletter-email');
   if (!btn || !inp) return;
-
   let sending = false;
   async function submitNewsletter() {
     if (sending) return;
     const email = (inp.value||'').trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Email inválido', false); return; }
-
     sending = true; btn.disabled = true; btn.style.opacity = '.6';
     const resp = await sendNewsletterEmail(email);
     if (resp?.ok) { showToast('Suscripción realizada ✅', true); inp.value = ''; }
@@ -483,7 +490,6 @@ function wireNewsletter() {
 window.onload = async () => {
   updateCartCount();
   startHackAnimation();
-
   ensurePageLoaderMounted();
   hidePageLoader();
 
