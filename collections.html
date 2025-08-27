@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Collections - SANDCAT</title>
-  <link rel="stylesheet" href="style.css?v=11"/>
-  <script defer src="script.js?v=11"></script>
+  <link rel="stylesheet" href="style.css?v=12"/>
+  <script defer src="script.js?v=12"></script>
 </head>
 <body>
   <div class="white-bar">
@@ -28,6 +28,12 @@
     </div>
 
     <div id="collection-output" class="collection-output"></div>
+
+    <!-- Consola visible (comandos + secreto) -->
+    <div class="console-input">
+      <span class="prompt">&gt;</span>
+      <input id="console-secret-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    </div>
   </div>
 
   <div class="newsletter sticky-newsletter">
@@ -54,7 +60,7 @@
           <input id="chk-zip" placeholder="Postal code (5 digits)"/>
           <select id="chk-method">
             <option value="paypal">PayPal</option>
-            <option value="cod">Cash on Delivery</option>
+            <option value="cod">Cash on delivery</option>
           </select>
         </div>
       </div>
