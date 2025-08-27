@@ -41,7 +41,7 @@ function showToast(msg, ok=true) {
     el.id = 'sandcat-toast';
     el.style.cssText = `
       position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
-      background: ${ok ? '#00ff66' : '#ff6b6b'}; color: #001a0c;
+      background: ${ok ? '#00ff66' : '#ff6b6b'}; color: ${ok ? '#001a0c' : '#1a0000'};
       padding: 10px 14px; border-radius: 8px; z-index: 100000;
       font-family: 'Courier New', monospace; box-shadow: 0 10px 24px rgba(0,0,0,.35);
     `;
@@ -63,16 +63,16 @@ function mountAuthOverlay({ title, onSubmit }) {
     display:flex; align-items:center; justify-content:center; font-family:'Courier New',monospace; color:#00ff66;
   `;
   overlay.innerHTML = `
-    <div style="border:1px solid #0f4; padding:20px; width:min(92vw,420px); background:#000; box-shadow:0 12px 36px rgba(0,255,102,.12); border-radius:8px;">
+    <div style="border:1px solid #0f4; padding:20px; width:min(92vw,420px); background:#000; box-shadow:0 12px 36px rgba(0,255,102,.12); border-radius:12px;">
       <div style="font-size:1.2rem; margin-bottom:10px;">${title}</div>
-      <input id="auth-pass" type="password" placeholder="Password" style="width:100%; background:#000; color:#00ff66; border:1px solid #0f4; padding:10px; border-radius:6px;">
+      <input id="auth-pass" type="password" placeholder="Password" style="width:100%; background:#000; color:#00ff66; border:1px solid #0f4; padding:10px; border-radius:8px;">
       <label style="display:flex; align-items:center; gap:8px; margin:8px 0;">
         <input id="auth-show" type="checkbox" />
         <span>Show password</span>
       </label>
       <div style="display:flex; gap:10px; margin-top:8px;">
-        <button id="auth-submit" style="background:#00ff66; color:#001a0c; border:none; padding:10px 14px; border-radius:6px; cursor:pointer;">Unlock</button>
-        <button id="auth-cancel" style="background:transparent; border:1px solid #0f4; color:#6aff9e; padding:10px 14px; border-radius:6px; cursor:pointer;">Cancel</button>
+        <button id="auth-submit" style="background:#00ff66; color:#001a0c; border:none; padding:10px 14px; border-radius:8px; cursor:pointer;">Unlock</button>
+        <button id="auth-cancel" style="background:transparent; border:1px solid #0f4; color:#6aff9e; padding:10px 14px; border-radius:8px; cursor:pointer;">Cancel</button>
       </div>
       <div id="auth-msg" style="margin-top:10px; min-height:20px; color:#ff6b6b;"></div>
     </div>
@@ -157,7 +157,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-/* ===================== Carrito ===================== */
+/* ===================== Carrito (lógica) ===================== */
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
 function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCartCount(); }
 function updateCartCount() {
@@ -186,17 +186,24 @@ function removeFromCart(index) {
   setCart(cart); renderCartModal(); renderCartPage();
 }
 function calcCartTotal(cart) { return cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0); }
+
+/* ===== Drawer: abrir/cerrar ===== */
 function toggleCart() {
-  const cartModal = document.getElementById("cart-modal");
-  if (!cartModal) return;
-  cartModal.classList.toggle("hidden");
-  renderCartModal();
+  const drawer  = document.getElementById("cart-drawer");
+  const overlay = document.getElementById("cart-overlay");
+  if (!drawer || !overlay) return;
+  const isOpen = drawer.classList.toggle("open");
+  overlay.style.display = isOpen ? "block" : "none";
+  if (isOpen) renderCartModal();
 }
+
+/* render del contenido del carrito en drawer */
 function renderCartModal() {
   const cart = getCart();
   const container = document.getElementById("cart-items");
   const totalEl = document.getElementById("cart-total");
   if (!container || !totalEl) return;
+
   container.innerHTML = "";
   cart.forEach((item, i) => {
     const row = document.createElement("div");
@@ -214,9 +221,10 @@ function renderCartModal() {
     row.appendChild(info); row.appendChild(controls); container.appendChild(row);
   });
   const total = calcCartTotal(cart);
-  if (totalEl.tagName === 'SPAN') totalEl.textContent = total.toFixed(2);
-  else totalEl.innerText = `Total: €${total.toFixed(2)}`;
+  totalEl.textContent = total.toFixed(2);
 }
+
+/* render listado en cart.html (compat) */
 function renderCartPage() {
   const cartList = document.getElementById('cart-items');
   const totalEl = document.getElementById('cart-total');
@@ -283,7 +291,7 @@ function buildOrder({name, email, address, zip, method}) {
   return order;
 }
 
-/* ===================== Fallback CORS ===================== */
+/* ===================== CORS fallback ===================== */
 async function fetchJSONWithCORSFallback(url, options) {
   try {
     const res = await fetch(url, options);
@@ -340,12 +348,14 @@ async function placeOrder(){
       document.getElementById('chk-method');
 
     if (!hasFields) {
-      const modal = document.getElementById('cart-modal');
-      if (modal && modal.classList.contains('hidden')) {
-        modal.classList.remove('hidden');
+      // Si no hay, intentamos abrir el drawer
+      const drawer = document.getElementById('cart-drawer');
+      const overlay = document.getElementById('cart-overlay');
+      if (drawer && overlay && !drawer.classList.contains('open')) {
+        drawer.classList.add('open'); overlay.style.display = 'block';
         showToast('Completa tus datos para finalizar el pedido', false);
       } else {
-        showToast('El checkout está en la ventana del carrito.', false);
+        showToast('El checkout está en el carrito.', false);
       }
       return;
     }
@@ -367,10 +377,17 @@ async function placeOrder(){
     const remote = await sendOrderToSheet(order);
     if (!remote?.ok) { showToast('No se pudo guardar el pedido: ' + (remote?.error || 'CORS/Conexión'), false); return; }
 
+    // limpiar carrito
     localStorage.removeItem('cart');
     updateCartCount(); renderCartModal(); renderCartPage();
-    const cartModal = document.getElementById('cart-modal');
-    if (cartModal && !cartModal.classList.contains('hidden')) cartModal.classList.add('hidden');
+
+    // cerrar drawer si está abierto
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartDrawer && cartDrawer.classList.contains('open')) {
+      cartDrawer.classList.remove('open');
+      if (cartOverlay) cartOverlay.style.display = 'none';
+    }
 
     showToast('Pedido confirmado: ' + order.orderId, true);
     setTimeout(()=> { window.location.href = 'thanks.html'; }, 600);
