@@ -4,8 +4,9 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SANDCAT Console</title>
-  <link rel="stylesheet" href="style.css?v=4"/>
-  <script defer src="script.js?v=4"></script>
+  <!-- Sube el número de versión si el navegador cachea -->
+  <link rel="stylesheet" href="style.css?v=7"/>
+  <script defer src="script.js?v=7"></script>
 </head>
 <body>
   <!-- Intro (solo primera visita) -->
@@ -35,9 +36,11 @@
     <div class="console-line" onclick="location.href='about.html'">&gt; about</div>
     <div class="console-line" onclick="location.href='contact.html'">&gt; contact</div>
 
+    <!-- Prompt consola SIN input (solo > y cursor parpadeante) -->
     <div class="console-input">
       <span>&gt;</span>
-      <input type="text" placeholder="type command..." onkeydown="handleCommand(event)"/>
+      <span id="console-cmd" class="console-cmd" contenteditable="true" spellcheck="false"></span>
+      <span class="blinking-cursor">|</span>
     </div>
   </div>
 
@@ -68,6 +71,8 @@
             <option value="paypal">PayPal</option>
             <option value="cod">Contrareembolso</option>
           </select>
+          <!-- Contenedor PayPal opcional (queda oculto si no lo usas) -->
+          <div id="paypal-button-container" class="hidden" style="margin-top:10px;"></div>
         </div>
       </div>
     </div>
