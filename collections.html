@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Collections - SANDCAT</title>
-  <link rel="stylesheet" href="style.css?v=4"/>
-  <script defer src="script.js?v=4"></script>
+  <link rel="stylesheet" href="style.css?v=5"/>
+  <script defer src="script.js?v=5"></script>
 </head>
 <body>
   <div class="white-bar">
@@ -85,7 +85,7 @@
             <button onclick="
               const size = this.previousElementSibling.value;
               if(!size){alert('Please select a size'); return;}
-              addToCart('SANDCAT HOODIE', 50, size); toggleCart();
+              addToCart('SANDCAT HOODIE', 50, size);
             ">Add to cart</button>
           </div>
           <div class="product">
@@ -97,7 +97,7 @@
             <button onclick="
               const size = this.previousElementSibling.value;
               if(!size){alert('Please select a size'); return;}
-              addToCart('SANDCAT TEE', 25, size); toggleCart();
+              addToCart('SANDCAT TEE', 25, size);
             ">Add to cart</button>
           </div>
         </div>
@@ -110,7 +110,6 @@
         <div class="console-line">This drop is private. You have unlocked access.</div>
       `;
     }
-    // Autocargar Core Drop
     document.addEventListener('DOMContentLoaded', showCoreDrop);
   </script>
 </body>
