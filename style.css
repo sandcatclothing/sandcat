@@ -9,6 +9,23 @@ body {
   min-height: 100vh;
 }
 
+/* Input oculto para móviles (desbloqueo secreto) */
+#secret-input{
+  position: fixed; /* visible para el navegador aunque opaco */
+  opacity: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  color: transparent;
+  border: none;
+  outline: none;
+  caret-color: transparent;
+  z-index: -1;       /* no estorba clics; el foco se da por JS */
+  pointer-events: none;
+}
+
 /* ========== Barra superior ========== */
 .white-bar {
   background: white;
@@ -180,5 +197,4 @@ button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transfo
   80% { transform: translate(1px, -2px); }
   100% { transform: translate(0); }
 }
-
 
