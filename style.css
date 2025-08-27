@@ -40,14 +40,14 @@ body {
   align-items: center;
 }
 
-/* contenedor del carrito (index usa <div>, otras páginas usan <img>) */
+/* contenedor del carrito */
 .cart-icon {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-/* todas las variantes de la imagen de carrito */
+/* imagen del carrito (en todas las variantes) */
 .cart-icon img,
 #cart-icon,
 .cart-icon-img {
@@ -57,12 +57,13 @@ body {
   cursor: pointer;
 }
 
+/* contador ROJO estilo badge */
 #cart-count,
 .cart-count {
   font-weight: bold;
   margin-left: 6px;
-  background: white;
-  color: black;
+  background: #ff3b3b;
+  color: white;
   padding: 2px 6px;
   border-radius: 50%;
   font-size: 0.8rem;
@@ -75,7 +76,7 @@ body {
   z-index: 2;
 }
 
-/* ========== Consola principal ========== */
+/* ========== Zona tipo consola ========== */
 #console-menu {
   background: black;
   color: #00ff66;
@@ -83,265 +84,147 @@ body {
   font-size: 1.2rem;
   flex-grow: 1;
 }
-
-.console-line {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.console-input {
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-}
-
+.console-line { margin-bottom: 10px; cursor: pointer; }
+.console-input { display: flex; align-items: center; margin-top: 20px; }
 .console-input input {
-  background: black;
-  color: #00ff66;
-  border: 1px solid #00ff66;
-  outline: none;
-  font-family: monospace;
-  font-size: 1rem;
-  padding: 8px 10px;
-  width: 300px;
+  background: black; color: #00ff66; border: 1px solid #00ff66; outline: none;
+  font-family: monospace; font-size: 1rem; padding: 8px 10px; width: 300px;
 }
+.submenu { margin-left: 20px; }
+.hidden { display: none; }
 
-.submenu {
-  margin-left: 20px;
-}
-
-.hidden {
-  display: none;
-}
-
-/* ========== Newsletter sticky abajo ========== */
+/* ========== Newsletter sticky ========== */
 .newsletter {
   background: black;
   color: #00ff66;
   padding: 30px 20px;
   text-align: center;
 }
-
-.sticky-newsletter {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
-}
-
+.sticky-newsletter { position: sticky; bottom: 0; z-index: 5; }
 .newsletter input {
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 10px;
-  width: 300px;
-  max-width: 90%;
-  background: black;
-  color: #00ff66;
-  border: 1px solid #00ff66;
-  outline: none;
+  padding: 10px; font-size: 1rem; margin-top: 10px; width: 300px; max-width: 90%;
+  background: black; color: #00ff66; border: 1px solid #00ff66; outline: none;
 }
-
 .newsletter button {
-  margin-left: 8px;
-  background: #00ff66;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-family: monospace;
+  margin-left: 8px; background: #00ff66; color: black; border: none;
+  padding: 10px 20px; cursor: pointer; font-family: monospace; border-radius: 4px;
   transition: background 0.2s ease, transform 0.2s ease;
-  border-radius: 4px;
 }
+.newsletter button:hover { background: #00cc55; transform: scale(1.05); }
 
-.newsletter button:hover {
-  background: #00cc55;
-  transform: scale(1.05);
-}
-
-/* ========== Inputs de Checkout (nombre, dirección, CP, etc.) ========== */
-#chk-name, #chk-email, #chk-address, #chk-zip, #chk-method {
-  background: black;
-  color: #00ff66;
-  border: 1px solid #00ff66;
-  padding: 10px;
+/* ========== Inputs consola (checkout/newsletter) ========== */
+input, select, textarea {
   font-family: monospace;
-  margin-top: 8px;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
 }
-
-#chk-method {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+#chk-name, #chk-email, #chk-address, #chk-zip, #chk-method {
+  background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 10px;
+  margin-top: 8px; border-radius: 6px; width: 100%; box-sizing: border-box;
 }
-
+#chk-method { appearance: none; -webkit-appearance: none; -moz-appearance: none; }
 #chk-name:focus, #chk-email:focus, #chk-address:focus, #chk-zip:focus, #chk-method:focus {
-  outline: none;
-  border-color: #00cc55;
-  box-shadow: 0 0 6px #00ff66;
+  outline: none; border-color: #00cc55; box-shadow: 0 0 8px #00ff66;
 }
 
 /* ========== Productos tienda ========== */
 .shop-grid {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  padding: 20px;
-  justify-content: center;
+  display: flex; gap: 30px; flex-wrap: wrap; padding: 20px; justify-content: center;
 }
-
 .product {
-  border: 1px solid #00ff66;
-  padding: 20px;
-  width: 220px;
-  text-align: center;
-  background-color: black;
-  transition: transform 0.3s ease;
+  border: 1px solid #00ff66; padding: 20px; width: 220px; text-align: center; background-color: black;
+  transition: transform 0.3s ease, box-shadow .3s ease;
+  border-radius: 12px; box-shadow: 0 12px 36px rgba(0,255,102,.08);
 }
-.product:hover {
-  transform: scale(1.03);
-}
-.product img {
-  width: 100%;
-  height: auto;
-  cursor: pointer;
-}
+.product:hover { transform: scale(1.03); box-shadow: 0 16px 42px rgba(0,255,102,.16); }
+.product img { width: 100%; height: auto; cursor: pointer; border-radius: 8px; }
 .product button {
-  margin-top: 10px;
-  background: #00ff66;
-  color: black;
-  border: none;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-family: monospace;
-  border-radius: 4px;
-  transition: background 0.2s ease, transform 0.2s ease;
+  margin-top: 10px; background: #00ff66; color: black; border: none; padding: 8px 15px; cursor: pointer;
+  border-radius: 6px; transition: background 0.2s ease, transform 0.2s ease;
 }
-.product button:hover {
-  background: #00cc55;
-  transform: scale(1.05);
-}
+.product button:hover { background: #00cc55; transform: translateY(-1px); }
 
 select {
-  margin-top: 10px;
-  padding: 5px;
-  font-family: monospace;
-  background: black;
-  color: #00ff66;
-  border: 1px solid #00ff66;
+  margin-top: 10px; padding: 6px 8px; background: black; color: #00ff66; border: 1px solid #00ff66; border-radius: 6px;
 }
 
-/* ========== Modal Carrito ========== */
-.cart-modal {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #000;
-  border: 1px solid #00ff66;
-  padding: 20px;
-  z-index: 1000;
-  width: 90%;
-  max-width: 480px;
-  color: #00ff66;
-  box-shadow: 0 0 20px rgba(0,255,102,0.4);
-  border-radius: 8px;
+/* ========== Drawer del carrito (slide-in right, estética thanks) ========== */
+/* overlay */
+#cart-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
+  display: none; z-index: 9997;
+}
+/* contenedor */
+#cart-drawer {
+  position: fixed; top: 0; right: 0; height: 100vh; width: min(460px, 92vw);
+  background: #000; color: #00ff66; border-left: 1px solid #00ff66;
+  box-shadow: -20px 0 60px rgba(0,255,102,.12);
+  transform: translateX(100%); transition: transform .28s ease-out;
+  z-index: 9998; display: flex; flex-direction: column; border-top-left-radius: 12px; border-bottom-left-radius: 12px;
+}
+#cart-drawer.open { transform: translateX(0); }
+
+/* cabecera estilo receipt */
+.cart-drawer-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 16px 18px; border-bottom: 1px solid rgba(0,255,102,.35);
+  background: linear-gradient(180deg, rgba(0,255,102,.07), rgba(0,255,102,0));
+}
+.cart-drawer-header h2 { margin: 0; font-size: 1.15rem; letter-spacing: .4px; }
+.btn-close {
+  background: transparent; border: 1px solid #00ff66; color: #9feabf;
+  padding: 6px 10px; border-radius: 8px; cursor: pointer;
+}
+.btn-close:hover { background: #00ff66; color: #001a0c; }
+
+/* cuerpo y footer */
+.cart-drawer-body {
+  padding: 14px 18px 8px; overflow-y: auto; flex: 1;
+}
+.cart-drawer-footer {
+  padding: 14px 18px 18px; border-top: 1px solid rgba(0,255,102,.35);
+  background: linear-gradient(180deg, rgba(0,255,102,.05), rgba(0,0,0,1));
 }
 
-#cart-items {
-  max-height: 220px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-}
-
-.cart-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
+/* lista items */
+#cart-items { margin-bottom: 10px; }
+.cart-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .cart-row .info { flex: 1; }
-.cart-row .controls { display: flex; gap: 6px; }
-
+.cart-row .controls { display: flex; gap: 6px; align-items: center; }
 .qty-btn, .remove-btn {
-  background: #111;
-  color: #00ff66;
-  border: 1px solid #00ff66;
-  padding: 4px 8px;
-  cursor: pointer;
-  border-radius: 3px;
+  background: #111; color: #00ff66; border: 1px solid #00ff66; padding: 4px 8px; cursor: pointer; border-radius: 6px;
 }
-.qty-btn:hover, .remove-btn:hover {
-  background: #00ff66;
-  color: black;
-}
+.qty-btn:hover, .remove-btn:hover { background: #00ff66; color: black; }
 
-/* ========== Botones genéricos (incluye Confirm Order y Close) ========== */
+/* total y acciones */
+.cart-total-line { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 12px; font-size: 1.05rem; }
+
+/* ========== Botones (incluye Confirm Order / Close) ========== */
 button {
-  background: #00ff66;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-family: monospace;
-  border-radius: 4px;
-  transition: background 0.2s ease, transform 0.2s ease;
+  background: #00ff66; color: #001a0c; border: none; padding: 10px 20px; cursor: pointer;
+  font-family: monospace; border-radius: 8px; transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+  box-shadow: 0 10px 24px rgba(0,255,102,.12);
 }
-button:hover {
-  background: #00cc55;
-  transform: scale(1.05);
-}
-button:disabled {
-  background: #044d1c;
-  color: #555;
-  cursor: not-allowed;
-  transform: none;
-}
+button:hover { background: #00cc55; transform: translateY(-1px); box-shadow: 0 14px 30px rgba(0,255,102,.2); }
+button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* ========== Loader pantalla completa ========== */
+.btn-ghost {
+  background: transparent; color: #00ff66; border: 1px solid #00ff66; padding: 10px 20px; border-radius: 8px;
+}
+.btn-ghost:hover { background: #00ff66; color: #001a0c; }
+
+/* ========== Loader (intro + transiciones) ========== */
 #hack-screen {
-  position: fixed;
-  inset: 0;
-  background: black;
-  color: #00ff66;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Courier New', monospace;
-  font-size: 2rem;
-  z-index: 99999;
-  transition: opacity 0.3s ease-out;
+  position: fixed; inset: 0; background: black; color: #00ff66;
+  display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; font-size: 2rem;
+  z-index: 99999; transition: opacity 0.3s ease-out;
 }
-
-/* Loader de páginas entre navegaciones */
 #page-loader {
-  position: fixed;
-  inset: 0;
-  background: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
+  position: fixed; inset: 0; background: black; display: flex; align-items: center; justify-content: center; z-index: 99999;
 }
-#page-loader img {
-  width: 120px;
-  height: auto;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.8; }
-}
+#page-loader img { width: 120px; height: auto; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%{ transform: scale(1); opacity: .8;} 50%{ transform: scale(1.08); opacity: 1;} 100%{ transform: scale(1); opacity:.8;} }
 
 /* Glitch text efecto inicial */
-.glitch-text {
-  position: relative;
-  color: #00ff66;
-  animation: glitch 0.6s infinite;
-}
+.glitch-text { position: relative; color: #00ff66; animation: glitch 0.6s infinite; }
 @keyframes glitch {
   0% { transform: translate(0); }
   20% { transform: translate(-2px, 2px); }
