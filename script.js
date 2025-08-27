@@ -60,63 +60,65 @@ function startHackAnimation() {
   }, 700);
 }
 
-/* ===================== CÓDIGO SECRETO (visible) ===================== */
+/* ===================== SECRETO ===================== */
 const SECRET_WORD = 'sorpresa';
+const STORAGE_SECRET_KEY = 'secret_unlocked_v2'; // clave nueva
+
+// 🔒 Al iniciar, limpiamos el secreto antiguo para evitar que quede desbloqueado de pruebas
+try { localStorage.removeItem('secret_unlocked'); } catch(_) {}
 
 function revealSecret() {
-  localStorage.setItem('secret_unlocked', '1');
+  localStorage.setItem(STORAGE_SECRET_KEY, '1');
   document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   showToast('Secret drop unlocked ✨', true);
 }
+function hideSecret() {
+  localStorage.removeItem(STORAGE_SECRET_KEY);
+  document.querySelectorAll(".secret-tag").forEach(el => {
+    if (!el.classList.contains('hidden')) el.classList.add('hidden');
+  });
+  showToast('Secret drop locked 🔒', true);
+}
 
-/* Input visible en la línea de consola */
+/* Consola visible (comandos + secreto) */
 function wireConsoleInput() {
   const inp = document.getElementById('console-secret-input');
   const area = document.getElementById('console-menu');
   if (!inp || !area) return;
 
-  // Foco al tocar la consola (móvil)
-  area.addEventListener('click', () => { try { inp.focus(); } catch(_){} });
-
-  // Mostrar secreto si ya está desbloqueado
-  if (localStorage.getItem('secret_unlocked') === '1') {
+  // Si ya está desbloqueado con la nueva clave, mostrarlo; si no, mantener oculto
+  if (localStorage.getItem(STORAGE_SECRET_KEY) === '1') {
     document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   }
 
-  // Detectar palabra secreta mientras se escribe
+  // Foco al tocar la zona consola (móvil)
+  area.addEventListener('click', () => { try { inp.focus(); } catch(_){} });
+
+  // Detectar palabra secreta al escribir
   inp.addEventListener('input', () => {
     const cleaned = (inp.value || '').toLowerCase().replace(/\s+/g,'');
-    if (cleaned.includes(SECRET_WORD)) {
-      revealSecret();
-    }
+    if (cleaned.includes(SECRET_WORD)) revealSecret();
   });
 
-  // Comandos con Enter (y también el secreto)
+  // Comandos
   inp.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     e.preventDefault();
     const cmd = (inp.value || '').trim().toLowerCase();
-
     if (!cmd) return;
-    if (cmd === SECRET_WORD) {
-      revealSecret();
-      inp.value = '';
-      return;
-    }
+
+    if (cmd === SECRET_WORD) { revealSecret(); inp.value = ''; return; }
+    if (cmd === 'lock') { hideSecret(); inp.value = ''; return; } // comando para volver a ocultar
 
     const routes = ['about','contact','collections','shop','cart','admin'];
-    if (routes.includes(cmd)) {
-      inp.value = '';
-      navigateTo(cmd);
-      return;
-    }
+    if (routes.includes(cmd)) { inp.value = ''; navigateTo(cmd); return; }
 
     showToast('Unknown command', false);
     inp.value = '';
   });
 }
 
-/* ===================== Desbloqueo también por teclado global y query ============== */
+/* Desbloqueo también por query y teclado global */
 function secretUnlockExtras(){
   // Query ?unlock=sorpresa
   try {
@@ -213,7 +215,7 @@ async function ensureAdminAccess() {
   });
 }
 
-/* ===================== Carrito (lógica) ===================== */
+/* ===================== Carrito ===================== */
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
 function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCartCount(); }
 function updateCartCount() {
@@ -246,7 +248,7 @@ function addToCart(product, price, size) {
   if (idx >= 0) cart[idx].qty = (cart[idx].qty || 1) + 1;
   else cart.push({ product, price: Number(price), size: finalSize, qty: 1 });
   setCart(cart);
-  openCart(); // mostrar al añadir
+  openCart(); // abrir al añadir
 }
 function changeQty(index, delta) {
   let cart = getCart();
@@ -570,4 +572,3 @@ window.onload = async () => {
   renderCartPage();
   wireNewsletter();
 };
-
