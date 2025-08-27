@@ -9,23 +9,6 @@ body {
   min-height: 100vh;
 }
 
-/* Input oculto para móviles (desbloqueo secreto) */
-#secret-input{
-  position: fixed; /* visible para el navegador aunque opaco */
-  opacity: 0;
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  background: transparent;
-  color: transparent;
-  border: none;
-  outline: none;
-  caret-color: transparent;
-  z-index: -1;       /* no estorba clics; el foco se da por JS */
-  pointer-events: none;
-}
-
 /* ========== Barra superior ========== */
 .white-bar {
   background: white;
@@ -63,15 +46,34 @@ body {
 .hamburger { color: black; font-size: 30px; cursor: pointer; z-index: 2; }
 
 /* ========== Zona tipo consola ========== */
-#console-menu { background: black; color: #00ff66; padding: 20px; font-size: 1.2rem; flex-grow: 1; }
+#console-menu {
+  background: black;
+  color: #00ff66;
+  padding: 20px;
+  font-size: 1.2rem;
+  flex-grow: 1;
+}
 .console-line { margin-bottom: 10px; cursor: pointer; }
 .submenu { margin-left: 20px; }
 .hidden { display: none; }
 
-/* Prompt consola minimal (solo '>') */
+/* Línea de consola con input visible */
 .console-input{
-  display:flex; align-items:center; gap:6px;
+  display:flex; align-items:center; gap:8px;
   font-family:'Courier New', monospace; color:#00ff66; margin-top:10px;
+}
+.console-input .prompt { color:#00ff66; user-select:none; }
+.console-input input#console-secret-input{
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #00ff66;
+  font-size: 1rem;
+  caret-color: #00ff66;
+}
+.console-input input#console-secret-input::placeholder{
+  color:#007a3a; opacity:.45;
 }
 
 /* etiqueta secreta dorada */
@@ -102,7 +104,7 @@ input, select, textarea { font-family: monospace; }
   outline: none; border-color: #00cc55; box-shadow: 0 0 8px #00ff66;
 }
 
-/* ========== Productos tienda ========== */
+/* ========== Productos ========== */
 .shop-grid { display: flex; gap: 30px; flex-wrap: wrap; padding: 20px; justify-content: center; }
 .product {
   border: 1px solid #00ff66; padding: 20px; width: 220px; text-align: center; background-color: black;
@@ -116,7 +118,6 @@ input, select, textarea { font-family: monospace; }
   border-radius: 8px; transition: background 0.2s ease, transform 0.2s ease;
 }
 .product button:hover { background: #00cc55; transform: translateY(-1px); }
-
 select {
   margin-top: 10px; padding: 6px 8px; background: black; color: #00ff66; border: 1px solid #00ff66; border-radius: 8px;
 }
@@ -197,4 +198,5 @@ button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transfo
   80% { transform: translate(1px, -2px); }
   100% { transform: translate(0); }
 }
+
 
