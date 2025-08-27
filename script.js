@@ -60,9 +60,8 @@ function startHackAnimation() {
   }, 700);
 }
 
-/* ===================== CÓDIGO SECRETO (desktop + móvil) ===================== */
+/* ===================== CÓDIGO SECRETO (visible) ===================== */
 const SECRET_WORD = 'sorpresa';
-let secretBuf = '';
 
 function revealSecret() {
   localStorage.setItem('secret_unlocked', '1');
@@ -70,66 +69,71 @@ function revealSecret() {
   showToast('Secret drop unlocked ✨', true);
 }
 
-function ensureSecretInput(){
-  let el = document.getElementById('secret-input');
-  if (!el) {
-    el = document.createElement('input');
-    el.id = 'secret-input';
-    el.autocapitalize = 'off';
-    el.autocomplete = 'off';
-    el.spellcheck = false;
-    document.body.appendChild(el);
-    el.addEventListener('input', (e) => {
-      const v = e.target.value || '';
-      for (const ch of v) {
-        if (ch && ch.length === 1) {
-          secretBuf = (secretBuf + ch.toLowerCase()).slice(-SECRET_WORD.length);
-          if (secretBuf === SECRET_WORD) { revealSecret(); secretBuf = ''; }
-        }
-      }
-      e.target.value = '';
-    });
+/* Input visible en la línea de consola */
+function wireConsoleInput() {
+  const inp = document.getElementById('console-secret-input');
+  const area = document.getElementById('console-menu');
+  if (!inp || !area) return;
+
+  // Foco al tocar la consola (móvil)
+  area.addEventListener('click', () => { try { inp.focus(); } catch(_){} });
+
+  // Mostrar secreto si ya está desbloqueado
+  if (localStorage.getItem('secret_unlocked') === '1') {
+    document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   }
-  return el;
+
+  // Detectar palabra secreta mientras se escribe
+  inp.addEventListener('input', () => {
+    const cleaned = (inp.value || '').toLowerCase().replace(/\s+/g,'');
+    if (cleaned.includes(SECRET_WORD)) {
+      revealSecret();
+    }
+  });
+
+  // Comandos con Enter (y también el secreto)
+  inp.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const cmd = (inp.value || '').trim().toLowerCase();
+
+    if (!cmd) return;
+    if (cmd === SECRET_WORD) {
+      revealSecret();
+      inp.value = '';
+      return;
+    }
+
+    const routes = ['about','contact','collections','shop','cart','admin'];
+    if (routes.includes(cmd)) {
+      inp.value = '';
+      navigateTo(cmd);
+      return;
+    }
+
+    showToast('Unknown command', false);
+    inp.value = '';
+  });
 }
 
-function secretUnlockInit() {
+/* ===================== Desbloqueo también por teclado global y query ============== */
+function secretUnlockExtras(){
   // Query ?unlock=sorpresa
   try {
     const params = new URLSearchParams(location.search);
     if ((params.get('unlock') || '').toLowerCase() === SECRET_WORD) revealSecret();
   } catch(_) {}
 
-  // Si ya estaba desbloqueado
-  if (localStorage.getItem('secret_unlocked') === '1') {
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
-    });
-  }
-
-  // Desktop: teclado global (si no estás escribiendo en otros inputs)
+  // Teclado global (si no estás en un input)
+  let buf = '';
   document.addEventListener('keydown', (e) => {
     const tag = (document.activeElement && document.activeElement.tagName) || '';
     const editable = document.activeElement && (document.activeElement.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
     if (editable) return;
     const key = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (!key) return;
-    secretBuf = (secretBuf + key).slice(-SECRET_WORD.length);
-    if (secretBuf === SECRET_WORD) { revealSecret(); secretBuf = ''; }
-  });
-
-  // Móvil: al tocar consola, enfocamos input oculto para abrir teclado
-  const focusTargets = ['console-menu'];
-  function focusHidden() {
-    const el = ensureSecretInput();
-    try { el.focus(); } catch(_) {}
-  }
-  focusTargets.forEach(id => {
-    const t = document.getElementById(id);
-    if (t) {
-      t.addEventListener('click', focusHidden);
-      t.addEventListener('touchstart', focusHidden, { passive: true });
-    }
+    buf = (buf + key).slice(-SECRET_WORD.length);
+    if (buf === SECRET_WORD) { revealSecret(); buf = ''; }
   });
 }
 
@@ -494,7 +498,7 @@ async function loadAdminOrders() {
     if (info) info.textContent = 'Error loading data';
   }
 }
-function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;'}[c])); }
 
 /* ===================== Newsletter ===================== */
 async function sendNewsletterEmail(email) {
@@ -530,8 +534,9 @@ window.onload = async () => {
   ensurePageLoaderMounted();
   hidePageLoader();
 
-  // Secret code (desktop + móvil)
-  secretUnlockInit();
+  // Consola visible + secreto
+  wireConsoleInput();
+  secretUnlockExtras();
 
   // Navegación suave
   window.addEventListener('beforeunload', () => {
