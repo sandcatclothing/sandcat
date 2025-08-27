@@ -48,24 +48,14 @@ body {
 /* ========== Zona tipo consola ========== */
 #console-menu { background: black; color: #00ff66; padding: 20px; font-size: 1.2rem; flex-grow: 1; }
 .console-line { margin-bottom: 10px; cursor: pointer; }
-
 .submenu { margin-left: 20px; }
 .hidden { display: none; }
 
-/* Prompt consola SIN input */
+/* Prompt consola minimal (solo '>') */
 .console-input{
   display:flex; align-items:center; gap:6px;
   font-family:'Courier New', monospace; color:#00ff66; margin-top:10px;
 }
-/* envoltorio para que el cursor quede pegado al texto */
-.cmd-wrap{ display:inline-flex; align-items:center; gap:0; }
-.console-cmd{
-  outline:none; border:none; background:transparent; color:#00ff66;
-  min-width:1ch; white-space:pre;
-}
-.blinking-cursor{ animation: blink 1s step-start infinite; margin-left:0; }
-.cmd-wrap:focus-within .blinking-cursor{ display:none; }
-@keyframes blink{ 50% { opacity:0; } }
 
 /* etiqueta secreta dorada */
 .secret-tag { color: #FFD700; } /* dorado */
@@ -190,4 +180,5 @@ button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transfo
   80% { transform: translate(1px, -2px); }
   100% { transform: translate(0); }
 }
+
 
