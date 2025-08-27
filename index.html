@@ -14,18 +14,17 @@
   </div>
 
   <!-- Top bar -->
- <div class="white-bar">
-  <img src="assets/logo2.png" class="logo-left" alt="SANDCAT logo" onclick="location.href='index.html'"/>
-  <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT"/>
-  <div class="top-icons">
-    <div class="cart-icon" onclick="toggleCart()">
-      <img src="assets/bag.png" class="cart-icon-img" alt="Cart"/>
-      <span class="cart-count" id="cart-count">0</span>
+  <div class="white-bar">
+    <img src="assets/logo2.png" class="logo-left" alt="SANDCAT logo" onclick="location.href='index.html'"/>
+    <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT"/>
+    <div class="top-icons">
+      <div class="cart-icon" onclick="toggleCart()">
+        <img src="assets/bag.png" class="cart-icon-img" alt="Cart"/>
+        <span class="cart-count" id="cart-count">0</span>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
     </div>
-    <div class="hamburger" onclick="toggleMenu()">☰</div>
   </div>
-</div>
-
 
   <!-- Console menu -->
   <div id="console-menu">
@@ -44,12 +43,6 @@
       <input type="text" placeholder="type command..." onkeydown="handleCommand(event)" />
     </div>
   </div>
-    
-   <!-- icono carrito -->
-    <div class="cart-icon" onclick="toggleCart()">
-  <img src="assets/bag.png" alt="Cart" class="cart-icon-img"/>
-  <span id="cart-count">0</span>
-</div>
 
   <!-- Newsletter -->
   <div class="newsletter sticky-newsletter">
@@ -63,7 +56,6 @@
     <h2>Your Cart</h2>
     <div id="cart-items"></div>
     <p>Total: €<span id="cart-total">0</span></p>
-
 
     <div class="console-line" style="cursor:default">
       <div><strong>Checkout</strong></div>
@@ -86,3 +78,4 @@
   </div>
 </body>
 </html>
+
