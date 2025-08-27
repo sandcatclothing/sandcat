@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Shop - SANDCAT</title>
-  <link rel="stylesheet" href="style.css?v=9"/>
-  <script defer src="script.js?v=9"></script>
+  <title>Collections - SANDCAT</title>
+  <link rel="stylesheet" href="style.css?v=10"/>
+  <script defer src="script.js?v=10"></script>
 </head>
 <body>
   <div class="white-bar">
@@ -20,34 +20,14 @@
     </div>
   </div>
 
-  <div id="console-menu" class="shop-grid">
-    <div class="product">
-      <img src="assets/core_tee.png" alt="SANDCAT TEE"/>
-      <p>SANDCAT TEE</p>
-      <select>
-        <option value="">Size</option>
-        <option>S</option><option>M</option><option>L</option><option>XL</option>
-      </select>
-      <button onclick="
-        const size1 = this.previousElementSibling.value;
-        if(!size1){alert('Please select a size'); return;}
-        addToCart('SANDCAT TEE', 25, size1);
-      ">Add to Cart</button>
+  <div id="console-menu">
+    <div class="console-line">&gt; collections</div>
+    <div class="submenu">
+      <div class="console-line clickable" onclick="showCoreDrop()">- CORE DROP</div>
+      <div class="console-line secret-tag hidden clickable" onclick="showSecretDrop()">- SECRET DROP (coming soon)</div>
     </div>
 
-    <div class="product">
-      <img src="assets/core_hoodie.png" alt="SANDCAT HOODIE"/>
-      <p>SANDCAT HOODIE</p>
-      <select>
-        <option value="">Size</option>
-        <option>S</option><option>M</option><option>L</option><option>XL</option>
-      </select>
-      <button onclick="
-        const size2 = this.previousElementSibling.value;
-        if(!size2){alert('Please select a size'); return;}
-        addToCart('SANDCAT HOODIE', 50, size2);
-      ">Add to Cart</button>
-    </div>
+    <div id="collection-output" class="collection-output"></div>
   </div>
 
   <div class="newsletter sticky-newsletter">
@@ -74,7 +54,7 @@
           <input id="chk-zip" placeholder="Postal code (5 digits)"/>
           <select id="chk-method">
             <option value="paypal">PayPal</option>
-            <option value="cod">Contrareembolso</option>
+            <option value="cod">Cash on delivery</option>
           </select>
         </div>
       </div>
@@ -90,6 +70,49 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function showCoreDrop() {
+      const c = document.getElementById("collection-output");
+      c.innerHTML = `
+        <div class="console-line">-- CORE DROP --</div>
+        <div class="shop-grid">
+          <div class="product">
+            <img src="assets/core_hoodie.png" class="product-thumb" alt="SANDCAT HOODIE"/>
+            <div>- SANDCAT BLACK HOODIE - €50</div>
+            <select class="size-select">
+              <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button onclick="
+              const size = this.previousElementSibling.value;
+              if(!size){alert('Please select a size'); return;}
+              addToCart('SANDCAT HOODIE', 50, size);
+            ">Add to cart</button>
+          </div>
+          <div class="product">
+            <img src="assets/core_tee.png" class="product-thumb" alt="SANDCAT TEE"/>
+            <div>- SANDCAT CORE TEE - €25</div>
+            <select class="size-select">
+              <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button onclick="
+              const size = this.previousElementSibling.value;
+              if(!size){alert('Please select a size'); return;}
+              addToCart('SANDCAT TEE', 25, size);
+            ">Add to cart</button>
+          </div>
+        </div>
+      `;
+    }
+    function showSecretDrop() {
+      const c = document.getElementById("collection-output");
+      c.innerHTML = `
+        <div class="console-line secret-tag">-- SECRET DROP (coming soon) --</div>
+        <div class="console-line">Thanks for unlocking with <b>sorpresa</b>. Stay tuned.</div>
+      `;
+    }
+    document.addEventListener('DOMContentLoaded', showCoreDrop);
+  </script>
 </body>
 </html>
 
