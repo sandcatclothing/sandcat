@@ -40,7 +40,6 @@ body {
   align-items: center;
 }
 
-/* contenedor del carrito */
 .cart-icon {
   display: flex;
   align-items: center;
@@ -85,11 +84,30 @@ body {
   flex-grow: 1;
 }
 .console-line { margin-bottom: 10px; cursor: pointer; }
-.console-input { display: flex; align-items: center; margin-top: 20px; }
-.console-input input {
-  background: black; color: #00ff66; border: 1px solid #00ff66; outline: none;
-  font-family: monospace; font-size: 1rem; padding: 8px 10px; width: 300px;
+
+/* Prompt consola sin input */
+.console-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Courier New', monospace;
+  color: #00ff66;
+  margin-top: 10px;
 }
+.console-cmd {
+  outline: none;
+  border: none;
+  background: transparent;
+  color: #00ff66;
+  min-width: 2px;
+  flex: 1;
+}
+.blinking-cursor {
+  animation: blink 1s step-start infinite;
+  margin-left: 2px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
 .submenu { margin-left: 20px; }
 .hidden { display: none; }
 
@@ -113,9 +131,7 @@ body {
 .newsletter button:hover { background: #00cc55; transform: scale(1.05); }
 
 /* ========== Inputs consola (checkout/newsletter) ========== */
-input, select, textarea {
-  font-family: monospace;
-}
+input, select, textarea { font-family: monospace; }
 #chk-name, #chk-email, #chk-address, #chk-zip, #chk-method {
   background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 10px;
   margin-top: 8px; border-radius: 6px; width: 100%; box-sizing: border-box;
@@ -146,13 +162,11 @@ select {
   margin-top: 10px; padding: 6px 8px; background: black; color: #00ff66; border: 1px solid #00ff66; border-radius: 6px;
 }
 
-/* ========== Drawer del carrito (slide-in right, estética thanks) ========== */
-/* overlay */
+/* ========== Drawer del carrito (slide-in right) ========== */
 #cart-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
   display: none; z-index: 9997;
 }
-/* contenedor */
 #cart-drawer {
   position: fixed; top: 0; right: 0; height: 100vh; width: min(460px, 92vw);
   background: #000; color: #00ff66; border-left: 1px solid #00ff66;
@@ -162,7 +176,6 @@ select {
 }
 #cart-drawer.open { transform: translateX(0); }
 
-/* cabecera estilo receipt */
 .cart-drawer-header {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 16px 18px; border-bottom: 1px solid rgba(0,255,102,.35);
@@ -175,16 +188,12 @@ select {
 }
 .btn-close:hover { background: #00ff66; color: #001a0c; }
 
-/* cuerpo y footer */
-.cart-drawer-body {
-  padding: 14px 18px 8px; overflow-y: auto; flex: 1;
-}
+.cart-drawer-body { padding: 14px 18px 8px; overflow-y: auto; flex: 1; }
 .cart-drawer-footer {
   padding: 14px 18px 18px; border-top: 1px solid rgba(0,255,102,.35);
   background: linear-gradient(180deg, rgba(0,255,102,.05), rgba(0,0,0,1));
 }
 
-/* lista items */
 #cart-items { margin-bottom: 10px; }
 .cart-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
 .cart-row .info { flex: 1; }
@@ -194,10 +203,9 @@ select {
 }
 .qty-btn:hover, .remove-btn:hover { background: #00ff66; color: black; }
 
-/* total y acciones */
 .cart-total-line { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 12px; font-size: 1.05rem; }
 
-/* ========== Botones (incluye Confirm Order / Close) ========== */
+/* ========== Botones (Confirm / Close...) ========== */
 button {
   background: #00ff66; color: #001a0c; border: none; padding: 10px 20px; cursor: pointer;
   font-family: monospace; border-radius: 8px; transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
@@ -223,7 +231,7 @@ button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transfo
 #page-loader img { width: 120px; height: auto; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0%{ transform: scale(1); opacity: .8;} 50%{ transform: scale(1.08); opacity: 1;} 100%{ transform: scale(1); opacity:.8;} }
 
-/* Glitch text efecto inicial */
+/* Glitch text */
 .glitch-text { position: relative; color: #00ff66; animation: glitch 0.6s infinite; }
 @keyframes glitch {
   0% { transform: translate(0); }
