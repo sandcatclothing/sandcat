@@ -1,8 +1,6 @@
 /* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
-
-// Exponer para admin.html
 window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
@@ -140,22 +138,42 @@ function startHackAnimation() {
 function initConsolePrompt() {
   const cmd = document.getElementById("console-cmd");
   if (!cmd) return;
+
+  const cursor = document.querySelector(".blinking-cursor");
+  const updateFakeCursor = () => {
+    if (!cursor) return;
+    const isEmpty = (cmd.textContent || "").length === 0;
+    const focused = document.activeElement === cmd;
+    cursor.style.display = (!focused && isEmpty) ? "inline" : "none";
+  };
+
+  cmd.addEventListener("input", updateFakeCursor);
+  cmd.addEventListener("focus", updateFakeCursor);
+  cmd.addEventListener("blur", updateFakeCursor);
+
   cmd.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const input = cmd.textContent.trim().toLowerCase();
-      if (input === "paraloschavales") {
-        document.querySelector(".secret-tag")?.classList.remove("hidden");
+
+      if (input === "sorpresa") {
+        // desbloquear elementos secretos (todas las .secret-tag del DOM)
+        document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
+        showToast('Secret drop unlocked ✨', true);
       } else if (["about","contact","collections","shop","cart","admin"].includes(input)) {
         navigateTo(input);
       }
+
       cmd.textContent = "";
+      updateFakeCursor();
     }
   });
+
+  updateFakeCursor();
 }
 
 /* ===================== Navegación / menú ============== */
-function handleCommand(e) { /* obsoleto con el nuevo prompt, se deja por compat */ }
+function handleCommand(e) { /* obsoleto con el nuevo prompt; se deja por compat */ }
 function navigateTo(page) { window.location.href = `${page}.html`; }
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
@@ -173,8 +191,6 @@ function updateCartCount() {
   const count = cart.reduce((n, it) => n + (it.qty || 1), 0);
   document.querySelectorAll('#cart-count, .cart-count').forEach(el => el && (el.textContent = count));
 }
-
-/* abrir explícitamente el drawer */
 function openCart() {
   const drawer  = document.getElementById("cart-drawer");
   const overlay = document.getElementById("cart-overlay");
@@ -193,7 +209,6 @@ function toggleCart() {
   overlay.style.display = isOpen ? "block" : "none";
   if (isOpen) renderCartModal();
 }
-
 function addToCart(product, price, size) {
   const finalSize = size || 'N/A';
   let cart = getCart();
@@ -201,9 +216,8 @@ function addToCart(product, price, size) {
   if (idx >= 0) cart[idx].qty = (cart[idx].qty || 1) + 1;
   else cart.push({ product, price: Number(price), size: finalSize, qty: 1 });
   setCart(cart);
-  openCart(); // <-- siempre mostrar el carrito al añadir
+  openCart(); // mostrar al añadir
 }
-
 function changeQty(index, delta) {
   let cart = getCart();
   if (index < 0 || index >= cart.length) return;
@@ -217,7 +231,6 @@ function removeFromCart(index) {
   setCart(cart); renderCartModal(); renderCartPage();
 }
 function calcCartTotal(cart) { return cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0); }
-
 function renderCartModal() {
   const cart = getCart();
   const container = document.getElementById("cart-items");
@@ -243,7 +256,6 @@ function renderCartModal() {
   const total = calcCartTotal(cart);
   totalEl.textContent = total.toFixed(2);
 }
-
 function renderCartPage() {
   const cartList = document.getElementById('cart-items');
   const totalEl = document.getElementById('cart-total');
@@ -263,13 +275,11 @@ function renderCartPage() {
   totalEl.textContent = calcCartTotal(cart).toFixed(2);
 }
 
-/* ===================== Validación + construcción de pedido ===================== */
+/* ===================== Validación + pedido ===================== */
 function validateCheckoutData({name, email, address, zip, method}) {
   const errors = [];
   if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
-  if (method === 'paypal') {
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.');
-  }
+  if (method === 'paypal') { if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.'); }
   if (!address || address.trim().length < 10) errors.push('Address looks too short.');
   if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
   if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
@@ -296,12 +306,7 @@ function buildOrder({name, email, address, zip, method}) {
     currency: 'EUR',
     method,
     status: method === 'paypal' ? 'PAID' : 'COD_PENDING',
-    items: cart.map(it => ({
-      name: it.product || it.name || 'Product',
-      size: it.size || 'N/A',
-      price: Number(it.price) || 0,
-      qty: it.qty || 1
-    })),
+    items: cart.map(it => ({ name: it.product || it.name || 'Product', size: it.size || 'N/A', price: Number(it.price) || 0, qty: it.qty || 1 })),
     total: cart.reduce((s, it) => s + (Number(it.price)||0)*(it.qty||1), 0).toFixed(2),
     customer: { name: name.trim(), email: (email||'').trim(), address: address.trim(), zip: zip.trim(), vatid: '' }
   };
@@ -330,11 +335,7 @@ async function fetchJSONWithCORSFallback(url, options) {
 async function sendOrderToSheet(order) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   const body = JSON.stringify({ token: GAS_TOKEN, order });
-  const r = await fetchJSONWithCORSFallback(GAS_ENDPOINT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body
-  });
+  const r = await fetchJSONWithCORSFallback(GAS_ENDPOINT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
   if (r.opaque) return { ok:true, note:'opaque' };
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
@@ -343,11 +344,7 @@ async function sendOrderToSheet(order) {
 let isPlacingOrder = false;
 function setConfirmButtonEnabled(enabled) {
   const btns = Array.from(document.querySelectorAll('#confirm-order-btn'));
-  btns.forEach(btn => {
-    btn.disabled = !enabled;
-    btn.style.opacity = enabled ? '1' : '.6';
-    btn.style.pointerEvents = enabled ? 'auto' : 'none';
-  });
+  btns.forEach(btn => { btn.disabled = !enabled; btn.style.opacity = enabled ? '1' : '.6'; btn.style.pointerEvents = enabled ? 'auto' : 'none'; });
 }
 function $val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 
@@ -364,11 +361,7 @@ async function placeOrder(){
       document.getElementById('chk-zip') &&
       document.getElementById('chk-method');
 
-    if (!hasFields) {
-      openCart();
-      showToast('Completa tus datos para finalizar el pedido', false);
-      return;
-    }
+    if (!hasFields) { openCart(); showToast('Completa tus datos para finalizar el pedido', false); return; }
 
     const name = $val('chk-name');
     const email = $val('chk-email');
@@ -414,10 +407,8 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     let rows = raw.map(o => ({
       timestamp: o.createdAt || o.timestamp || new Date().toISOString(),
       orderId: o.orderId, method: o.method, status: o.status,
-      name: o.customer?.name, email: o.customer?.email,
-      address: o.customer?.address, zip: o.customer?.zip,
-      total: o.total, currency: o.currency || 'EUR',
-      items: o.items || []
+      name: o.customer?.name, email: o.customer?.email, address: o.customer?.address, zip: o.customer?.zip,
+      total: o.total, currency: o.currency || 'EUR', items: o.items || []
     }));
     if (since) { const dt = new Date(since); if (!isNaN(dt)) rows = rows.filter(r => new Date(r.timestamp) >= dt); }
     rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
@@ -455,9 +446,8 @@ async function loadAdminOrders() {
       return byMethod && byStatus;
     });
     table.innerHTML = '';
-    if (!filtered.length) {
-      table.innerHTML = '<tr><td colspan="7">No data</td></tr>';
-    } else {
+    if (!filtered.length) { table.innerHTML = '<tr><td colspan="7">No data</td></tr>'; }
+    else {
       for (const r of filtered) {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -484,11 +474,7 @@ function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','
 async function sendNewsletterEmail(email) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   const body = JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } });
-  const r = await fetchJSONWithCORSFallback(GAS_ENDPOINT_URL, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body
-  });
+  const r = await fetchJSONWithCORSFallback(GAS_ENDPOINT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
   if (r.opaque) return { ok:true, note:'opaque' };
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
@@ -550,3 +536,4 @@ window.onload = async () => {
   renderCartPage();
   wireNewsletter();
 };
+
