@@ -13,24 +13,6 @@ const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b
 const AUTH_SITE_KEY  = 'site_auth';
 const AUTH_ADMIN_KEY = 'admin_auth';
 
-/* ===================== Utils ===================== */
-async function sha256Hex(text) {
-  const enc = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-async function genHashFromPrompt() {
-  const pwd = prompt('Introduce contraseña a hashear (no se guarda):');
-  if (!pwd) return;
-  const h = await sha256Hex(pwd);
-  console.log('SHA-256:', h);
-  alert('Hash generado. Copia el valor desde la consola y pégalo en script.js');
-}
-function isSiteAuthed()  { return localStorage.getItem(AUTH_SITE_KEY)  === '1' || !SITE_PASS_HASH; }
-function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' || !ADMIN_PASS_HASH; }
-function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
-function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
-
 /* ====== Toast ====== */
 function showToast(msg, ok=true) {
   let el = document.getElementById('sandcat-toast');
@@ -53,6 +35,16 @@ function showToast(msg, ok=true) {
 }
 
 /* ===================== Overlay de login ===================== */
+async function sha256Hex(text) {
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function isSiteAuthed()  { return localStorage.getItem(AUTH_SITE_KEY)  === '1' || !SITE_PASS_HASH; }
+function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' || !ADMIN_PASS_HASH; }
+function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
+function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
+
 function mountAuthOverlay({ title, onSubmit }) {
   const overlay = document.createElement('div');
   overlay.id = 'auth-overlay';
@@ -134,46 +126,46 @@ function startHackAnimation() {
   }, 700);
 }
 
-/* ===================== Prompt consola (sin input visible) ===================== */
-function initConsolePrompt() {
-  const cmd = document.getElementById("console-cmd");
-  if (!cmd) return;
+/* ===================== CÓDIGO SECRETO GLOBAL ===================== */
+const SECRET_WORD = 'sorpresa';
+function revealSecret() {
+  localStorage.setItem('secret_unlocked', '1');
+  document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
+  showToast('Secret drop unlocked ✨', true);
+}
+function secretUnlockInit() {
+  // Desbloqueo por query: ?unlock=sorpresa
+  try {
+    const params = new URLSearchParams(location.search);
+    if ((params.get('unlock') || '').toLowerCase() === SECRET_WORD) revealSecret();
+  } catch(_) {}
 
-  const cursor = document.querySelector(".blinking-cursor");
-  const updateFakeCursor = () => {
-    if (!cursor) return;
-    const isEmpty = (cmd.textContent || "").length === 0;
-    const focused = document.activeElement === cmd;
-    cursor.style.display = (!focused && isEmpty) ? "inline" : "none";
-  };
+  // Si ya estaba desbloqueado, mostrarlo
+  if (localStorage.getItem('secret_unlocked') === '1') {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
+    });
+  }
 
-  cmd.addEventListener("input", updateFakeCursor);
-  cmd.addEventListener("focus", updateFakeCursor);
-  cmd.addEventListener("blur", updateFakeCursor);
+  // Buffer de teclas global (ignore inputs)
+  let buf = '';
+  document.addEventListener('keydown', (e) => {
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    const editable = document.activeElement && (document.activeElement.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
+    // Capturamos aunque haya inputs? Mejor solo si NO está en input, para no molestar al usuario:
+    if (editable) return;
 
-  cmd.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const input = cmd.textContent.trim().toLowerCase();
-
-      if (input === "sorpresa") {
-        // desbloquear elementos secretos (todas las .secret-tag del DOM)
-        document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
-        showToast('Secret drop unlocked ✨', true);
-      } else if (["about","contact","collections","shop","cart","admin"].includes(input)) {
-        navigateTo(input);
-      }
-
-      cmd.textContent = "";
-      updateFakeCursor();
+    const key = e.key.length === 1 ? e.key.toLowerCase() : '';
+    if (!key) return;
+    buf = (buf + key).slice(-SECRET_WORD.length);
+    if (buf === SECRET_WORD) {
+      revealSecret();
+      buf = '';
     }
   });
-
-  updateFakeCursor();
 }
 
 /* ===================== Navegación / menú ============== */
-function handleCommand(e) { /* obsoleto con el nuevo prompt; se deja por compat */ }
 function navigateTo(page) { window.location.href = `${page}.html`; }
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
@@ -503,7 +495,9 @@ window.onload = async () => {
   startHackAnimation();
   ensurePageLoaderMounted();
   hidePageLoader();
-  initConsolePrompt();
+
+  // Secret code global
+  secretUnlockInit();
 
   window.addEventListener('beforeunload', () => {
     document.body.classList.add('fade-out');
@@ -536,4 +530,3 @@ window.onload = async () => {
   renderCartPage();
   wireNewsletter();
 };
-
