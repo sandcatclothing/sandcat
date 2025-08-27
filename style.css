@@ -20,12 +20,7 @@ body {
   top: 0;
   z-index: 10;
 }
-
-.logo-left {
-  height: 100px;
-  cursor: pointer;
-}
-
+.logo-left { height: 100px; cursor: pointer; }
 .logo-center {
   height: 160px;
   position: absolute;
@@ -34,31 +29,12 @@ body {
 }
 
 /* ========== Iconos arriba (carrito + menú) ========== */
-.top-icons {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
+.top-icons { display: flex; gap: 15px; align-items: center; }
+.cart-icon { display: flex; align-items: center; cursor: pointer; }
+.cart-icon img, #cart-icon, .cart-icon-img { width: 28px; height: auto; display: block; cursor: pointer; }
 
-.cart-icon {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-/* imagen del carrito (en todas las variantes) */
-.cart-icon img,
-#cart-icon,
-.cart-icon-img {
-  width: 28px;
-  height: auto;
-  display: block;
-  cursor: pointer;
-}
-
-/* contador ROJO estilo badge */
-#cart-count,
-.cart-count {
+/* contador ROJO */
+#cart-count, .cart-count {
   font-weight: bold;
   margin-left: 6px;
   background: #ff3b3b;
@@ -67,65 +43,43 @@ body {
   border-radius: 50%;
   font-size: 0.8rem;
 }
-
-.hamburger {
-  color: black;
-  font-size: 30px;
-  cursor: pointer;
-  z-index: 2;
-}
+.hamburger { color: black; font-size: 30px; cursor: pointer; z-index: 2; }
 
 /* ========== Zona tipo consola ========== */
-#console-menu {
-  background: black;
-  color: #00ff66;
-  padding: 20px;
-  font-size: 1.2rem;
-  flex-grow: 1;
-}
+#console-menu { background: black; color: #00ff66; padding: 20px; font-size: 1.2rem; flex-grow: 1; }
 .console-line { margin-bottom: 10px; cursor: pointer; }
-
-/* Prompt consola sin input */
-.console-input {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Courier New', monospace;
-  color: #00ff66;
-  margin-top: 10px;
-}
-.console-cmd {
-  outline: none;
-  border: none;
-  background: transparent;
-  color: #00ff66;
-  min-width: 2px;
-  flex: 1;
-}
-.blinking-cursor {
-  animation: blink 1s step-start infinite;
-  margin-left: 2px;
-}
-@keyframes blink { 50% { opacity: 0; } }
 
 .submenu { margin-left: 20px; }
 .hidden { display: none; }
 
-/* ========== Newsletter sticky ========== */
-.newsletter {
-  background: black;
-  color: #00ff66;
-  padding: 30px 20px;
-  text-align: center;
+/* Prompt consola SIN input */
+.console-input{
+  display:flex; align-items:center; gap:6px;
+  font-family:'Courier New', monospace; color:#00ff66; margin-top:10px;
 }
+/* envoltorio para que el cursor quede pegado al texto */
+.cmd-wrap{ display:inline-flex; align-items:center; gap:0; }
+.console-cmd{
+  outline:none; border:none; background:transparent; color:#00ff66;
+  min-width:1ch; white-space:pre;
+}
+.blinking-cursor{ animation: blink 1s step-start infinite; margin-left:0; }
+.cmd-wrap:focus-within .blinking-cursor{ display:none; }
+@keyframes blink{ 50% { opacity:0; } }
+
+/* etiqueta secreta dorada */
+.secret-tag { color: #FFD700; } /* dorado */
+
+/* ========== Newsletter sticky ========== */
+.newsletter { background: black; color: #00ff66; padding: 30px 20px; text-align: center; }
 .sticky-newsletter { position: sticky; bottom: 0; z-index: 5; }
 .newsletter input {
   padding: 10px; font-size: 1rem; margin-top: 10px; width: 300px; max-width: 90%;
-  background: black; color: #00ff66; border: 1px solid #00ff66; outline: none;
+  background: black; color: #00ff66; border: 1px solid #00ff66; outline: none; border-radius:6px;
 }
 .newsletter button {
   margin-left: 8px; background: #00ff66; color: black; border: none;
-  padding: 10px 20px; cursor: pointer; font-family: monospace; border-radius: 4px;
+  padding: 10px 20px; cursor: pointer; font-family: monospace; border-radius: 8px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .newsletter button:hover { background: #00cc55; transform: scale(1.05); }
@@ -134,7 +88,7 @@ body {
 input, select, textarea { font-family: monospace; }
 #chk-name, #chk-email, #chk-address, #chk-zip, #chk-method {
   background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 10px;
-  margin-top: 8px; border-radius: 6px; width: 100%; box-sizing: border-box;
+  margin-top: 8px; border-radius: 8px; width: 100%; box-sizing: border-box;
 }
 #chk-method { appearance: none; -webkit-appearance: none; -moz-appearance: none; }
 #chk-name:focus, #chk-email:focus, #chk-address:focus, #chk-zip:focus, #chk-method:focus {
@@ -142,9 +96,7 @@ input, select, textarea { font-family: monospace; }
 }
 
 /* ========== Productos tienda ========== */
-.shop-grid {
-  display: flex; gap: 30px; flex-wrap: wrap; padding: 20px; justify-content: center;
-}
+.shop-grid { display: flex; gap: 30px; flex-wrap: wrap; padding: 20px; justify-content: center; }
 .product {
   border: 1px solid #00ff66; padding: 20px; width: 220px; text-align: center; background-color: black;
   transition: transform 0.3s ease, box-shadow .3s ease;
@@ -154,12 +106,12 @@ input, select, textarea { font-family: monospace; }
 .product img { width: 100%; height: auto; cursor: pointer; border-radius: 8px; }
 .product button {
   margin-top: 10px; background: #00ff66; color: black; border: none; padding: 8px 15px; cursor: pointer;
-  border-radius: 6px; transition: background 0.2s ease, transform 0.2s ease;
+  border-radius: 8px; transition: background 0.2s ease, transform 0.2s ease;
 }
 .product button:hover { background: #00cc55; transform: translateY(-1px); }
 
 select {
-  margin-top: 10px; padding: 6px 8px; background: black; color: #00ff66; border: 1px solid #00ff66; border-radius: 6px;
+  margin-top: 10px; padding: 6px 8px; background: black; color: #00ff66; border: 1px solid #00ff66; border-radius: 8px;
 }
 
 /* ========== Drawer del carrito (slide-in right) ========== */
@@ -199,13 +151,13 @@ select {
 .cart-row .info { flex: 1; }
 .cart-row .controls { display: flex; gap: 6px; align-items: center; }
 .qty-btn, .remove-btn {
-  background: #111; color: #00ff66; border: 1px solid #00ff66; padding: 4px 8px; cursor: pointer; border-radius: 6px;
+  background: #111; color: #00ff66; border: 1px solid #00ff66; padding: 4px 8px; cursor: pointer; border-radius: 8px;
 }
 .qty-btn:hover, .remove-btn:hover { background: #00ff66; color: black; }
 
 .cart-total-line { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0 12px; font-size: 1.05rem; }
 
-/* ========== Botones (Confirm / Close...) ========== */
+/* ========== Botones ========== */
 button {
   background: #00ff66; color: #001a0c; border: none; padding: 10px 20px; cursor: pointer;
   font-family: monospace; border-radius: 8px; transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
@@ -213,13 +165,10 @@ button {
 }
 button:hover { background: #00cc55; transform: translateY(-1px); box-shadow: 0 14px 30px rgba(0,255,102,.2); }
 button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
-
-.btn-ghost {
-  background: transparent; color: #00ff66; border: 1px solid #00ff66; padding: 10px 20px; border-radius: 8px;
-}
+.btn-ghost { background: transparent; color: #00ff66; border: 1px solid #00ff66; padding: 10px 20px; border-radius: 8px; }
 .btn-ghost:hover { background: #00ff66; color: #001a0c; }
 
-/* ========== Loader (intro + transiciones) ========== */
+/* ========== Loaders (intro + entre páginas) ========== */
 #hack-screen {
   position: fixed; inset: 0; background: black; color: #00ff66;
   display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; font-size: 2rem;
@@ -231,7 +180,7 @@ button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transfo
 #page-loader img { width: 120px; height: auto; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0%{ transform: scale(1); opacity: .8;} 50%{ transform: scale(1.08); opacity: 1;} 100%{ transform: scale(1); opacity:.8;} }
 
-/* Glitch text */
+/* Glitch */
 .glitch-text { position: relative; color: #00ff66; animation: glitch 0.6s infinite; }
 @keyframes glitch {
   0% { transform: translate(0); }
