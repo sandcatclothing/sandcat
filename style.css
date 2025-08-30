@@ -1,6 +1,4 @@
-/* =========================
-   SANDCAT – Global Styles
-   ========================= */
+/* SANDCAT – Styles */
 
 /* Base */
 html, body {
@@ -12,7 +10,7 @@ html, body {
   min-height: 100%;
 }
 
-/* Smooth transitions when we fade between pages */
+/*  transitions */
 * {
   box-sizing: border-box;
 }
@@ -25,9 +23,7 @@ body.fade-out {
 a { color: #63ff9b; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* =========================
-   Top bar
-   ========================= */
+/* top */
 .white-bar {
   background: #fff;
   color: #000;
@@ -43,7 +39,7 @@ a:hover { text-decoration: underline; }
 
 /* Logos */
 .logo-left {
-  height: 100px;           /* un pelín más grande y proporcionado */
+  height: 100px;           /*proporcionado */
   width: auto;
   cursor: pointer;
   user-select: none;
@@ -58,14 +54,14 @@ a:hover { text-decoration: underline; }
   pointer-events: none;
 }
 
-/* Top icons (cart + hamburger) */
+/* icons */
 .top-icons {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-/* Cart icon */
+/* Cart */
 .cart-icon {
   display: inline-flex;
   align-items: center;
@@ -75,7 +71,7 @@ a:hover { text-decoration: underline; }
   user-select: none;
 }
 .cart-icon-img {
-  height: 26px;            /* Tamaño controlado para evitar desajustes */
+  height: 26px;            /* Tamaño okok */
   width: auto;
   display: block;
 }
@@ -87,7 +83,7 @@ a:hover { text-decoration: underline; }
   font-weight: bold;
   line-height: 1;
   border-radius: 999px;
-  background: #ff3b3b;     /* contador rojo como pediste */
+  background: #ff3b3b;   
   color: #fff;
   text-align: center;
 }
@@ -100,9 +96,7 @@ a:hover { text-decoration: underline; }
   user-select: none;
 }
 
-/* =========================
-   Console layout
-   ========================= */
+/* layout */
 #console-menu {
   padding: 20px;
   background: #000;
@@ -122,7 +116,7 @@ a:hover { text-decoration: underline; }
   margin-left: 20px;
 }
 
-/* Consola: input visible (para secreto/navegación) */
+/*  input  */
 .console-input {
   display: flex;
   align-items: center;
@@ -148,9 +142,7 @@ a:hover { text-decoration: underline; }
   color: rgba(0,255,102,.4);
 }
 
-/* =========================
-   Shop grid / product cards
-   ========================= */
+/* grid */
 .shop-grid {
   display: flex;
   flex-wrap: wrap;
@@ -190,9 +182,7 @@ a:hover { text-decoration: underline; }
   border-radius: 8px;
 }
 
-/* =========================
-   Inputs & Buttons (global)
-   ========================= */
+/* buttons */
 input, select, textarea {
   background: #000;
   color: #00ff66;
@@ -237,9 +227,7 @@ button[disabled] {
   background: rgba(0,255,102,.08);
 }
 
-/* =========================
-   Newsletter bar (sticky)
-   ========================= */
+/* newsletter version creo ya definitiva */
 .newsletter {
   background: #000;
   color: #00ff66;
@@ -263,7 +251,7 @@ button[disabled] {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.75);
-  display: none;    /* se muestra por JS cuando se necesita */
+  display: none;    
   align-items: center;
   justify-content: center;
   z-index: 9999;
@@ -288,9 +276,7 @@ button[disabled] {
   color: #ff6b6b; min-height: 18px; margin-top: 6px;
 }
 
-/* =========================
-   Drawer Cart (slide from right)
-   ========================= */
+/* carrito */
 #cart-overlay {
   position: fixed;
   inset: 0;
@@ -356,7 +342,7 @@ button[disabled] {
   }
 }
 
-/* Cart list lines (modal/drawer) */
+/* Cart list */
 #cart-items .cart-row {
   display: flex;
   align-items: center;
@@ -393,9 +379,7 @@ button[disabled] {
   margin-bottom: 10px;
 }
 
-/* =========================
-   Premium Loader (between pages)
-   ========================= */
+/* loader */
 #page-loader {
   position: fixed;
   inset: 0;
@@ -416,9 +400,7 @@ button[disabled] {
   to   { transform: translateY(-6px); }
 }
 
-/* =========================
-   Hack intro (first visit only)
-   ========================= */
+/* intro */
 #hack-screen {
   position: fixed;
   inset: 0;
@@ -446,9 +428,6 @@ button[disabled] {
   100% { transform: translate(0); }
 }
 
-/* =========================
-   Utility
-   ========================= */
 .hidden { display: none !important; }
 
 /* Tables (admin) */
@@ -463,23 +442,23 @@ tbody tr:hover { background: rgba(0,255,102,.04); }
   border: 1px solid #00ff66;
 }
 
-/* =========================
-   Thank you page tweaks
-   ========================= */
+/* 
+   Thank you page
+    */
 main h1 {
   margin: 6px 0 10px;
 }
 
-/* =========================
+/* 
    Small screens
-   ========================= */
+ */
 @media (max-width: 780px) {
   .logo-center { height: 120px; }
   .logo-left { height: 88px; }
 }
 
 @media (max-width: 520px) {
-  .logo-center { display: none; } /* más limpio en móviles pequeños */
+  .logo-center { display: none; }
   .white-bar { min-height: 64px; }
   #console-secret-input { width: 60vw; }
 }
