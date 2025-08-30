@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About - SANDCAT</title>
-  <link rel="stylesheet" href="style.css?v=4"/>
-  <script defer src="script.js?v=4"></script>
+  <link rel="stylesheet" href="style.css?v=15"/>
+  <script defer src="script.js?v=15"></script>
 </head>
 <body>
   <div class="white-bar">
@@ -20,11 +20,12 @@
     </div>
   </div>
 
-  <div id="console-menu">
-    <div class="console-line">&gt; about</div>
-    <p>SANDCAT blends independence, agility and sustainability into streetwear drops with a premium, minimal aesthetic.</p>
-    <p>All the platform runs on open web tech, GitHub for version control and deployments over <b>sandcat.es</b>.</p>
-  </div>
+  <main style="padding:24px; max-width:980px; margin:0 auto;">
+    <h1>About SANDCAT</h1>
+    <p>SANDCAT blends streetwear with a digital-first experience. We aim for sustainability,
+      quality, and a playful tech aesthetic across our products and platform.</p>
+    <p>We build our site on open web tech and a lean toolchain so we can move fast and ship fresh drops.</p>
+  </main>
 
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
@@ -32,7 +33,7 @@
     <button id="newsletter-btn">Subscribe</button>
   </div>
 
-  <!-- Drawer -->
+  <!-- Drawer Cart -->
   <div id="cart-overlay" onclick="toggleCart()"></div>
   <div id="cart-drawer">
     <div class="cart-drawer-header">
@@ -45,12 +46,12 @@
         <div><strong>Checkout</strong></div>
         <div style="margin-top:8px; display:grid; gap:8px;">
           <input id="chk-name" placeholder="Full name"/>
-          <input id="chk-email" placeholder="Email (required for PayPal)"/>
+          <input id="chk-email" placeholder="Email (required)"/>
           <input id="chk-address" placeholder="Address (street, number, city)"/>
           <input id="chk-zip" placeholder="Postal code (5 digits)"/>
           <select id="chk-method">
             <option value="paypal">PayPal</option>
-            <option value="cod">Cash on delivery</option>
+            <option value="cod">Cash on Delivery</option>
           </select>
         </div>
       </div>
@@ -66,6 +67,26 @@
       </div>
     </div>
   </div>
+
+  <!-- Newsletter Consent Modal (EN) -->
+  <div id="consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+    <div id="consent-modal">
+      <h3 id="consent-title">Newsletter Consent</h3>
+      <p>
+        To subscribe to SANDCAT’s newsletter, we need your consent to process your email
+        for marketing communications. See our
+        <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.
+      </p>
+      <div class="consent-row">
+        <input type="checkbox" id="consent-check"/>
+        <label for="consent-check">I agree to the processing of my data to receive the SANDCAT newsletter.</label>
+      </div>
+      <div id="consent-actions">
+        <button id="consent-accept">Accept and subscribe</button>
+        <button id="consent-cancel" class="btn-ghost">Cancel</button>
+      </div>
+      <div id="consent-error"></div>
+    </div>
+  </div>
 </body>
 </html>
-
