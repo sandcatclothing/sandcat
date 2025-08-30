@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Shop - SANDCAT</title>
-  <link rel="stylesheet" href="style.css?v=5"/>
-  <script defer src="script.js?v=5"></script>
+  <link rel="stylesheet" href="style.css?v=15"/>
+  <script defer src="script.js?v=15"></script>
 </head>
 <body>
   <div class="white-bar">
@@ -25,28 +25,26 @@
       <img src="assets/core_tee.png" alt="SANDCAT TEE"/>
       <p>SANDCAT TEE</p>
       <select>
-        <option value="">Size</option>
-        <option>S</option><option>M</option><option>L</option><option>XL</option>
+        <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
       </select>
       <button onclick="
         const size1 = this.previousElementSibling.value;
         if(!size1){alert('Please select a size'); return;}
         addToCart('SANDCAT TEE', 25, size1);
-      ">Add to Cart</button>
+      ">Add to cart</button>
     </div>
 
     <div class="product">
       <img src="assets/core_hoodie.png" alt="SANDCAT HOODIE"/>
       <p>SANDCAT HOODIE</p>
       <select>
-        <option value="">Size</option>
-        <option>S</option><option>M</option><option>L</option><option>XL</option>
+        <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
       </select>
       <button onclick="
         const size2 = this.previousElementSibling.value;
         if(!size2){alert('Please select a size'); return;}
         addToCart('SANDCAT HOODIE', 50, size2);
-      ">Add to Cart</button>
+      ">Add to cart</button>
     </div>
   </div>
 
@@ -56,7 +54,7 @@
     <button id="newsletter-btn">Subscribe</button>
   </div>
 
-  <!-- Drawer -->
+  <!-- Drawer Cart -->
   <div id="cart-overlay" onclick="toggleCart()"></div>
   <div id="cart-drawer">
     <div class="cart-drawer-header">
@@ -69,12 +67,12 @@
         <div><strong>Checkout</strong></div>
         <div style="margin-top:8px; display:grid; gap:8px;">
           <input id="chk-name" placeholder="Full name"/>
-          <input id="chk-email" placeholder="Email (required for PayPal)"/>
+          <input id="chk-email" placeholder="Email (required)"/>
           <input id="chk-address" placeholder="Address (street, number, city)"/>
           <input id="chk-zip" placeholder="Postal code (5 digits)"/>
           <select id="chk-method">
             <option value="paypal">PayPal</option>
-            <option value="cod">Cash on delivery</option>
+            <option value="cod">Cash on Delivery</option>
           </select>
         </div>
       </div>
@@ -88,6 +86,27 @@
         <button id="confirm-order-btn" onclick="placeOrder()">Confirm Order</button>
         <button class="btn-ghost" onclick="toggleCart()">Close</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Consent Modal (EN) -->
+  <div id="consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+    <div id="consent-modal">
+      <h3 id="consent-title">Newsletter Consent</h3>
+      <p>
+        To subscribe to SANDCAT’s newsletter, we need your consent to process your email
+        for marketing communications. See our
+        <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.
+      </p>
+      <div class="consent-row">
+        <input type="checkbox" id="consent-check"/>
+        <label for="consent-check">I agree to the processing of my data to receive the SANDCAT newsletter.</label>
+      </div>
+      <div id="consent-actions">
+        <button id="consent-accept">Accept and subscribe</button>
+        <button id="consent-cancel" class="btn-ghost">Cancel</button>
+      </div>
+      <div id="consent-error"></div>
     </div>
   </div>
 </body>
