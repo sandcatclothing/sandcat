@@ -199,4 +199,32 @@ button:disabled { background: #044d1c; color: #555; cursor: not-allowed; transfo
   100% { transform: translate(0); }
 }
 
+/* ========== MODAL CONSENTIMIENTO NEWSLETTER ========== */
+#consent-overlay{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.8);
+  display: none; /* se muestra por JS */
+  align-items: center; justify-content: center;
+  z-index: 100000;
+  backdrop-filter: blur(2px);
+}
+#consent-modal{
+  width: min(520px, 92vw);
+  background: #000; color: #00ff66; border: 1px solid #00ff66;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,255,102,.15);
+  padding: 18px;
+}
+#consent-modal h3{ margin: 0 0 8px 0; }
+#consent-modal p{ margin: 8px 0 14px 0; color: #7fffb2; }
+#consent-modal .consent-row{
+  display: flex; align-items: start; gap: 10px; margin: 10px 0 16px 0;
+}
+#consent-check{
+  width: 18px; height: 18px; accent-color: #00ff66; cursor: pointer;
+}
+#consent-actions{ display: flex; gap: 10px; flex-wrap: wrap; }
+#consent-actions .btn-ghost{ border-color:#00ff66; color:#9feabf; }
+#consent-actions .btn-ghost:hover{ color:#001a0c; }
+#consent-error{ color: #ff6b6b; min-height: 18px; margin-top: 6px; }
 
