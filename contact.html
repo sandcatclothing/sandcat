@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Contact - SANDCAT</title>
-  <link rel="stylesheet" href="style.css?v=4"/>
-  <script defer src="script.js?v=4"></script>
+  <link rel="stylesheet" href="style.css?v=15"/>
+  <script defer src="script.js?v=15"></script>
 </head>
 <body>
   <div class="white-bar">
@@ -20,12 +20,11 @@
     </div>
   </div>
 
-  <div id="console-menu">
-    <div class="console-line">&gt; contact</div>
-    <p>Email: <b>contacto@sandcat.es</b></p>
-    <p>We usually reply within 24–48h.</p>
-    <p>Follow us on Instagram @sandcatwear </p>
-  </div>
+  <main style="padding:24px; max-width:980px; margin:0 auto;">
+    <h1>Contact</h1>
+    <p>Hit us up for collabs, press or support:</p>
+    <p><a href="mailto:contacto@sandcat.es">contacto@sandcat.es</a></p>
+  </main>
 
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
@@ -33,7 +32,7 @@
     <button id="newsletter-btn">Subscribe</button>
   </div>
 
-  <!-- Drawer -->
+  <!-- Drawer Cart -->
   <div id="cart-overlay" onclick="toggleCart()"></div>
   <div id="cart-drawer">
     <div class="cart-drawer-header">
@@ -46,12 +45,12 @@
         <div><strong>Checkout</strong></div>
         <div style="margin-top:8px; display:grid; gap:8px;">
           <input id="chk-name" placeholder="Full name"/>
-          <input id="chk-email" placeholder="Email (required for PayPal)"/>
+          <input id="chk-email" placeholder="Email (required)"/>
           <input id="chk-address" placeholder="Address (street, number, city)"/>
           <input id="chk-zip" placeholder="Postal code (5 digits)"/>
           <select id="chk-method">
             <option value="paypal">PayPal</option>
-            <option value="cod">Cash on delivery</option>
+            <option value="cod">Cash on Delivery</option>
           </select>
         </div>
       </div>
@@ -67,5 +66,27 @@
       </div>
     </div>
   </div>
+
+  <!-- Newsletter Consent Modal (EN) -->
+  <div id="consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+    <div id="consent-modal">
+      <h3 id="consent-title">Newsletter Consent</h3>
+      <p>
+        To subscribe to SANDCAT’s newsletter, we need your consent to process your email
+        for marketing communications. See our
+        <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.
+      </p>
+      <div class="consent-row">
+        <input type="checkbox" id="consent-check"/>
+        <label for="consent-check">I agree to the processing of my data to receive the SANDCAT newsletter.</label>
+      </div>
+      <div id="consent-actions">
+        <button id="consent-accept">Accept and subscribe</button>
+        <button id="consent-cancel" class="btn-ghost">Cancel</button>
+      </div>
+      <div id="consent-error"></div>
+    </div>
+  </div>
 </body>
 </html>
+
