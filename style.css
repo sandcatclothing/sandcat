@@ -298,4 +298,19 @@ tbody tr:hover { background: rgba(0,255,102,.04); }
   .logo-center { display: none; }
   .white-bar { padding: 6px 14px; }
 }
+/* FIX: mostrar textlogo en móvil y escalarlo correctamente */
+@media (max-width: 520px) {
+  .logo-center {
+    display: block !important;    /* vuelve a mostrarse */
+    height: 110px;                /* más pequeño para caber */
+    width: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    object-fit: contain;
+    z-index: 1;                   /* por debajo de los iconos */
+    pointer-events: none;         /* que no bloquee clics */
+  }
+  .top-icons { z-index: 2; }      /* asegúrate de que iconos queden encima */
+  .white-bar { padding-right: 70px; } /* deja espacio para el carrito/hamburguesa */
+}
 
