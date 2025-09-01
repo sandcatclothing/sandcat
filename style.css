@@ -233,7 +233,7 @@ button[disabled] {
   color: #00ff66;
   padding: 22px 16px;
   text-align: center;
-  border-top: 1px solid rgba(0,255,102,.2);
+  border-top: 1px solid rgba(0,0,0,.2);
 }
 .sticky-newsletter {
   position: sticky;
@@ -462,4 +462,62 @@ main h1 {
   .white-bar { min-height: 64px; }
   #console-secret-input { width: 60vw; }
 }
+/* ==== FIX: Controles del carrito en una sola línea, sin deformar ==== */
+#cart-items .cart-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#cart-items .cart-row .info{
+  flex: 1 1 auto;
+  min-width: 0;                 /* permite elipsis */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;          /* el texto no rompe línea */
+}
+
+#cart-items .cart-row .controls{
+  flex: 0 0 auto;               /* tamaño contenido */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;          /* evita saltos de línea en botones/contador */
+}
+
+#cart-items .cart-row .controls .qty-btn,
+#cart-items .cart-row .controls .remove-btn{
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  line-height: 1;
+  border-radius: 6px;           /* un pelín más compacto */
+}
+
+#cart-items .cart-row .controls span{
+  display: inline-block;
+  min-width: 22px;              /* ancho fijo para el número */
+  text-align: center;
+}
+
+/* En móviles reducimos un poco tipografía y padding para que siempre quepa */
+@media (max-width: 420px){
+  #cart-items .cart-row{
+    gap: 6px;
+  }
+  #cart-items .cart-row .info{
+    font-size: 0.95rem;
+  }
+  #cart-items .cart-row .controls{
+    gap: 4px;
+  }
+  #cart-items .cart-row .controls .qty-btn,
+  #cart-items .cart-row .controls .remove-btn{
+    padding: 3px 7px;
+    font-size: 0.95rem;
+  }
+  #cart-items .cart-row .controls span{
+    min-width: 20px;
+  }
+}
+
 
