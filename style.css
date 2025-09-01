@@ -314,3 +314,58 @@ tbody tr:hover { background: rgba(0,255,102,.04); }
   .white-bar { padding-right: 70px; } /* deja espacio para el carrito/hamburguesa */
 }
 
+/* === FIX móvil: textlogo visible + iconos (carrito/hamburguesa) pegados a la derecha === */
+@media (max-width: 520px){
+  /* Asegura anclajes relativos dentro de la barra */
+  .white-bar{
+    position: sticky; /* ya lo tienes, pero reafirmamos el contexto */
+    top: 0;
+    z-index: 10;
+    padding-right: 16px;  /* margen visual, no exagerado para no empujar nada */
+  }
+
+  /* El textlogo se ve centrado y no “empuja” el layout */
+  .logo-center{
+    display: block !important;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+    pointer-events: none;   /* no bloquea toques/clicks */
+    z-index: 1;             /* por debajo de los iconos */
+  }
+
+  /* Los iconos van ABSOLUTOS a la derecha y centrados verticalmente */
+  .top-icons{
+    position: absolute;
+    right: 12px;            /* pegado al borde derecho */
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;   /* ignora el flex del contenedor principal */
+    gap: 12px;
+    align-items: center;
+    z-index: 2;             /* por encima del textlogo */
+  }
+
+  /* Evita que el flex parent “recoloque” los hijos laterales */
+  .white-bar > .logo-left{
+    flex: 0 0 auto;
+  }
+
+  /* Tamaños cómodos en móvil */
+  .logo-left{ height: 84px; }
+  .cart-icon img, #cart-icon, .cart-icon-img{
+    width: 26px;
+    height: auto;
+  }
+  #cart-count, .cart-count{
+    font-size: 0.78rem;
+    padding: 2px 6px;
+    margin-left: 6px;
+  }
+
+  /* Si notas solapamientos extremos en móviles muy pequeños, puedes bajar un poco más el textlogo: */
+  /* .logo-center { height: 90px; } */
+}
