@@ -6,36 +6,45 @@
   <title>Collections - SANDCAT</title>
   <link rel="stylesheet" href="style.css?v=15"/>
   <script defer src="script.js?v=15"></script>
+
   <style>
-    /* === FIX selects recortados en Collections === */
-    #console-menu,
-    .collection-output,
-    .shop-grid,
-    .product {
-      overflow: visible !important; /* Permite que el menú del select salga del contenedor */
+    /* ---- Asegurar que nada tapa el select ---- */
+    /* El host del grid queda fuera de la "consola" para evitar recortes */
+    #collections-grid-host {
+      position: relative;
+      z-index: 10; /* por encima de fondos/ornamentos */
+      padding: 12px 16px;
     }
-    #console-menu {
-      transform: none !important; /* Evita stacking context que corta menús nativos */
+    /* Por si algún ancestro crea stacking context raro */
+    #collections-grid-host .shop-grid,
+    #collections-grid-host .product {
+      overflow: visible !important;
+      position: relative;
+      z-index: 10;
     }
-    /* overlays cerrados no bloquean clics */
+
+    /* Evita que el sticky de newsletter se ponga por encima del desplegable */
+    .sticky-newsletter {
+      position: sticky;
+      bottom: 0;
+      z-index: 5;
+    }
+
+    /* Si algún overlay quedara activo por CSS, que no intercepte clics salvo abierto explícito */
     #cart-overlay,
     #consent-overlay {
-      display: none;
       pointer-events: none;
+      display: none;
     }
     #cart-overlay.is-open,
     #consent-overlay.is-open {
       display: block;
       pointer-events: auto;
     }
-    .sticky-newsletter {
-      z-index: 5;
-      position: sticky;
-      bottom: 0;
-    }
-    .shop-grid {
-      position: relative;
-      z-index: 10;
+
+    /* Un poco de margen superior para separar el grid de la consola */
+    .collections-sep {
+      height: 8px;
     }
   </style>
 </head>
@@ -53,6 +62,7 @@
     </div>
   </div>
 
+  <!-- Consola -->
   <div id="console-menu">
     <div class="console-line">&gt; collections</div>
     <div class="submenu">
@@ -60,6 +70,7 @@
       <div class="console-line secret-tag hidden clickable" onclick="showSecretDrop()">- SECRET DROP (coming soon)</div>
     </div>
 
+    <!-- Aquí ya NO pintamos el grid; sólo mensajes/estado -->
     <div id="collection-output" class="collection-output"></div>
 
     <!-- Console input -->
@@ -69,6 +80,13 @@
     </div>
   </div>
 
+  <!-- Separador visual entre consola y grid -->
+  <div class="collections-sep"></div>
+
+  <!-- Host del GRID fuera del wrapper consola -->
+  <div id="collections-grid-host"></div>
+
+  <!-- Newsletter -->
   <div class="newsletter sticky-newsletter">
     <p>Subscribe to our newsletter:</p>
     <input type="email" id="newsletter-email" placeholder="youremail@example.com"/>
@@ -132,9 +150,9 @@
   </div>
 
   <script>
-    function showCoreDrop() {
-      const c = document.getElementById("collection-output");
-      c.innerHTML = `
+    function renderCoreGrid() {
+      const host = document.getElementById("collections-grid-host");
+      host.innerHTML = `
         <div class="console-line">-- CORE DROP --</div>
         <div class="shop-grid">
           <div class="product">
@@ -149,6 +167,7 @@
               addToCart('SANDCAT HOODIE', 50, size);
             ">Add to cart</button>
           </div>
+
           <div class="product">
             <img src="assets/core_tee.png" class="product-thumb" alt="SANDCAT TEE"/>
             <div>- SANDCAT CORE TEE - €25</div>
@@ -164,13 +183,23 @@
         </div>
       `;
     }
+
+    function showCoreDrop() {
+      const log = document.getElementById("collection-output");
+      log.innerHTML = `<div class="console-line">-- CORE DROP -- (rendered)</div>`;
+      renderCoreGrid();
+    }
+
     function showSecretDrop() {
-      const c = document.getElementById("collection-output");
-      c.innerHTML = `
+      const log = document.getElementById("collection-output");
+      log.innerHTML = `
         <div class="console-line secret-tag">-- SECRET DROP (coming soon) --</div>
         <div class="console-line">Thanks for unlocking with <b>sorpresa</b>. Stay tuned.</div>
       `;
+      // Opcional: limpiar grid si quieres que no se vea nada del core cuando está "secret"
+      // document.getElementById("collections-grid-host").innerHTML = "";
     }
+
     document.addEventListener('DOMContentLoaded', showCoreDrop);
   </script>
 </body>
