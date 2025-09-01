@@ -462,62 +462,52 @@ main h1 {
   .white-bar { min-height: 64px; }
   #console-secret-input { width: 60vw; }
 }
-/* ==== FIX: Controles del carrito en una sola línea, sin deformar ==== */
-#cart-items .cart-row{
-  display: flex;
+/* === CART ROW: layout estable en una sola línea === */
+#cart-drawer #cart-items .cart-row{
+  display: grid !important;                 /* forzamos sobre flex previas */
+  grid-template-columns: 1fr max-content;   /* texto elástico + controles fijos */
   align-items: center;
-  gap: 8px;
+  column-gap: 8px;
 }
 
-#cart-items .cart-row .info{
-  flex: 1 1 auto;
-  min-width: 0;                 /* permite elipsis */
+#cart-drawer #cart-items .cart-row .info{
+  min-width: 0;               /* indispensable para que elipsis funcione en grid */
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;          /* el texto no rompe línea */
+  white-space: nowrap;        /* no rompe línea */
 }
 
-#cart-items .cart-row .controls{
-  flex: 0 0 auto;               /* tamaño contenido */
-  display: flex;
+#cart-drawer #cart-items .cart-row .controls{
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;          /* evita saltos de línea en botones/contador */
+  white-space: nowrap;        /* botones no rompen línea */
+  flex-wrap: nowrap;
 }
 
-#cart-items .cart-row .controls .qty-btn,
-#cart-items .cart-row .controls .remove-btn{
-  flex: 0 0 auto;
+#cart-drawer #cart-items .cart-row .controls .qty-btn,
+#cart-drawer #cart-items .cart-row .controls .remove-btn{
   padding: 4px 8px;
   line-height: 1;
-  border-radius: 6px;           /* un pelín más compacto */
+  border-radius: 6px;
+  flex: 0 0 auto;
 }
 
-#cart-items .cart-row .controls span{
+#cart-drawer #cart-items .cart-row .controls span{
   display: inline-block;
-  min-width: 22px;              /* ancho fijo para el número */
+  min-width: 22px;            /* ancho fijo para el número */
   text-align: center;
 }
 
-/* En móviles reducimos un poco tipografía y padding para que siempre quepa */
+/* micro–ajustes responsive para móviles muy estrechos */
 @media (max-width: 420px){
-  #cart-items .cart-row{
-    gap: 6px;
-  }
-  #cart-items .cart-row .info{
-    font-size: 0.95rem;
-  }
-  #cart-items .cart-row .controls{
-    gap: 4px;
-  }
-  #cart-items .cart-row .controls .qty-btn,
-  #cart-items .cart-row .controls .remove-btn{
+  #cart-drawer #cart-items .cart-row{ column-gap: 6px; }
+  #cart-drawer #cart-items .cart-row .info{ font-size: 0.95rem; }
+  #cart-drawer #cart-items .cart-row .controls{ gap: 4px; }
+  #cart-drawer #cart-items .cart-row .controls .qty-btn,
+  #cart-drawer #cart-items .cart-row .controls .remove-btn{
     padding: 3px 7px;
     font-size: 0.95rem;
   }
-  #cart-items .cart-row .controls span{
-    min-width: 20px;
-  }
+  #cart-drawer #cart-items .cart-row .controls span{ min-width: 20px; }
 }
-
-
