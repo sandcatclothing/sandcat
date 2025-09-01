@@ -378,7 +378,7 @@ tbody tr:hover { background: rgba(0,255,102,.04); }
 /* En móviles, subimos aún más para evitar la franja inferior / gestos del SO */
 @media (max-width: 520px){
   .cart-drawer-footer{
-    padding-bottom: 64px;            /* empuja visualmente los botones hacia arriba */
+    padding-bottom: 80px;            /* empuja visualmente los botones hacia arriba */
   }
 }
 
