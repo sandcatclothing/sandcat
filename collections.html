@@ -6,6 +6,38 @@
   <title>Collections - SANDCAT</title>
   <link rel="stylesheet" href="style.css?v=15"/>
   <script defer src="script.js?v=15"></script>
+  <style>
+    /* === FIX selects recortados en Collections === */
+    #console-menu,
+    .collection-output,
+    .shop-grid,
+    .product {
+      overflow: visible !important; /* Permite que el menú del select salga del contenedor */
+    }
+    #console-menu {
+      transform: none !important; /* Evita stacking context que corta menús nativos */
+    }
+    /* overlays cerrados no bloquean clics */
+    #cart-overlay,
+    #consent-overlay {
+      display: none;
+      pointer-events: none;
+    }
+    #cart-overlay.is-open,
+    #consent-overlay.is-open {
+      display: block;
+      pointer-events: auto;
+    }
+    .sticky-newsletter {
+      z-index: 5;
+      position: sticky;
+      bottom: 0;
+    }
+    .shop-grid {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
 </head>
 <body>
   <!-- Top -->
@@ -143,4 +175,5 @@
   </script>
 </body>
 </html>
+
 
