@@ -64,7 +64,7 @@ function startHackAnimation() {
 const SECRET_WORD = 'sorpresa';
 const STORAGE_SECRET_KEY = 'secret_unlocked_v2'; // clave nueva
 
-// 🔒 Al iniciar, limpiamos el secreto antiguo para evitar que quede desbloqueado de pruebas
+// 🔒 Limpia estado antiguo para que no aparezca desbloqueado por pruebas
 try { localStorage.removeItem('secret_unlocked'); } catch(_) {}
 
 function revealSecret() {
@@ -86,7 +86,7 @@ function wireConsoleInput() {
   const area = document.getElementById('console-menu');
   if (!inp || !area) return;
 
-  // Si ya está desbloqueado con la nueva clave, mostrarlo; si no, mantener oculto
+  // Muestra el secreto si ya estaba desbloqueado en localStorage
   if (localStorage.getItem(STORAGE_SECRET_KEY) === '1') {
     document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   }
@@ -108,10 +108,14 @@ function wireConsoleInput() {
     if (!cmd) return;
 
     if (cmd === SECRET_WORD) { revealSecret(); inp.value = ''; return; }
-    if (cmd === 'lock') { hideSecret(); inp.value = ''; return; } // comando para volver a ocultar
+    if (cmd === 'lock') { hideSecret(); inp.value = ''; return; } // volver a ocultar
 
-    const routes = ['about','contact','collections','shop','cart','admin'];
-    if (routes.includes(cmd)) { inp.value = ''; navigateTo(cmd); return; }
+    const routes = ['about','contact','collections','shop','cart','admin','index'];
+    if (routes.includes(cmd)) {
+      inp.value = '';
+      navigateTo(cmd === 'index' ? 'index.html' : `${cmd}.html`);
+      return;
+    }
 
     showToast('Unknown command', false);
     inp.value = '';
@@ -311,7 +315,8 @@ function renderCartPage() {
 function validateCheckoutData({name, email, address, zip, method}) {
   const errors = [];
   if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
-  if (method === 'paypal') { if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required for PayPal.'); }
+  // Email requerido SIEMPRE (no solo PayPal)
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required.');
   if (!address || address.trim().length < 10) errors.push('Address looks too short.');
   if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
   if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
@@ -431,6 +436,7 @@ async function placeOrder(){
     hidePageLoader();
   }
 }
+window.placeOrder = placeOrder;
 
 /* ===================== Admin – lectura ===================== */
 async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
@@ -503,6 +509,7 @@ async function loadAdminOrders() {
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;'}[c])); }
 
 /* ===================== Newsletter ===================== */
+// Envío a GAS
 async function sendNewsletterEmail(email) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   const body = JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } });
@@ -510,21 +517,64 @@ async function sendNewsletterEmail(email) {
   if (r.opaque) return { ok:true, note:'opaque' };
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
+
+// Modal de consentimiento (EN) – solo si existe en el DOM
+function showConsentModal() {
+  const ov = document.getElementById('consent-overlay');
+  if (ov) ov.style.display = 'flex';
+}
+function hideConsentModal() {
+  const ov = document.getElementById('consent-overlay');
+  if (!ov) return;
+  ov.style.display = 'none';
+  const err = document.getElementById('consent-error');
+  if (err) err.textContent = '';
+  const chk = document.getElementById('consent-check');
+  if (chk) chk.checked = false;
+}
+
 function wireNewsletter() {
   const btn = document.getElementById('newsletter-btn');
   const inp = document.getElementById('newsletter-email');
   if (!btn || !inp) return;
+
   let sending = false;
+
+  // Botones del modal (si existen)
+  const accept = document.getElementById('consent-accept');
+  const cancel = document.getElementById('consent-cancel');
+  const check = document.getElementById('consent-check');
+  const err   = document.getElementById('consent-error');
+
+  async function reallySubscribe(email) {
+    sending = true; btn.disabled = true; btn.style.opacity = '.6';
+    const resp = await sendNewsletterEmail(email);
+    if (resp?.ok) { showToast('You are subscribed ✅', true); inp.value = ''; }
+    else { console.warn('Newsletter failed:', resp); showToast('Subscription failed: ' + (resp?.error || 'Network/CORS'), false); }
+    sending = false; btn.disabled = false; btn.style.opacity = '1';
+  }
+
   async function submitNewsletter() {
     if (sending) return;
     const email = (inp.value||'').trim();
-    if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Email inválido', false); return; }
-    sending = true; btn.disabled = true; btn.style.opacity = '.6';
-    const resp = await sendNewsletterEmail(email);
-    if (resp?.ok) { showToast('Suscripción realizada ✅', true); inp.value = ''; }
-    else { console.warn('Newsletter failed:', resp); showToast('Error newsletter: ' + (resp?.error || 'CORS/Conexión'), false); }
-    sending = false; btn.disabled = false; btn.style.opacity = '1';
+    if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Please enter a valid email', false); return; }
+
+    // Si hay modal en la página, usar consentimiento
+    if (document.getElementById('consent-overlay')) {
+      showConsentModal();
+      if (accept) accept.onclick = async () => {
+        if (check && !check.checked) { if (err) err.textContent = 'You must accept to proceed.'; return; }
+        hideConsentModal();
+        await reallySubscribe(email);
+      };
+      if (cancel) cancel.onclick = hideConsentModal;
+      return;
+    }
+
+    // Si no hay modal, enviar directamente
+    await reallySubscribe(email);
   }
+
   btn.onclick = submitNewsletter;
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitNewsletter(); });
 }
@@ -568,7 +618,14 @@ window.onload = async () => {
   const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
   if (isAdminPage) { await ensureAdminAccess(); } else { await ensureSiteAccess(); }
 
+  // Cerrar drawer al clicar fuera
+  const overlay = document.getElementById('cart-overlay');
+  if (overlay) overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) toggleCart(); // solo si hacen click en el fondo
+  });
+
   // Carrito / newsletter
   renderCartPage();
   wireNewsletter();
 };
+
