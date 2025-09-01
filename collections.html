@@ -6,110 +6,9 @@
   <title>Collections - SANDCAT</title>
   <link rel="stylesheet" href="style.css?v=15"/>
   <script defer src="script.js?v=15"></script>
-
-  <style>
-    /* ======= LAYOUT LIMPIO PARA COLLECTIONS ======= */
-
-    /* Host del grid fuera de la consola para evitar recortes del <select> */
-    #collections-grid-host {
-      position: relative;
-      z-index: 10;
-      max-width: 1100px;
-      margin: 24px auto 96px;
-      padding: 0 16px;
-    }
-    /* “Tapadera” para cubrir la línea de la consola que atraviesa el grid */
-    #collections-grid-host::before {
-      content: "";
-      position: absolute;
-      top: -14px;
-      left: 0;
-      right: 0;
-      height: 14px;
-      background: #000; /* mismo fondo que tu sitio */
-      z-index: 1;
-    }
-
-    /* Grid responsive y centrado */
-    .shop-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 28px;
-      align-items: stretch;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Tarjetas de producto */
-    .product {
-      background: rgba(0, 0, 0, 0.72);
-      border: 1px solid #0cbf4a;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 6px 24px rgba(0, 255, 120, 0.1);
-    }
-    .product-thumb {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-    .product div {
-      margin: 6px 0 10px;
-      line-height: 1.3;
-      white-space: normal;
-    }
-
-    /* Select y botón */
-    .size-select {
-      width: 100%;
-      height: 40px;
-      border-radius: 10px;
-      border: 1px solid #0cbf4a;
-      background: #0a0a0a;
-      color: #eafff1;
-      padding: 0 10px;
-      margin-bottom: 12px;
-      appearance: none;
-      background-image: none;
-    }
-    .product button {
-      width: 100%;
-      height: 42px;
-      border: 0;
-      border-radius: 12px;
-      background: #22ff88;
-      color: #062a14;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* Newsletter por debajo del grid, sin taparlo */
-    .sticky-newsletter {
-      position: sticky;
-      bottom: 0;
-      z-index: 5;
-    }
-
-    /* Overlays solo interactúan cuando están abiertos */
-    #cart-overlay,
-    #consent-overlay {
-      pointer-events: none;
-      display: none;
-    }
-    #cart-overlay.is-open,
-    #consent-overlay.is-open {
-      display: block;
-      pointer-events: auto;
-    }
-
-    /* Evita stacking raro en la consola */
-    #console-menu { transform: none; }
-  </style>
 </head>
 <body>
-  <!-- Top -->
+  <!-- Top bar -->
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" alt="SANDCAT" onclick="location.href='index.html'"/>
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT"/>
@@ -122,22 +21,34 @@
     </div>
   </div>
 
-  <!-- Consola (solo texto/estado, sin grid dentro) -->
-  <div id="console-menu">
-    <div class="console-line">&gt; collections</div>
-    <div class="submenu">
-      <div class="console-line clickable" onclick="showCoreDrop()">- CORE DROP</div>
-      <div class="console-line secret-tag hidden clickable" onclick="showSecretDrop()">- SECRET DROP (coming soon)</div>
+  <!-- GRID igual que shop -->
+  <div id="console-menu" class="shop-grid">
+    <div class="product">
+      <img src="assets/core_tee.png" alt="SANDCAT TEE"/>
+      <p>SANDCAT CORE TEE</p>
+      <select>
+        <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+      </select>
+      <button onclick="
+        const size1 = this.previousElementSibling.value;
+        if(!size1){alert('Please select a size'); return;}
+        addToCart('SANDCAT TEE', 25, size1);
+      ">Add to cart</button>
     </div>
-    <div id="collection-output" class="collection-output"></div>
-    <div class="console-input">
-      <span class="prompt">&gt;</span>
-      <input id="console-secret-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+
+    <div class="product">
+      <img src="assets/core_hoodie.png" alt="SANDCAT HOODIE"/>
+      <p>SANDCAT BLACK HOODIE</p>
+      <select>
+        <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+      </select>
+      <button onclick="
+        const size2 = this.previousElementSibling.value;
+        if(!size2){alert('Please select a size'); return;}
+        addToCart('SANDCAT HOODIE', 50, size2);
+      ">Add to cart</button>
     </div>
   </div>
-
-  <!-- Host del GRID fuera de la consola -->
-  <div id="collections-grid-host"></div>
 
   <!-- Newsletter -->
   <div class="newsletter sticky-newsletter">
@@ -146,7 +57,7 @@
     <button id="newsletter-btn">Subscribe</button>
   </div>
 
-  <!-- Cart -->
+  <!-- Drawer Cart -->
   <div id="cart-overlay" onclick="toggleCart()"></div>
   <div id="cart-drawer">
     <div class="cart-drawer-header">
@@ -201,59 +112,6 @@
       <div id="consent-error"></div>
     </div>
   </div>
-
-  <script>
-    /* ---- Render limpio sin duplicar cabeceras ---- */
-    function renderCoreGrid() {
-      const host = document.getElementById("collections-grid-host");
-      host.innerHTML = `
-        <div class="console-line">-- CORE DROP --</div>
-        <div class="shop-grid">
-          <div class="product">
-            <img src="assets/core_hoodie.png" class="product-thumb" alt="SANDCAT HOODIE"/>
-            <div>- SANDCAT BLACK HOODIE - €50</div>
-            <select class="size-select">
-              <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
-            </select>
-            <button onclick="
-              const size = this.previousElementSibling.value;
-              if(!size){alert('Please select a size'); return;}
-              addToCart('SANDCAT HOODIE', 50, size);
-            ">Add to cart</button>
-          </div>
-          <div class="product">
-            <img src="assets/core_tee.png" class="product-thumb" alt="SANDCAT TEE"/>
-            <div>- SANDCAT CORE TEE - €25</div>
-            <select class="size-select">
-              <option value="">Size</option><option>S</option><option>M</option><option>L</option><option>XL</option>
-            </select>
-            <button onclick="
-              const size = this.previousElementSibling.value;
-              if(!size){alert('Please select a size'); return;}
-              addToCart('SANDCAT TEE', 25, size);
-            ">Add to cart</button>
-          </div>
-        </div>
-      `;
-    }
-
-    function showCoreDrop() {
-      // Solo una línea de log en la consola, sin "(rendered)" ni duplicados
-      document.getElementById("collection-output").innerHTML =
-        `<div class="console-line">-- CORE DROP --</div>`;
-      renderCoreGrid();
-    }
-
-    function showSecretDrop() {
-      document.getElementById("collection-output").innerHTML = `
-        <div class="console-line secret-tag">-- SECRET DROP (coming soon) --</div>
-        <div class="console-line">Thanks for unlocking with <b>sorpresa</b>. Stay tuned.</div>
-      `;
-      document.getElementById("collections-grid-host").innerHTML = "";
-    }
-
-    document.addEventListener('DOMContentLoaded', showCoreDrop);
-  </script>
 </body>
 </html>
 
