@@ -369,3 +369,21 @@ tbody tr:hover { background: rgba(0,255,102,.04); }
   /* Si notas solapamientos extremos en móviles muy pequeños, puedes bajar un poco más el textlogo: */
   /* .logo-center { height: 90px; } */
 }
+/* === Carrito: subir un poco los botones del footer === */
+.cart-drawer-footer{
+  padding-top: 16px;
+  padding-bottom: 36px;              /* más espacio debajo = botones se ven más “arriba” */
+}
+
+/* En móviles, subimos aún más para evitar la franja inferior / gestos del SO */
+@media (max-width: 520px){
+  .cart-drawer-footer{
+    padding-bottom: 64px;            /* empuja visualmente los botones hacia arriba */
+  }
+}
+
+/* Por si algún navegador comprime el padding, garantizamos separación extra */
+.cart-drawer-footer > *:last-child{
+  margin-bottom: 6px;                /* micro-‘aire’ adicional bajo la última fila de botones */
+}
+
