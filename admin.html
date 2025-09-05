@@ -6,42 +6,23 @@
   <title>SANDCAT Admin</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Estilos específicos del admin (ligeros, aprovecha style.css) */
     .admin-wrap{ padding:20px; }
-    .admin-controls{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;
-    }
-    .admin-controls select, .admin-controls input{
-      background:#000; color:#00ff66; border:1px solid #0f4; padding:8px; border-radius:6px;
-    }
-    table.admin{
-      width:100%; border-collapse:collapse; border:1px solid #0f4; background:#000; color:#00ff66;
-      box-shadow: 0 12px 36px rgba(0,255,102,.06);
-    }
-    table.admin th, table.admin td{
-      border-bottom:1px dashed #0f4; padding:8px; text-align:left; vertical-align:top;
-    }
+    .admin-controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+    .admin-controls select, .admin-controls input{ background:#000; color:#00ff66; border:1px solid #0f4; padding:8px; border-radius:6px; }
+    table.admin{ width:100%; border-collapse:collapse; border:1px solid #0f4; background:#000; color:#00ff66; box-shadow: 0 12px 36px rgba(0,255,102,.06); }
+    table.admin th, table.admin td{ border-bottom:1px dashed #0f4; padding:8px; text-align:left; vertical-align:top; }
     table.admin th{ color:#6aff9e; font-weight:normal; background:#001a0c; }
-    .pill{
-      display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #0f4; margin-right:6px;
-      background:#001a0c; color:#00ff66;
-    }
-    .admin-header{
-      display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
-    }
+    .pill{ display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #0f4; margin-right:6px; background:#001a0c; color:#00ff66; }
+    .admin-header{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
     .admin-actions { display:flex; gap:10px; align-items:center; }
     .admin-actions button { padding:8px 12px; }
     .muted { opacity:.8; }
-    @media (max-width:720px){
-      .logo-center{ display:none; }
-    }
+    @media (max-width:720px){ .logo-center{ display:none; } }
   </style>
 </head>
 <body>
-  <!-- Intro opcional global -->
   <div id="hack-screen"><div id="hack-text"></div></div>
 
-  <!-- Barra superior consistente -->
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" onclick="window.location.href='index.html'" alt="SANDCAT logo" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
@@ -63,7 +44,6 @@
       </div>
     </div>
 
-    <!-- Filtros -->
     <div class="admin-controls">
       <label>Method:
         <select id="filter-method" onchange="loadAdminOrders()">
@@ -85,7 +65,6 @@
       <button onclick="loadAdminOrders()">Refresh</button>
     </div>
 
-    <!-- Tabla de pedidos -->
     <div style="overflow:auto;">
       <table class="admin">
         <thead>
@@ -104,23 +83,15 @@
         </tbody>
       </table>
     </div>
-
-    <div class="console-line muted" style="margin-top:8px;">
-      Tip: si no has configurado Google Sheets aún, verás datos del modo <b>Local (this browser)</b>.
-    </div>
   </div>
 
-  <!-- Importante: dejamos que el gate lo haga script.js para evitar doble prompt -->
-  <script defer src="script.js?v=16"></script>
+  <script defer src="script.js?v=17"></script>
   <script>
     (function boot(){
-      // Mostrar la fuente (GAS vs Local) al cargar la página
       var src = (window.GAS_ENDPOINT_URL && window.GAS_TOKEN) ? 'Google Sheet' : 'Local';
       var pill = document.getElementById('src-pill');
       if (pill) pill.textContent = 'source: ' + src;
 
-      // Si ya está autenticado como admin (admin_auth = '1'), carga las órdenes;
-      // si no, script.js (ensureAdminAccess en onload) mostrará el overlay y luego llamará a loadAdminOrders()
       try {
         if (localStorage.getItem('admin_auth') === '1') {
           loadAdminOrders();
