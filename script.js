@@ -1,19 +1,19 @@
-/* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
+/*  Apps Script  */
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
 window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
-/* ============ Page Loader config ============ */
+/*  Page Loader   */
 const LOADER_LOGO_SRC = 'assets/sandcatloading.png';
 
-/* ===================== PASSWORD GATES (SHA-256) ===================== */
+/*  contraseñasssssss  */
 const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
 const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
 const AUTH_SITE_KEY  = 'site_auth';
 const AUTH_ADMIN_KEY = 'admin_auth';
 
-/* ====== Toast ====== */
+/*  Toast  */
 function showToast(msg, ok=true) {
   let el = document.getElementById('sandcat-toast');
   if (!el) {
@@ -34,7 +34,7 @@ function showToast(msg, ok=true) {
   el._t = setTimeout(()=> { el.style.display = 'none'; }, 2400);
 }
 
-/* ===================== Loader entre páginas ===================== */
+/*  Loader entre páginas  */
 function ensurePageLoaderMounted() {
   if (document.getElementById('page-loader')) return;
   const el = document.createElement('div');
@@ -45,7 +45,7 @@ function ensurePageLoaderMounted() {
 function showPageLoader() { ensurePageLoaderMounted(); document.getElementById('page-loader').style.display = 'flex'; }
 function hidePageLoader() { const el = document.getElementById('page-loader'); if (el) el.style.display = 'none'; }
 
-/* ===================== Intro (solo primera visita) ===================== */
+/*  Intro (solo primera visita)  */
 function startHackAnimation() {
   const hackScreen = document.getElementById("hack-screen");
   const hackText = document.getElementById("hack-text");
@@ -60,7 +60,7 @@ function startHackAnimation() {
   }, 700);
 }
 
-/* ===================== SECRETO ===================== */
+/*  SECRETO  */
 const SECRET_WORD = 'sorpresa';
 const STORAGE_SECRET_KEY = 'secret_unlocked_v2'; // clave nueva
 
@@ -86,7 +86,7 @@ function wireConsoleInput() {
   const area = document.getElementById('console-menu');
   if (!inp || !area) return;
 
-  // Muestra el secreto si ya estaba desbloqueado en localStorage
+  // Muestra el secreto 
   if (localStorage.getItem(STORAGE_SECRET_KEY) === '1') {
     document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   }
@@ -113,7 +113,8 @@ function wireConsoleInput() {
     const routes = ['about','contact','collections','shop','cart','admin','index'];
     if (routes.includes(cmd)) {
       inp.value = '';
-      navigateTo(cmd === 'index' ? 'index.html' : `${cmd}.html`);
+      // Deja que navigateTo añada .html si hace falta
+      navigateTo(cmd === 'index' ? 'index' : cmd);
       return;
     }
 
@@ -122,15 +123,15 @@ function wireConsoleInput() {
   });
 }
 
-/* Desbloqueo también por query y teclado global */
+/* Desbloqueo */
 function secretUnlockExtras(){
-  // Query ?unlock=sorpresa
+  // unlock=sorpresa
   try {
     const params = new URLSearchParams(location.search);
     if ((params.get('unlock') || '').toLowerCase() === SECRET_WORD) revealSecret();
   } catch(_) {}
 
-  // Teclado global (si no estás en un input)
+  // Teclado 
   let buf = '';
   document.addEventListener('keydown', (e) => {
     const tag = (document.activeElement && document.activeElement.tagName) || '';
@@ -143,8 +144,12 @@ function secretUnlockExtras(){
   });
 }
 
-/* ===================== Navegación / menú ============== */
-function navigateTo(page) { window.location.href = `${page}.html`; }
+/*  Navegación  */
+function navigateTo(page) {
+  // Si ya viene con .html, no lo dupliques; acepta 'about' o 'about.html'
+  const target = /\.html$/i.test(page) ? page : `${page}.html`;
+  window.location.href = target;
+}
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
 window.addEventListener('keydown', (e) => {
@@ -153,7 +158,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-/* ===================== Password gates ===================== */
+/*  Password   */
 async function sha256Hex(text) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -219,7 +224,7 @@ async function ensureAdminAccess() {
   });
 }
 
-/* ===================== Carrito ===================== */
+/* Carrito */
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
 function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCartCount(); }
 function updateCartCount() {
@@ -311,7 +316,7 @@ function renderCartPage() {
   totalEl.textContent = calcCartTotal(cart).toFixed(2);
 }
 
-/* ===================== Validación + pedido ===================== */
+/* Validación */
 function validateCheckoutData({name, email, address, zip, method}) {
   const errors = [];
   if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
@@ -352,7 +357,7 @@ function buildOrder({name, email, address, zip, method}) {
   return order;
 }
 
-/* ===================== CORS fallback ===================== */
+/* CORS */
 async function fetchJSONWithCORSFallback(url, options) {
   try {
     const res = await fetch(url, options);
@@ -368,7 +373,7 @@ async function fetchJSONWithCORSFallback(url, options) {
   }
 }
 
-/* ===================== Envío a Google Sheets ===================== */
+/* Sheets */
 async function sendOrderToSheet(order) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   const body = JSON.stringify({ token: GAS_TOKEN, order });
@@ -377,7 +382,7 @@ async function sendOrderToSheet(order) {
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
-/* ===== Cerrojo anti doble click ===== */
+/* Cerrojo  */
 let isPlacingOrder = false;
 function setConfirmButtonEnabled(enabled) {
   const btns = Array.from(document.querySelectorAll('#confirm-order-btn'));
@@ -438,7 +443,7 @@ async function placeOrder(){
 }
 window.placeOrder = placeOrder;
 
-/* ===================== Admin – lectura ===================== */
+/*  Admin */
 async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) {
     const raw = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -508,7 +513,7 @@ async function loadAdminOrders() {
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;'}[c])); }
 
-/* ===================== Newsletter ===================== */
+/* Newsletter */
 // Envío a GAS
 async function sendNewsletterEmail(email) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
@@ -518,7 +523,7 @@ async function sendNewsletterEmail(email) {
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
-// Modal de consentimiento (EN) – solo si existe en el DOM
+// Modal de consentimiento (EN) 
 function showConsentModal() {
   const ov = document.getElementById('consent-overlay');
   if (ov) ov.style.display = 'flex';
@@ -540,7 +545,7 @@ function wireNewsletter() {
 
   let sending = false;
 
-  // Botones del modal (si existen)
+  // Botones
   const accept = document.getElementById('consent-accept');
   const cancel = document.getElementById('consent-cancel');
   const check = document.getElementById('consent-check');
@@ -559,7 +564,7 @@ function wireNewsletter() {
     const email = (inp.value||'').trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Please enter a valid email', false); return; }
 
-    // Si hay modal en la página, usar consentimiento
+    // usar consentimiento
     if (document.getElementById('consent-overlay')) {
       showConsentModal();
       if (accept) accept.onclick = async () => {
@@ -571,7 +576,7 @@ function wireNewsletter() {
       return;
     }
 
-    // Si no hay modal, enviar directamente
+    // enviar directamente
     await reallySubscribe(email);
   }
 
@@ -579,18 +584,57 @@ function wireNewsletter() {
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitNewsletter(); });
 }
 
-/* ===================== INIT ===================== */
+/* COOKIES  */
+const COOKIE_CONSENT_KEY = 'cookie_consent_v1';
+
+function getCookieConsent() {
+  try { return JSON.parse(localStorage.getItem(COOKIE_CONSENT_KEY) || 'null'); } catch(_) { return null; }
+}
+function setCookieConsent(value) {
+  localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({ accepted: !!value, ts: Date.now() }));
+}
+
+function mountCookieBanner() {
+  if (getCookieConsent()?.accepted) return; // ya aceptado
+
+  const bar = document.createElement('div');
+  bar.id = 'cookie-banner';
+  bar.style.cssText = `
+    position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 99999;
+    background: #000; color: #00ff66; border:1px solid #0f4; border-radius: 12px;
+    padding: 12px 14px; font-family: 'Courier New', monospace; box-shadow: 0 12px 36px rgba(0,255,102,.12);
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  `;
+  bar.innerHTML = `
+    <div style="flex:1; min-width:220px;">
+      We use essential cookies to run SANDCAT. For details, see our
+      <a href="privacy.html" style="color:#6aff9e; text-decoration:underline;">Privacy Policy</a>.
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button id="cookie-accept" style="background:#00ff66; color:#001a0c; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Accept</button>
+    </div>
+  `;
+  document.body.appendChild(bar);
+
+  document.getElementById('cookie-accept').onclick = () => {
+    setCookieConsent(true);
+    bar.remove();
+    showToast('Cookies accepted', true);
+  };
+}
+
+
 window.onload = async () => {
   updateCartCount();
   startHackAnimation();
   ensurePageLoaderMounted();
   hidePageLoader();
 
-  // Consola visible + secreto
+  
   wireConsoleInput();
   secretUnlockExtras();
 
-  // Navegación suave
+  // animaciones guachis
   window.addEventListener('beforeunload', () => {
     document.body.classList.add('fade-out');
     showPageLoader();
@@ -599,7 +643,10 @@ window.onload = async () => {
   window.navigateTo = function(page) {
     document.body.classList.add('fade-out');
     showPageLoader();
-    setTimeout(() => { oldNavigateTo ? oldNavigateTo(page) : (window.location.href = `${page}.html`); }, 350);
+    setTimeout(() => {
+      const target = /\.html$/i.test(page) ? page : `${page}.html`;
+      oldNavigateTo ? oldNavigateTo(target) : (window.location.href = target);
+    }, 350);
   };
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
@@ -614,11 +661,11 @@ window.onload = async () => {
     }
   });
 
-  // Password gate
-  const isAdminPage = location.pathname.endsWith('/admin.html') || location.pathname.endsWith('admin.html');
+  // Password 
+  const isAdminPage = /\/admin(\.html)?$/i.test(location.pathname);
   if (isAdminPage) { await ensureAdminAccess(); } else { await ensureSiteAccess(); }
 
-  // Cerrar drawer al clicar fuera
+  // Cerrar drawer
   const overlay = document.getElementById('cart-overlay');
   if (overlay) overlay.addEventListener('click', (e) => {
     if (e.target === overlay) toggleCart(); // solo si hacen click en el fondo
@@ -627,5 +674,7 @@ window.onload = async () => {
   // Carrito / newsletter
   renderCartPage();
   wireNewsletter();
-};
 
+  // Cookies
+  mountCookieBanner();
+};
