@@ -1,19 +1,25 @@
-/*  Apps Script  */
+/* ===================== CONFIG REMOTA (Google Apps Script) ===================== */
+// endpoint del sheets pa tirar pedidos, cero misterio
 const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyB0z3lxyONeAp-9GsiDlfyAW92M67NsLEgjm8HQJeCk3CR17cGmvSCVlWjoCtMtnSp/exec';
+// token cutre-cerrao. si lo cambias, avisa al GAS y ya
 const GAS_TOKEN = 's4ndc4t_7vWUpBQJQ3kRr2pF8m9Z';
 window.GAS_ENDPOINT_URL = GAS_ENDPOINT_URL;
 window.GAS_TOKEN = GAS_TOKEN;
 
-/*  Page Loader   */
+/* ============ Page Loader config ============ */
+// logo del loader, sin dramas
 const LOADER_LOGO_SRC = 'assets/sandcatloading.png';
 
-/*  contraseñasssssss  */
+/* ===================== PASSWORD GATES (SHA-256) ===================== */
+// hashes pa’ no guardar pass en claro. sí, feo, pero tira
 const SITE_PASS_HASH  = '84a731da94efc561be5523eea8ab865b6c9a665c86df1f36f98f3d4d8df2559a'; // sandcat
 const ADMIN_PASS_HASH = '99caf7f51eb6f8c7c61fd3ed386283de564ff0ab4e7cce943094a8b1b6fa9664'; // sandcat-admin
+// llaves del localStorage pa saber si ya pasaste
 const AUTH_SITE_KEY  = 'site_auth';
 const AUTH_ADMIN_KEY = 'admin_auth';
 
-/*  Toast  */
+/* ====== Toast ====== */
+// popup de “bro, pasó esto”, sin movidas
 function showToast(msg, ok=true) {
   let el = document.getElementById('sandcat-toast');
   if (!el) {
@@ -34,7 +40,8 @@ function showToast(msg, ok=true) {
   el._t = setTimeout(()=> { el.style.display = 'none'; }, 2400);
 }
 
-/*  Loader entre páginas  */
+/* ===================== Loader entre páginas ===================== */
+// si no está montado, lo plantamos y fuera
 function ensurePageLoaderMounted() {
   if (document.getElementById('page-loader')) return;
   const el = document.createElement('div');
@@ -45,7 +52,8 @@ function ensurePageLoaderMounted() {
 function showPageLoader() { ensurePageLoaderMounted(); document.getElementById('page-loader').style.display = 'flex'; }
 function hidePageLoader() { const el = document.getElementById('page-loader'); if (el) el.style.display = 'none'; }
 
-/*  Intro (solo primera visita)  */
+/* ===================== Intro (solo primera visita) ===================== */
+// pantallita hacker de postureo, 0.7s y a otra cosa
 function startHackAnimation() {
   const hackScreen = document.getElementById("hack-screen");
   const hackText = document.getElementById("hack-text");
@@ -60,18 +68,21 @@ function startHackAnimation() {
   }, 700);
 }
 
-/*  SECRETO  */
+/* ===================== SECRETO ===================== */
+// palabra secreta rollo huevo de pascua, porque sí
 const SECRET_WORD = 'sorpresa';
-const STORAGE_SECRET_KEY = 'secret_unlocked_v2'; // clave nueva
+const STORAGE_SECRET_KEY = 'secret_unlocked_v2'; // versión fresca, la otra estaba guarra
 
-// 🔒 Limpia estado antiguo para que no aparezca desbloqueado por pruebas
+// limpiamos lo viejo por si quedó algo loco
 try { localStorage.removeItem('secret_unlocked'); } catch(_) {}
 
+// desbloqueo modo “magia, bro”
 function revealSecret() {
   localStorage.setItem(STORAGE_SECRET_KEY, '1');
   document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   showToast('Secret drop unlocked ✨', true);
 }
+// lo escondemos otra vez si te rajas
 function hideSecret() {
   localStorage.removeItem(STORAGE_SECRET_KEY);
   document.querySelectorAll(".secret-tag").forEach(el => {
@@ -80,27 +91,27 @@ function hideSecret() {
   showToast('Secret drop locked 🔒', true);
 }
 
-/* Consola visible (comandos + secreto) */
+/* Consolita fake con comandos minimal */
 function wireConsoleInput() {
   const inp = document.getElementById('console-secret-input');
   const area = document.getElementById('console-menu');
   if (!inp || !area) return;
 
-  // Muestra el secreto 
+  // si ya estaba desbloqueado, pues eso
   if (localStorage.getItem(STORAGE_SECRET_KEY) === '1') {
     document.querySelectorAll(".secret-tag.hidden").forEach(el => el.classList.remove("hidden"));
   }
 
-  // Foco al tocar la zona consola (móvil)
+  // tap en móvil = foco, porque UX básica
   area.addEventListener('click', () => { try { inp.focus(); } catch(_){} });
 
-  // Detectar palabra secreta al escribir
+  // si escribes la palabra secreta, boom
   inp.addEventListener('input', () => {
     const cleaned = (inp.value || '').toLowerCase().replace(/\s+/g,'');
     if (cleaned.includes(SECRET_WORD)) revealSecret();
   });
 
-  // Comandos
+  // comandos rollo “admin”, “shop”, etc. sin florituras
   inp.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     e.preventDefault();
@@ -108,12 +119,12 @@ function wireConsoleInput() {
     if (!cmd) return;
 
     if (cmd === SECRET_WORD) { revealSecret(); inp.value = ''; return; }
-    if (cmd === 'lock') { hideSecret(); inp.value = ''; return; } // volver a ocultar
+    if (cmd === 'lock') { hideSecret(); inp.value = ''; return; }
 
     const routes = ['about','contact','collections','shop','cart','admin','index'];
     if (routes.includes(cmd)) {
       inp.value = '';
-      // Deja que navigateTo añada .html si hace falta
+      // aquí que se apañe navigateTo con el .html, no liamos nada
       navigateTo(cmd === 'index' ? 'index' : cmd);
       return;
     }
@@ -123,15 +134,13 @@ function wireConsoleInput() {
   });
 }
 
-/* Desbloqueo */
+/* Desbloqueo por query y por tecleo ninja global */
 function secretUnlockExtras(){
-  // unlock=sorpresa
   try {
     const params = new URLSearchParams(location.search);
     if ((params.get('unlock') || '').toLowerCase() === SECRET_WORD) revealSecret();
   } catch(_) {}
 
-  // Teclado 
   let buf = '';
   document.addEventListener('keydown', (e) => {
     const tag = (document.activeElement && document.activeElement.tagName) || '';
@@ -144,31 +153,36 @@ function secretUnlockExtras(){
   });
 }
 
-/*  Navegación  */
+/* ===================== Navegación / menú ============== */
+// si ya viene con .html no lo duplicamos, chill
 function navigateTo(page) {
-  // Si ya viene con .html, no lo dupliques; acepta 'about' o 'about.html'
   const target = /\.html$/i.test(page) ? page : `${page}.html`;
   window.location.href = target;
 }
+// mostrar/ocultar menús como si nada
 function toggleMenu() { document.getElementById("console-menu")?.classList.toggle("hidden"); }
 function toggleSubmenu() { document.querySelector(".submenu")?.classList.toggle("hidden"); }
+// combo secreto Alt+Shift+A para admin porque me apetece
 window.addEventListener('keydown', (e) => {
   if (e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
     e.preventDefault(); window.location.href = 'admin.html';
   }
 });
 
-/*  Password   */
+/* ===================== Password gates ===================== */
+// hash sha-256 con la API del navegador, rapidito y a seguir
 async function sha256Hex(text) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
+// flags de “ya pasaste” guardados en local, cero glamour
 function isSiteAuthed()  { return localStorage.getItem(AUTH_SITE_KEY)  === '1' || !SITE_PASS_HASH; }
 function isAdminAuthed() { return localStorage.getItem(AUTH_ADMIN_KEY) === '1' || !ADMIN_PASS_HASH; }
 function logoutSite()  { localStorage.removeItem(AUTH_SITE_KEY);  location.reload(); }
 function logoutAdmin() { localStorage.removeItem(AUTH_ADMIN_KEY); location.reload(); }
 
+// modal de pedir pass hecho en dos divs y pa’lante
 function mountAuthOverlay({ title, onSubmit }) {
   const overlay = document.createElement('div');
   overlay.id = 'auth-overlay';
@@ -212,19 +226,33 @@ async function ensureSiteAccess() {
   });
 }
 async function ensureAdminAccess() {
+  // primero gate del sitio (puede abrir un overlay)
   await ensureSiteAccess();
-  if (isAdminAuthed()) return;
+
+  // si ya eres admin, carga pedidos y fuera
+  if (isAdminAuthed()) {
+    try { loadAdminOrders(); } catch(_) {}
+    return;
+  }
+
+  // si no, pide pass de admin UNA sola vez aquí
   mountAuthOverlay({
     title: 'SANDCAT – Admin login',
     onSubmit: async (pass, overlay) => {
       const hex = await sha256Hex(pass);
-      if (hex === ADMIN_PASS_HASH) { localStorage.setItem(AUTH_ADMIN_KEY, '1'); overlay.remove(); loadAdminOrders(); }
-      else overlay.querySelector('#auth-msg').textContent = 'Invalid admin password';
+      if (hex === ADMIN_PASS_HASH) {
+        localStorage.setItem(AUTH_ADMIN_KEY, '1');
+        overlay.remove();
+        try { loadAdminOrders(); } catch(_) {}
+      } else {
+        overlay.querySelector('#auth-msg').textContent = 'Invalid admin password';
+      }
     }
   });
 }
 
-/* Carrito */
+/* ===================== Carrito ===================== */
+// carrito en localStorage como los clásicos del barrio
 function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
 function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCartCount(); }
 function updateCartCount() {
@@ -257,7 +285,7 @@ function addToCart(product, price, size) {
   if (idx >= 0) cart[idx].qty = (cart[idx].qty || 1) + 1;
   else cart.push({ product, price: Number(price), size: finalSize, qty: 1 });
   setCart(cart);
-  openCart(); // abrir al añadir
+  openCart(); // lo abrimos porque nos mola ver la compra
 }
 function changeQty(index, delta) {
   let cart = getCart();
@@ -316,29 +344,32 @@ function renderCartPage() {
   totalEl.textContent = calcCartTotal(cart).toFixed(2);
 }
 
-/* Validación */
+/* ===================== Validación + pedido ===================== */
+// validaciones básicas pa no mandar basura
 function validateCheckoutData({name, email, address, zip, method}) {
   const errors = [];
   if (!name || name.trim().length < 3) errors.push('Name must have at least 3 characters.');
-  // Email requerido SIEMPRE (no solo PayPal)
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.push('Valid email is required.');
   if (!address || address.trim().length < 10) errors.push('Address looks too short.');
   if (!/^\d{5}$/.test(zip || '')) errors.push('Postal code must be 5 digits.');
   if (!['paypal', 'cod'].includes(method)) errors.push('Payment method not supported.');
   return errors;
 }
+// id de pedido con la fecha + random, 0 ciencia
 function generateOrderId() {
   const d = new Date();
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `SC-${y}${m}${day}-${rand}`;
 }
+// guardamos historial en local por si acaso
 function appendOrderHistory(order) {
   const key = 'orders';
   const list = JSON.parse(localStorage.getItem(key) || '[]');
   list.push(order);
   localStorage.setItem(key, JSON.stringify(list));
 }
+// montamos el objeto pedido y arreando
 function buildOrder({name, email, address, zip, method}) {
   const cart = getCart();
   if (!cart.length) return null;
@@ -357,7 +388,8 @@ function buildOrder({name, email, address, zip, method}) {
   return order;
 }
 
-/* CORS */
+/* ===================== CORS fallback ===================== */
+// si CORS se pone tonto, mode: no-cors y a tomar viento (best effort)
 async function fetchJSONWithCORSFallback(url, options) {
   try {
     const res = await fetch(url, options);
@@ -373,7 +405,8 @@ async function fetchJSONWithCORSFallback(url, options) {
   }
 }
 
-/* Sheets */
+/* ===================== Envío a Google Sheets ===================== */
+// mandamos el pedido al GAS. si no hay config, pues no
 async function sendOrderToSheet(order) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   const body = JSON.stringify({ token: GAS_TOKEN, order });
@@ -382,7 +415,8 @@ async function sendOrderToSheet(order) {
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
-/* Cerrojo  */
+/* ===== Cerrojo anti doble click ===== */
+// anti-dobles clickers nerviosos
 let isPlacingOrder = false;
 function setConfirmButtonEnabled(enabled) {
   const btns = Array.from(document.querySelectorAll('#confirm-order-btn'));
@@ -443,7 +477,56 @@ async function placeOrder(){
 }
 window.placeOrder = placeOrder;
 
-/*  Admin */
+/* ===================== Admin – helpers items ===================== */
+function tryParseJSON(s) {
+  if (typeof s !== 'string') return null;
+  const t = s.trim();
+  if (!t || (t[0] !== '[' && t[0] !== '{')) return null;
+  try { return JSON.parse(t); } catch { return null; }
+}
+function parseStringItems(s) {
+  if (!s || typeof s !== 'string') return [];
+  const parts = s.split(/<br\s*\/?>|\|\|?|;|\n|,/i).map(x => x.trim()).filter(Boolean);
+  return parts.map(line => {
+    const nameMatch  = line.match(/^(.+?)(?:\s*\(|\s*[×x]|$)/);
+    const sizeMatch  = line.match(/\(([^)]+)\)/);
+    const qtyMatch   = line.match(/[×x]\s*(\d+)/i);
+    const priceMatch = line.match(/€\s*([\d.,]+)/);
+    const name  = nameMatch ? nameMatch[1].trim() : line.trim();
+    const size  = sizeMatch ? sizeMatch[1].trim() : '';
+    const qty   = qtyMatch ? Number(qtyMatch[1]) : 1;
+    let price = 0;
+    if (priceMatch) {
+      price = Number(priceMatch[1].replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',', '.')) || 0;
+    }
+    return { name, size, qty: qty || 1, price: price || 0 };
+  });
+}
+function normalizeItems(itemsMaybe) {
+  if (itemsMaybe == null) return [];
+  if (typeof itemsMaybe === 'string') {
+    const j = tryParseJSON(itemsMaybe);
+    if (j) return normalizeItems(j);
+    return parseStringItems(itemsMaybe);
+  }
+  if (!Array.isArray(itemsMaybe)) itemsMaybe = [itemsMaybe];
+  const out = [];
+  for (const it of itemsMaybe) {
+    if (typeof it === 'string') { out.push(...parseStringItems(it)); continue; }
+    const name = it.name ?? it.product ?? it.title ?? '';
+    const size = it.size ?? it.variant ?? (it.options && it.options.size) ?? '';
+    let qty = it.qty ?? it.quantity ?? it.count ?? 1;
+    let price = it.price ?? it.unitPrice ?? it.amount ?? it.unit_price ?? 0;
+    if (typeof price === 'string') {
+      price = Number(price.replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',', '.'));
+    }
+    out.push({ name: String(name||'').trim(), size: String(size||'').trim(), qty: Number(qty)||1, price: Number(price)||0 });
+  }
+  return out;
+}
+
+/* ===================== Admin – lectura ===================== */
+// si hay GAS, tiramos de ahí; si no, tiramos del local y santas pascuas
 async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) {
     const raw = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -451,7 +534,7 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
       timestamp: o.createdAt || o.timestamp || new Date().toISOString(),
       orderId: o.orderId, method: o.method, status: o.status,
       name: o.customer?.name, email: o.customer?.email, address: o.customer?.address, zip: o.customer?.zip,
-      total: o.total, currency: o.currency || 'EUR', items: o.items || []
+      total: o.total, currency: o.currency || 'EUR', items: normalizeItems(o.items)
     }));
     if (since) { const dt = new Date(since); if (!isNaN(dt)) rows = rows.filter(r => new Date(r.timestamp) >= dt); }
     rows.sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
@@ -470,7 +553,7 @@ async function fetchOrdersFromSheet({ limit = 200, since = '' } = {}) {
     timestamp: r.timestamp, orderId: r.orderId, method: r.method, status: r.status,
     name: r.name, email: r.email, address: r.address, zip: r.zip,
     total: r.total, currency: r.currency || 'EUR',
-    items: Array.isArray(r.items) ? r.items : []
+    items: normalizeItems(r.items)
   }));
 }
 async function loadAdminOrders() {
@@ -500,7 +583,11 @@ async function loadAdminOrders() {
           <td>${escapeHtml(r.name || '')}<br><small>${escapeHtml(r.email || '')}</small></td>
           <td>${escapeHtml(r.address || '')}<br><small>${escapeHtml(r.zip || '')}</small></td>
           <td>€${Number(r.total || 0).toFixed(2)} ${escapeHtml(r.currency || 'EUR')}</td>
-          <td>${Array.isArray(r.items) ? r.items.map(it => `${escapeHtml(it.name||'')} (${escapeHtml(it.size||'')}) × ${Number(it.qty||1)} – €${Number(it.price||0).toFixed(2)}`).join('<br>') : ''}</td>
+          <td>${
+            Array.isArray(r.items)
+              ? r.items.map(it => `${escapeHtml(it.name||'')} (${escapeHtml(it.size||'')}) × ${Number(it.qty||1)} – €${Number(it.price||0).toFixed(2)}`).join('<br>')
+              : ''
+          }</td>
         `;
         table.appendChild(tr);
       }
@@ -513,8 +600,8 @@ async function loadAdminOrders() {
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;'}[c])); }
 
-/* Newsletter */
-// Envío a GAS
+/* ===================== Newsletter ===================== */
+// manda el correo al GAS; si se cae, mala suerte y toast rojo
 async function sendNewsletterEmail(email) {
   if (!GAS_ENDPOINT_URL || !GAS_TOKEN) return { ok:false, error:'No GAS config' };
   const body = JSON.stringify({ token: GAS_TOKEN, newsletter: { email, source:'site' } });
@@ -523,7 +610,7 @@ async function sendNewsletterEmail(email) {
   return r.ok ? (r.data || { ok:true }) : { ok:false, error: (r.data && r.data.error) || r.error || 'Failed' };
 }
 
-// Modal de consentimiento (EN) 
+// modal de consentimiento: si está, lo usamos; si no, directo y ya
 function showConsentModal() {
   const ov = document.getElementById('consent-overlay');
   if (ov) ov.style.display = 'flex';
@@ -537,7 +624,6 @@ function hideConsentModal() {
   const chk = document.getElementById('consent-check');
   if (chk) chk.checked = false;
 }
-
 function wireNewsletter() {
   const btn = document.getElementById('newsletter-btn');
   const inp = document.getElementById('newsletter-email');
@@ -545,7 +631,6 @@ function wireNewsletter() {
 
   let sending = false;
 
-  // Botones
   const accept = document.getElementById('consent-accept');
   const cancel = document.getElementById('consent-cancel');
   const check = document.getElementById('consent-check');
@@ -564,7 +649,6 @@ function wireNewsletter() {
     const email = (inp.value||'').trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) { showToast('Please enter a valid email', false); return; }
 
-    // usar consentimiento
     if (document.getElementById('consent-overlay')) {
       showConsentModal();
       if (accept) accept.onclick = async () => {
@@ -576,7 +660,6 @@ function wireNewsletter() {
       return;
     }
 
-    // enviar directamente
     await reallySubscribe(email);
   }
 
@@ -584,7 +667,8 @@ function wireNewsletter() {
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitNewsletter(); });
 }
 
-/* COOKIES  */
+/* ===================== COOKIES – Popup mínimo legal-ready ===================== */
+// banner básico de cookies: aceptas y a correr
 const COOKIE_CONSENT_KEY = 'cookie_consent_v1';
 
 function getCookieConsent() {
@@ -593,9 +677,8 @@ function getCookieConsent() {
 function setCookieConsent(value) {
   localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({ accepted: !!value, ts: Date.now() }));
 }
-
 function mountCookieBanner() {
-  if (getCookieConsent()?.accepted) return; // ya aceptado
+  if (getCookieConsent()?.accepted) return; // si ya diste OK, paso
 
   const bar = document.createElement('div');
   bar.id = 'cookie-banner';
@@ -623,18 +706,19 @@ function mountCookieBanner() {
   };
 }
 
-
+/* ===================== INIT ===================== */
+// arranque general: contamos cosas, animación y listo
 window.onload = async () => {
   updateCartCount();
   startHackAnimation();
   ensurePageLoaderMounted();
   hidePageLoader();
 
-  
+  // consola y truquitos
   wireConsoleInput();
   secretUnlockExtras();
 
-  // animaciones guachis
+  // transición con fade cutrilla pero resultona
   window.addEventListener('beforeunload', () => {
     document.body.classList.add('fade-out');
     showPageLoader();
@@ -661,20 +745,20 @@ window.onload = async () => {
     }
   });
 
-  // Password 
+  // si estás en admin (con o sin .html), pide pass de admin UNA vez
   const isAdminPage = /\/admin(\.html)?$/i.test(location.pathname);
   if (isAdminPage) { await ensureAdminAccess(); } else { await ensureSiteAccess(); }
 
-  // Cerrar drawer
+  // cerrar carrito si pinchas fuera, UX de cajón
   const overlay = document.getElementById('cart-overlay');
   if (overlay) overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) toggleCart(); // solo si hacen click en el fondo
+    if (e.target === overlay) toggleCart();
   });
 
-  // Carrito / newsletter
+  // pintar carrito y enganchar newsletter
   renderCartPage();
   wireNewsletter();
 
-  // Cookies
+  // cookies banner y a correr
   mountCookieBanner();
 };
