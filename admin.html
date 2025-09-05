@@ -38,10 +38,10 @@
   </style>
 </head>
 <body>
-  <!-- (opcional) pantalla de hack animación si usas la intro global -->
+  <!-- Intro opcional global -->
   <div id="hack-screen"><div id="hack-text"></div></div>
 
-  <!-- Barra superior consistente con el resto del sitio -->
+  <!-- Barra superior consistente -->
   <div class="white-bar">
     <img src="assets/logo2.png" class="logo-left" onclick="window.location.href='index.html'" alt="SANDCAT logo" />
     <img src="assets/logo_text.png" class="logo-center" alt="SANDCAT" />
@@ -110,18 +110,22 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Importante: dejamos que el gate lo haga script.js para evitar doble prompt -->
+  <script defer src="script.js?v=16"></script>
   <script>
-    (async function boot(){
-      // Pide contraseña de sitio y de admin (si has dejado los hashes por defecto: sitio "sandcat", admin "sandcat-admin")
-      await ensureAdminAccess();
+    (function boot(){
+      // Mostrar la fuente (GAS vs Local) al cargar la página
+      var src = (window.GAS_ENDPOINT_URL && window.GAS_TOKEN) ? 'Google Sheet' : 'Local';
+      var pill = document.getElementById('src-pill');
+      if (pill) pill.textContent = 'source: ' + src;
 
-      // Mostrar fuente (local o GAS) en la pill
-      const src = (window.GAS_ENDPOINT_URL && window.GAS_TOKEN) ? 'Google Sheet' : 'Local';
-      document.getElementById('src-pill').textContent = 'source: ' + src;
-
-      // Cargar pedidos
-      loadAdminOrders();
+      // Si ya está autenticado como admin (admin_auth = '1'), carga las órdenes;
+      // si no, script.js (ensureAdminAccess en onload) mostrará el overlay y luego llamará a loadAdminOrders()
+      try {
+        if (localStorage.getItem('admin_auth') === '1') {
+          loadAdminOrders();
+        }
+      } catch(_) {}
     })();
   </script>
 </body>
