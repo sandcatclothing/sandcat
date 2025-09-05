@@ -477,7 +477,35 @@ async function placeOrder(){
 }
 window.placeOrder = placeOrder;
 
-/* ===================== Admin – helpers items ===================== */
+/* ===================== Admin – helpers dinero + items ===================== */
+// parsea dinero “europeo/usa” sin liarla: 1.234,56 / 1,234.56 / 25,00 / 25.00
+function moneyToNumber(raw) {
+  if (raw == null) return 0;
+  let s = String(raw).replace(/[^\d.,-]/g, '').trim();
+  if (!s) return 0;
+
+  const hasComma = s.includes(',');
+  const hasDot = s.includes('.');
+
+  if (hasComma && hasDot) {
+    const lastComma = s.lastIndexOf(',');
+    const lastDot = s.lastIndexOf('.');
+    if (lastComma > lastDot) {
+      s = s.replace(/\./g, '').replace(',', '.'); // decimal = coma
+    } else {
+      s = s.replace(/,/g, ''); // decimal = punto
+    }
+  } else if (hasComma) {
+    const m = s.match(/,(\d{1,2})$/);
+    if (m) s = s.replace(',', '.'); else s = s.replace(/,/g, '');
+  } else if (hasDot) {
+    const m = s.match(/\.(\d{1,2})$/);
+    if (!m) s = s.replace(/\./g, '');
+  }
+  const n = Number(s);
+  return isNaN(n) ? 0 : n;
+}
+
 function tryParseJSON(s) {
   if (typeof s !== 'string') return null;
   const t = s.trim();
@@ -495,10 +523,7 @@ function parseStringItems(s) {
     const name  = nameMatch ? nameMatch[1].trim() : line.trim();
     const size  = sizeMatch ? sizeMatch[1].trim() : '';
     const qty   = qtyMatch ? Number(qtyMatch[1]) : 1;
-    let price = 0;
-    if (priceMatch) {
-      price = Number(priceMatch[1].replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',', '.')) || 0;
-    }
+    const price = priceMatch ? moneyToNumber(priceMatch[1]) : 0;
     return { name, size, qty: qty || 1, price: price || 0 };
   });
 }
@@ -517,9 +542,7 @@ function normalizeItems(itemsMaybe) {
     const size = it.size ?? it.variant ?? (it.options && it.options.size) ?? '';
     let qty = it.qty ?? it.quantity ?? it.count ?? 1;
     let price = it.price ?? it.unitPrice ?? it.amount ?? it.unit_price ?? 0;
-    if (typeof price === 'string') {
-      price = Number(price.replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',', '.'));
-    }
+    price = moneyToNumber(price);
     out.push({ name: String(name||'').trim(), size: String(size||'').trim(), qty: Number(qty)||1, price: Number(price)||0 });
   }
   return out;
